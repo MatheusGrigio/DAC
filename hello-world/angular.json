@@ -9,7 +9,17 @@
   "projects": {
     "hello-world": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+             "@schematics/angular:component": {
+             "standalone": true
+            },
+             "@schematics/angular:directive": {
+             "standalone": true
+            },
+             "@schematics/angular:pipe": {
+            "standalone": true
+          }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -26,7 +36,11 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+            ],
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           },
           "configurations": {
