@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "decimal.js": "^10.6.0",
+    "luxon": "^3.7.2"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.7.5"
+  }
+}
