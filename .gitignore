@@ -1,0 +1,36 @@
+# Dependências do Node
+node_modules/
+
+# Builds do Angular
+dist/
+.angular/
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+*.sw?
+*.swo
+
+# Testes
+coverage/
+
+# Outros
+*.tmp
+*.temp
