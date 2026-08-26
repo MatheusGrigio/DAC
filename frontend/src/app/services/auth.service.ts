@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -13,6 +13,8 @@ export interface UsuarioResponse {
   nome: string;
   email: string;
 }
+
+export type TipoUsuario = 'CLIENTE' | 'GERENTE';
 
 export interface LoginResponse {
   auth: boolean;      
@@ -33,6 +35,11 @@ export class Auth {
   private http = inject(HttpClient);   
   private router = inject(Router);  
 
+  readonly usuarioLogado = signal<UsuarioResponse | null>(this.lerUsuarioSalvo());
+  readonly tipoLogado = signal<TipoUsuario | null>(
+    (localStorage.getItem(this.TIPO_KEY) as TipoUsuario | null) ?? null,
+);
+
   login(credenciais: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.API_GATEWAY}/login`, credenciais).pipe(
       tap((response: LoginResponse) => {
@@ -52,5 +59,38 @@ export class Auth {
         return throwError(() => ({ mensagem, status: error.status }));
       })
     );
+}
+
+  logout(): void {
+    this.http.post(`${this.API_GATEWAY}/logout`, {}).subscribe({
+      complete: () => this.encerrarSessaoLocal(),
+      error: () => this.encerrarSessaoLocal(),
+    });
+  }
+ 
+  encerrarSessaoLocal(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USUARIO_KEY);
+    localStorage.removeItem(this.TIPO_KEY);
+    this.usuarioLogado.set(null);
+    this.tipoLogado.set(null);
+    this.router.navigate(['/login']);
+  }
+ 
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+ 
+  getTipo(): TipoUsuario | null {
+    return this.tipoLogado();
+  }
+ 
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+ 
+  private lerUsuarioSalvo(): UsuarioResponse | null {
+    const bruto = localStorage.getItem(this.USUARIO_KEY);
+    return bruto ? JSON.parse(bruto) : null;
   }
 }

@@ -1,2 +1,2 @@
-export { Auth } from './auth';
-export { LoginRequest, UsuarioResponse, LoginResponse } from './auth';
+export type { LoginRequest, UsuarioResponse, LoginResponse } from './auth.service';
+export { Auth } from './auth.service';
