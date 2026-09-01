@@ -1,0 +1,305 @@
+name: bantads
+
+networks:
+  bantads:
+    name: bantads
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
+  rabbitmq_data:
+
+x-java-ms: &java-ms
+  mem_limit: 512m
+  networks:
+    - bantads
+  environment:
+    SERVER_PORT: "8080"
+    JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
+  healthcheck:
+    test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health | grep -q UP"]
+    interval: 15s
+    timeout: 5s
+    retries: 8
+    start_period: 40s
+
+services:
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bantads}
+      POSTGRES_USER: ${POSTGRES_USER:-bantads}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_CLIENTE_USER: ${POSTGRES_CLIENTE_USER:-bantads_cliente}
+      POSTGRES_CLIENTE_PASSWORD: ${POSTGRES_CLIENTE_PASSWORD:-change-me}
+      POSTGRES_GERENTE_USER: ${POSTGRES_GERENTE_USER:-bantads_gerente}
+      POSTGRES_GERENTE_PASSWORD: ${POSTGRES_GERENTE_PASSWORD:-change-me}
+      POSTGRES_CONTA_COMMAND_USER: ${POSTGRES_CONTA_COMMAND_USER:-bantads_conta_command}
+      POSTGRES_CONTA_COMMAND_PASSWORD: ${POSTGRES_CONTA_COMMAND_PASSWORD:-change-me}
+      POSTGRES_CONTA_QUERY_USER: ${POSTGRES_CONTA_QUERY_USER:-bantads_conta_query}
+      POSTGRES_CONTA_QUERY_PASSWORD: ${POSTGRES_CONTA_QUERY_PASSWORD:-change-me}
+    command: ["postgres", "-c", "shared_buffers=128MB"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/postgres/init:/docker-entrypoint-initdb.d:ro
+    mem_limit: 384m
+    networks:
+      - bantads
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-bantads}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-change-me}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-bantads_auth}
+    command: ["--wiredTigerCacheSizeGB", "0.25"]
+    volumes:
+      - mongo_data:/data/db
+    mem_limit: 384m
+    networks:
+      - bantads
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mongosh --quiet -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.adminCommand({ ping: 1 })'",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--maxmemory", "100mb", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis_data:/data
+    mem_limit: 128m
+    networks:
+      - bantads
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER:-bantads}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD:-change-me}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./db/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./db/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+    mem_limit: 512m
+    networks:
+      - bantads
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  gateway:
+    build:
+      context: ./backend/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_OPTIONS: --max-old-space-size=192
+      PORT: "3000"
+      GATEWAY_PUBLIC_URL: ${GATEWAY_PUBLIC_URL:-http://localhost:3000}
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-string}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:4200}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: ${RABBIT_USER:-bantads}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
+      AUTH_URL: http://auth:8080
+      CLIENTE_URL: http://cliente:8080
+      GERENTE_URL: http://gerente:8080
+      CONTA_URL: http://conta:8080
+      SAGA_URL: http://saga:8080
+      EMAIL_URL: http://email:8080
+    mem_limit: 256m
+    networks:
+      - bantads
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+      cliente:
+        condition: service_healthy
+      gerente:
+        condition: service_healthy
+      conta:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health | grep -q UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  auth:
+    <<: *java-ms
+    build:
+      context: ./backend/services
+      dockerfile: auth/Dockerfile
+    environment:
+      SERVER_PORT: "8080"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
+      MONGO_HOST: mongo
+      MONGO_PORT: "27017"
+      MONGO_USER: ${MONGO_USER:-bantads}
+      MONGO_PASSWORD: ${MONGO_PASSWORD:-change-me}
+      MONGO_DB: ${MONGO_DB:-bantads_auth}
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: ${RABBIT_USER:-bantads}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  cliente:
+    <<: *java-ms
+    build:
+      context: ./backend/services
+      dockerfile: cliente/Dockerfile
+    environment:
+      SERVER_PORT: "8080"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-bantads}
+      POSTGRES_USER: ${POSTGRES_CLIENTE_USER:-bantads_cliente}
+      POSTGRES_PASSWORD: ${POSTGRES_CLIENTE_PASSWORD:-change-me}
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: ${RABBIT_USER:-bantads}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  gerente:
+    <<: *java-ms
+    build:
+      context: ./backend/services
+      dockerfile: gerente/Dockerfile
+    environment:
+      SERVER_PORT: "8080"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-bantads}
+      POSTGRES_USER: ${POSTGRES_GERENTE_USER:-bantads_gerente}
+      POSTGRES_PASSWORD: ${POSTGRES_GERENTE_PASSWORD:-change-me}
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: ${RABBIT_USER:-bantads}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  conta:
+    <<: *java-ms
+    build:
+      context: ./backend/services
+      dockerfile: conta/Dockerfile
+    environment:
+      SERVER_PORT: "8080"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-bantads}
+      POSTGRES_USER: ${POSTGRES_CONTA_COMMAND_USER:-bantads_conta_command}
+      POSTGRES_PASSWORD: ${POSTGRES_CONTA_COMMAND_PASSWORD:-change-me}
+      POSTGRES_QUERY_USER: ${POSTGRES_CONTA_QUERY_USER:-bantads_conta_query}
+      POSTGRES_QUERY_PASSWORD: ${POSTGRES_CONTA_QUERY_PASSWORD:-change-me}
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: ${RABBIT_USER:-bantads}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  saga:
+    <<: *java-ms
+    build:
+      context: ./backend/services
+      dockerfile: saga/Dockerfile
+    environment:
+      SERVER_PORT: "8080"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: ${RABBIT_USER:-bantads}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  email:
+    <<: *java-ms
+    build:
+      context: ./backend/services
+      dockerfile: email/Dockerfile
+    environment:
+      SERVER_PORT: "8080"
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
+      MAIL_DEV: ${MAIL_DEV:-true}
+      MAIL_OUTBOX_DIR: /tmp/outbox
+      GMAIL_USER: ${GMAIL_USER:-}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: "5672"
+      RABBIT_USER: ${RABBIT_USER:-bantads}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
+    volumes:
+      - ./outbox:/tmp/outbox
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  # frontend: nginx estático (mem_limit 64m) quando frontend/ existir

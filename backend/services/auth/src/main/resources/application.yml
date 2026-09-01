@@ -1,0 +1,33 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: auth
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+    serialization:
+      write-dates-as-timestamps: false
+      write-bigdecimal-as-plain: true
+  data:
+    mongodb:
+      host: ${MONGO_HOST:localhost}
+      port: ${MONGO_PORT:27017}
+      database: ${MONGO_DB:bantads_auth}
+      username: ${MONGO_USER:bantads}
+      password: ${MONGO_PASSWORD:change-me}
+      authentication-database: admin
+      auto-index-creation: true
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:bantads}
+    password: ${RABBIT_PASSWORD:change-me}
+
+argon2:
+  salt-length: 16
+  hash-length: 32
+  parallelism: 1
+  memory-kb: 19456
+  iterations: 2
