@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-alert',
@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   templateUrl: './alert.html',
   styleUrl: './alert.css',
 })
-export class Alert {}
+export class Alert {
+  @Input() type: 'success' | 'error' = 'success';
+
+}

@@ -1,0 +1,11 @@
+.alert {
+  padding: 12px;
+  border-radius: 8px;
+  color: #176259;
+  background: #e3f3ef;
+}
+
+.alert.error {
+  color: #a23d43;
+  background: #fff0f1;
+}
