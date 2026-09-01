@@ -13,12 +13,13 @@
       Ja sou cliente
     </a>
   </header>
-
-
-
-
-
-
-
-  
+  <form #formulario="ngForm">
+//campos
+    <app-button
+      type="submit"
+      [disabled]="formulario.invalid"
+    >
+      Continuar
+    </app-button>
+  </form>
 </main>
