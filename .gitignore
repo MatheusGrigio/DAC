@@ -34,3 +34,5 @@ coverage/
 # Outros
 *.tmp
 *.temp
+backend/services/**/.gradle/
+backend/services/**/build/

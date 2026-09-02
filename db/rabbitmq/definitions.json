@@ -1,0 +1,63 @@
+{
+  "rabbit_version": "3.13.0",
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "queues": [
+    {
+      "name": "ms.auth.cmd",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "ms.auth.dlx",
+        "x-dead-letter-routing-key": "ms.auth.cmd.dlq"
+      }
+    },
+    {
+      "name": "ms.auth.cmd.dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "ms.auth.exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "ms.auth.dlx",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "ms.auth.exchange",
+      "vhost": "/",
+      "destination": "ms.auth.cmd",
+      "destination_type": "queue",
+      "routing_key": "ms.auth.cmd",
+      "arguments": {}
+    },
+    {
+      "source": "ms.auth.dlx",
+      "vhost": "/",
+      "destination": "ms.auth.cmd.dlq",
+      "destination_type": "queue",
+      "routing_key": "ms.auth.cmd.dlq",
+      "arguments": {}
+    }
+  ]
+}
