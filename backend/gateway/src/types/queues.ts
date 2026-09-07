@@ -1,0 +1,15 @@
+export const QueueNames = {
+  SAGA_CMD: 'saga.cmd',
+  MS_CLIENTE_CMD: 'ms.cliente.cmd',
+  MS_CONTA_CMD: 'ms.conta.cmd',
+  MS_GERENTE_CMD: 'ms.gerente.cmd',
+  MS_AUTH_CMD: 'ms.auth.cmd',
+  MS_EMAIL_CMD: 'ms.email.cmd',
+  ORQUESTRADOR_REPLY: 'orquestrador.reply',
+  MS_CONTA_EVENTS: 'ms.conta.events',
+  MS_CLIENTE_CMD_DLQ: 'ms.cliente.cmd.dlq',
+  MS_CONTA_CMD_DLQ: 'ms.conta.cmd.dlq',
+  MS_GERENTE_CMD_DLQ: 'ms.gerente.cmd.dlq',
+  MS_AUTH_CMD_DLQ: 'ms.auth.cmd.dlq',
+  MS_CONTA_EVENTS_DLQ: 'ms.conta.events.dlq',
+} as const;
