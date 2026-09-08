@@ -26,7 +26,7 @@ export interface LoginResponse {
 @Injectable({
   providedIn: 'root',
 })
-export class Auth {
+export class AuthService {
   private readonly API_GATEWAY = 'http://localhost:3000';
   private readonly TOKEN_KEY = 'token';
   private readonly USUARIO_KEY = 'usuario';
