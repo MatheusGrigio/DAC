@@ -1,0 +1,38 @@
+server:
+  port: ${SERVER_PORT:8084}
+
+spring:
+  application:
+    name: conta
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+    serialization:
+      write-dates-as-timestamps: false
+      write-bigdecimal-as-plain: true
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bantads}?currentSchema=conta_command
+    username: ${POSTGRES_USER:bantads_conta_command}
+    password: ${POSTGRES_PASSWORD:change-me}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: conta_command
+        jdbc:
+          time_zone: America/Sao_Paulo
+  flyway:
+    enabled: false
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:bantads}
+    password: ${RABBIT_PASSWORD:change-me}
+
+query:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bantads}?currentSchema=conta_query
+    username: ${POSTGRES_QUERY_USER:bantads_conta_query}
+    password: ${POSTGRES_QUERY_PASSWORD:change-me}
