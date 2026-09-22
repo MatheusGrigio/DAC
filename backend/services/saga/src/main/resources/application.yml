@@ -1,0 +1,27 @@
+server:
+  port: ${SERVER_PORT:8085}
+
+spring:
+  application:
+    name: saga
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+    serialization:
+      write-dates-as-timestamps: false
+      write-bigdecimal-as-plain: true
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:bantads}
+    password: ${RABBIT_PASSWORD:change-me}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+saga:
+  step-timeout: ${SAGA_STEP_TIMEOUT:30s}
+  timeout-scan-ms: ${SAGA_TIMEOUT_SCAN_MS:1000}
+  saga-ttl: ${SAGA_TTL:1h}
+  job-ttl: ${SAGA_JOB_TTL:5m}
