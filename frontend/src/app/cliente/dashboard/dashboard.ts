@@ -2,16 +2,15 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { Button } from '../../shared/components/button/button';
 
 @Component({
-  selector: 'app-dashboard-gerente',
+  selector: 'app-dashboard-cliente',
   standalone: true,
-  imports: [CommonModule, RouterModule, Button],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class DashboardGerenteComponent {
+export class DashboardClienteComponent {
   private authService = inject(AuthService);
   
   get usuario() {

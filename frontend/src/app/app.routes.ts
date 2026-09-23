@@ -24,5 +24,11 @@ export const routes: Routes = [
         .then(m => m.DashboardGerenteComponent)
   },
   
+  {
+    path: 'gerente/relatorio',
+    canActivate: [authGuard],
+    data: { role: 'GERENTE' },
+    loadComponent: () => import('./gerente/relatorio/relatorio').then(m => m.Relatorio)
+  },
   { path: '**', redirectTo: '/login' }
 ];

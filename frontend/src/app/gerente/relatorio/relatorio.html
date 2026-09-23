@@ -1,0 +1,40 @@
+<main class="relatorio-page">
+  <h1>Relatório de clientes</h1>
+  <div class="acoes">
+    <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
+  </div>
+  <div class="tabela">
+    <table>
+      <caption class="visually-hidden">Clientes em ordem crescente por nome</caption>
+      <thead>
+        <tr>
+          <th scope="col">CPF</th>
+          <th scope="col">Nome</th>
+          <th scope="col">E-mail</th>
+          <th scope="col">Salário</th>
+          <th scope="col">Número da conta</th>
+          <th scope="col">Saldo</th>
+          <th scope="col">CPF do gerente</th>
+          <th scope="col">Nome do gerente</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cliente of clientesOrdenados; track cliente.cpf) {
+          <tr>
+            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.nome }}</td>
+            <td>{{ cliente.email }}</td>
+            <td>R$ {{ cliente.salario }}</td>
+            <td>{{ cliente.numeroConta }}</td>
+            <td>R$ {{ cliente.saldo }}</td>
+            <td>{{ cliente.cpfGerente }}</td>
+            <td>{{ cliente.nomeGerente }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  @if (clientes.length === 0) {
+    <app-alert>Nenhum cliente para exibir no relatório.</app-alert>
+  }
+</main>
