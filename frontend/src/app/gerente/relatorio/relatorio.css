@@ -1,0 +1,7 @@
+.relatorio-page { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+h1 { font-size: 24px; margin-bottom: 24px; }
+.acoes { margin-bottom: 24px; }
+.tabela { overflow-x: auto; margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+th { background: #f4f4f4; }

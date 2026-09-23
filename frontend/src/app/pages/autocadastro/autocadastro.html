@@ -17,7 +17,7 @@
 //campos
     <app-button
       type="submit"
-      [disabled]="formulario.invalid"
+      [disabled]="formulario.invalid ?? false"
     >
       Continuar
     </app-button>
