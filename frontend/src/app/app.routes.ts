@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
 import { authGuard } from './auth/auth.guard';
+import { Transferencia } from './transferencia/transferencia';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -30,5 +31,13 @@ export const routes: Routes = [
     data: { role: 'GERENTE' },
     loadComponent: () => import('./gerente/relatorio/relatorio').then(m => m.Relatorio)
   },
+  
+  { 
+    path: 'transferencia', 
+    component: Transferencia,
+    canActivate: [authGuard],
+    data: { role: 'CLIENTE' }
+  },
+
   { path: '**', redirectTo: '/login' }
 ];
