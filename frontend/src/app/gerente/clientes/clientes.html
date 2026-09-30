@@ -1,35 +1,44 @@
 <main class="clientes-page">
   <h1>Consultar clientes</h1>
+  <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
   <form (ngSubmit)="filtro = busca" class="busca">
     <div class="campo">
-      <label for="busca">Nome</label>
+      <label for="busca">Nome ou CPF</label>
       <input id="busca" name="busca" type="search" [(ngModel)]="busca"/>
     </div>
     <app-button type="submit">Buscar</app-button>
   </form>
-  <div class="tabela">
-    <table>
-      <caption class="visually-hidden">Clientes</caption>
-      <thead>
-        <tr>
-          <th scope="col">CPF</th>
-          <th scope="col">Nome</th>
-          <th scope="col">Cidade</th>
-          <th scope="col">Estado</th>
-          <th scope="col">Saldo</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (cliente of clientesFiltrados; track cliente.cpf) {
+  @if (carregando()) {
+    <p role="status">Carregando clientes...</p>
+  } @else if (erro()) {
+    <app-alert type="error">{{ erro() }}</app-alert>
+  } @else {
+    <div class="tabela">
+      <table>
+        <caption class="visually-hidden">Clientes</caption>
+        <thead>
           <tr>
-            <td>{{ cliente.cpf }}</td>
-            <td>{{ cliente.nome }}</td>
-            <td>{{ cliente.cidade }}</td>
-            <td>{{ cliente.estado }}</td>
-            <td>R$ {{ cliente.saldo }}</td>
+            <th scope="col">CPF</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Cidade</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Saldo</th>
           </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          @for (cliente of clientesFiltrados; track cliente.cpf) {
+            <tr>
+              <td>{{ cliente.cpf }}</td>
+              <td>{{ cliente.nome }}</td>
+              <td>{{ cliente.cidade }}</td>
+              <td>{{ cliente.estado }}</td>
+              <td>R$ {{ cliente.saldo.toFixed(2).replace('.', ',') }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5">Nenhum cliente encontrado.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </main>

@@ -5,6 +5,10 @@ import { Transferencia } from './transferencia/transferencia';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
+  {
+    path: 'autocadastro',
+    loadComponent: () => import('./pages/autocadastro/autocadastro').then(m => m.Autocadastro)
+  },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   
   {
@@ -26,6 +30,13 @@ export const routes: Routes = [
   },
   
   {
+    path: 'gerente/clientes',
+    canActivate: [authGuard],
+    data: { role: 'GERENTE' },
+    loadComponent: () => import('./gerente/clientes/clientes').then(m => m.Clientes)
+  },
+
+  {
     path: 'gerente/relatorio',
     canActivate: [authGuard],
     data: { role: 'GERENTE' },
@@ -33,11 +44,12 @@ export const routes: Routes = [
   },
   
   { 
-    path: 'transferencia', 
+    path: 'cliente/transferencia',
     component: Transferencia,
     canActivate: [authGuard],
     data: { role: 'CLIENTE' }
   },
 
+  { path: 'transferencia', redirectTo: '/cliente/transferencia', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

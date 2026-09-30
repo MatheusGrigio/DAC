@@ -2,6 +2,7 @@
   <h1>BANTADS - Área do Gerente</h1>
   <p>Bem-vindo, {{ usuario?.nome }}!</p>
   <div class="d-flex gap-3 flex-wrap">
+    <app-button routerLink="/gerente/clientes">Consultar clientes</app-button>
     <app-button routerLink="/gerente/relatorio">Relatório de clientes</app-button>
     <app-button variant="secondary" (click)="logout()">Sair</app-button>
   </div>
