@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT:8086}
+
+spring:
+  application:
+    name: email
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USER:email@gmail.com}
+    password: ${GMAIL_PASSWORD:change-me}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:bantads}
+    password: ${RABBIT_PASSWORD:change-me}
