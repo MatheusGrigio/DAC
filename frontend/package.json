@@ -19,6 +19,7 @@
     "@angular/router": "^21.2.0",
     "bootstrap": "^5.3.8",
     "decimal.js": "^10.6.0",
+    "luxon": "^3.7.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -26,6 +27,7 @@
     "@angular/build": "^21.2.13",
     "@angular/cli": "^21.2.13",
     "@angular/compiler-cli": "^21.2.0",
+    "@types/luxon": "^3.7.6",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
