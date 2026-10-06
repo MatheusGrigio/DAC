@@ -14,7 +14,7 @@ import { LoginRequest } from '../../shared/models';
 })
 export class Login implements OnInit {  
   credenciais: LoginRequest = {
-    login: '',
+    email: '',
     senha: '',
   };
   
@@ -36,7 +36,7 @@ export class Login implements OnInit {
   fazerLogin(): void {
     this.erroLogin = '';
 
-    if (!this.credenciais.login || !this.credenciais.senha) {
+    if (!this.credenciais.email || !this.credenciais.senha) {
       this.erroLogin = 'Por favor, preencha todos os campos.';
       return;
     }

@@ -1,1 +1,117 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --papel: #f5f2ec;
+  --superficie: #fffdf9;
+  --tinta: #1c2623;
+  --tinta-suave: #5d6b66;
+  --linha: #ddd8cc;
+  --marca: #0d6b62;
+  --marca-escura: #095950;
+  --marca-clara: #e3f3ef;
+  --destaque: #b4781e;
+  --entrada: #1f4f9a;
+  --saida: #b3372f;
+  --raio: 6px;
+  --fonte-texto: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fonte-titulo: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+}
+
+:root {
+  --bs-primary: var(--marca);
+  --bs-primary-rgb: 13, 107, 98;
+  --bs-body-bg: var(--papel);
+  --bs-body-color: var(--tinta);
+  --bs-body-font-family: var(--fonte-texto);
+  --bs-border-color: var(--linha);
+  --bs-border-radius: var(--raio);
+  --bs-link-color: var(--marca);
+  --bs-link-color-rgb: 13, 107, 98;
+  --bs-link-hover-color: var(--marca-escura);
+  --bs-link-hover-color-rgb: 9, 89, 80;
+}
+
+body {
+  background: var(--papel);
+  color: var(--tinta);
+}
+
+h1, h2, h3, h4,
+.titulo {
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.valor {
+  font-variant-numeric: tabular-nums;
+}
+
+.btn {
+  --bs-btn-border-radius: var(--raio);
+  font-weight: 600;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--marca);
+  --bs-btn-border-color: var(--marca);
+  --bs-btn-hover-bg: var(--marca-escura);
+  --bs-btn-hover-border-color: var(--marca-escura);
+  --bs-btn-active-bg: var(--marca-escura);
+  --bs-btn-active-border-color: var(--marca-escura);
+  --bs-btn-disabled-bg: var(--marca);
+  --bs-btn-disabled-border-color: var(--marca);
+  --bs-btn-focus-shadow-rgb: 13, 107, 98;
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--tinta);
+  --bs-btn-border-color: var(--linha);
+  --bs-btn-hover-bg: var(--marca-clara);
+  --bs-btn-hover-color: var(--marca-escura);
+  --bs-btn-hover-border-color: var(--marca);
+  --bs-btn-active-bg: var(--marca-clara);
+  --bs-btn-active-color: var(--marca-escura);
+  --bs-btn-active-border-color: var(--marca);
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+}
+
+.form-control {
+  background: var(--superficie);
+}
+
+.form-control:focus {
+  border-color: var(--marca);
+  box-shadow: 0 0 0 0.2rem rgba(13, 107, 98, 0.18);
+}
+
+.rotulo {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+}
+
+.estado {
+  color: var(--tinta-suave);
+  padding: 2rem 0;
+}
+
+.aviso {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--marca);
+  background: var(--marca-clara);
+  color: var(--marca-escura);
+  font-size: 0.95rem;
+}
+
+.aviso-erro {
+  border-left-color: var(--saida);
+  background: #fbeceb;
+  color: #8a2a24;
+}
