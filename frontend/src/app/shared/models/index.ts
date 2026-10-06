@@ -7,3 +7,11 @@ export type {
     Usuario, 
     UsuarioAutenticado 
 } from './usuario.model';
+
+export type {
+  Link,
+  Links,
+  ContaResponse,
+  Conta,
+  OperacaoResponse,
+} from './conta.model';

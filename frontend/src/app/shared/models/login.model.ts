@@ -4,7 +4,7 @@ export class Login {
 }
 
 export interface LoginRequest {
-  login: string;
+  email: string;
   senha: string;
 }
 

@@ -4,7 +4,7 @@ import { Observable, tap, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 export interface LoginRequest {
-  login: string;
+  email: string;
   senha: string;
 }
 
@@ -41,7 +41,7 @@ export class AuthService {
 );
 
   login(credenciais: LoginRequest): Observable<LoginResponse> {
-    const dadosLogin = { email: credenciais.login, senha: credenciais.senha };
+    const dadosLogin = { email: credenciais.email, senha: credenciais.senha };
     return this.http.post<LoginResponse>(`${this.API_GATEWAY}/login`, dadosLogin).pipe(
       tap((response: LoginResponse) => {
         if (response.auth) {
