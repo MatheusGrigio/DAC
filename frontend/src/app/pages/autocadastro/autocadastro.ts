@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Button } from '../../shared/components/button/button';
 
@@ -26,7 +26,7 @@ export class Autocadastro {
     logradouro: '',
     numero: '',
     complemento: '',
-    cidade: 'araucity',
+    cidade: '',
     uf: '',
   };
 

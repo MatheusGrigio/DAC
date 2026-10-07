@@ -10,11 +10,85 @@
     </a>
 
     <a routerLink="/login" class="login-link">
-      Ja sou cliente
+      Já sou cliente
     </a>
   </header>
-  <form #formulario="ngForm">
-//campos
+  <h1>Solicitar autocadastro</h1>
+  <p>Preencha seus dados. Todos os campos são obrigatórios, exceto complemento.</p>
+  <form #formulario="ngForm" class="mt-4">
+    <fieldset class="mb-4">
+      <legend>Dados pessoais</legend>
+      <div class="row g-3">
+        <div class="col-12">
+          <label for="nome" class="form-label">Nome completo</label>
+          <input id="nome" name="nome" class="form-control" autocomplete="name"
+            [(ngModel)]="cadastro.nome" required>
+        </div>
+        <div class="col-md-6">
+          <label for="cpf" class="form-label">CPF</label>
+          <input id="cpf" name="cpf" class="form-control" inputmode="numeric" maxlength="11"
+            [(ngModel)]="cadastro.cpf" (input)="somenteNumeros($event, 'cpf')" pattern="[0-9]{11}" required>
+        </div>
+        <div class="col-md-6">
+          <label for="email" class="form-label">E-mail</label>
+          <input id="email" name="email" type="email" class="form-control" autocomplete="email"
+            [(ngModel)]="cadastro.email" #email="ngModel" email required>
+          @if (email.invalid && email.touched) {
+            <small class="text-danger">Informe um e-mail válido.</small>
+          }
+        </div>
+        <div class="col-md-6">
+          <label for="telefone" class="form-label">Telefone com DDD</label>
+          <input id="telefone" name="telefone" type="tel" class="form-control" autocomplete="tel-national"
+            [(ngModel)]="cadastro.telefone" (input)="somenteNumeros($event, 'telefone')"
+            maxlength="11" pattern="[0-9]{10,11}" required>
+        </div>
+        <div class="col-md-6">
+          <label for="salario" class="form-label">Salário (R$)</label>
+          <input id="salario" name="salario" class="form-control" inputmode="decimal" placeholder="0,00"
+            [(ngModel)]="cadastro.salario" (input)="formatarSalario($event)"
+            pattern="[0-9]+([.,][0-9]{1,2})?" required>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="mb-4">
+      <legend>Endereço</legend>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="cep" class="form-label">CEP</label>
+          <input id="cep" name="cep" class="form-control" inputmode="numeric" autocomplete="postal-code"
+            [(ngModel)]="cadastro.cep" (input)="somenteNumeros($event, 'cep')"
+            maxlength="8" pattern="[0-9]{8}" required>
+        </div>
+        <div class="col-md-8">
+          <label for="logradouro" class="form-label">Logradouro</label>
+          <input id="logradouro" name="logradouro" class="form-control" autocomplete="address-line1"
+            [(ngModel)]="cadastro.logradouro" required>
+        </div>
+        <div class="col-md-4">
+          <label for="numero" class="form-label">Número</label>
+          <input id="numero" name="numero" class="form-control" [(ngModel)]="cadastro.numero" required>
+        </div>
+        <div class="col-md-8">
+          <label for="complemento" class="form-label">Complemento (opcional)</label>
+          <input id="complemento" name="complemento" class="form-control" autocomplete="address-line2"
+            [(ngModel)]="cadastro.complemento">
+        </div>
+        <div class="col-md-8">
+          <label for="cidade" class="form-label">Cidade</label>
+          <input id="cidade" name="cidade" class="form-control" autocomplete="address-level2"
+            [(ngModel)]="cadastro.cidade" required>
+        </div>
+        <div class="col-md-4">
+          <label for="uf" class="form-label">UF</label>
+          <input id="uf" name="uf" class="form-control" autocomplete="address-level1" maxlength="2"
+            [(ngModel)]="cadastro.uf" (ngModelChange)="converterUfParaMaiusculo()" pattern="[A-Z]{2}" required>
+        </div>
+      </div>
+    </fieldset>
+    @if (formulario.invalid && formulario.touched) {
+      <p class="text-danger" role="status">Confira os campos obrigatórios e os formatos informados.</p>
+    }
     <app-button
       type="submit"
       [disabled]="formulario.invalid ?? false"
