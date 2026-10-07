@@ -15,3 +15,5 @@ export type {
   Conta,
   OperacaoResponse,
 } from './conta.model';
+
+export * from './solicitacao.model';

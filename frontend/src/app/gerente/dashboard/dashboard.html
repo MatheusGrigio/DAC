@@ -1,9 +1,54 @@
 <main class="container mt-4">
   <h1>BANTADS - Área do Gerente</h1>
   <p>Bem-vindo, {{ usuario?.nome }}!</p>
-  <div class="d-flex gap-3 flex-wrap">
+  <div class="d-flex gap-3 flex-wrap mb-4">
     <app-button routerLink="/gerente/clientes">Consultar clientes</app-button>
     <app-button routerLink="/gerente/relatorio">Relatório de clientes</app-button>
     <app-button variant="secondary" (click)="logout()">Sair</app-button>
   </div>
+
+  <h2>Solicitações de Autocadastro</h2>
+  
+  <div *ngIf="loading" class="alert alert-info">Carregando solicitações...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <table class="table table-striped table-hover mt-3" *ngIf="!loading && !error">
+    <thead>
+      <tr>
+        <th>CPF</th>
+        <th>Nome</th>
+        <th>Salário</th>
+        <th>Status</th>
+        <th>Motivo/Data</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of solicitacoes">
+        <td>{{ s.cpf }}</td>
+        <td>{{ s.nome }}</td>
+        <td>{{ s.salario | currency:'BRL' }}</td>
+        <td>
+          <span class="badge" [ngClass]="{
+            'bg-warning': s.status === 'PENDENTE',
+            'bg-success': s.status === 'APROVADA',
+            'bg-danger': s.status === 'REJEITADA'
+          }">{{ s.status }}</span>
+        </td>
+        <td>
+          <div *ngIf="s.motivo"><small>Motivo: {{ s.motivo }}</small></div>
+          <div *ngIf="s.dataHoraProcessamento"><small>Data: {{ s.dataHoraProcessamento | date:'short' }}</small></div>
+        </td>
+        <td>
+          <div class="d-flex gap-2" *ngIf="s.status === 'PENDENTE'">
+            <app-button variant="primary" (click)="aprovar(s.cpf)">Aprovar</app-button>
+            <app-button variant="danger" (click)="rejeitar(s.cpf)">Recusar</app-button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="solicitacoes.length === 0">
+        <td colspan="6" class="text-center">Nenhuma solicitação encontrada.</td>
+      </tr>
+    </tbody>
+  </table>
 </main>
