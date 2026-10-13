@@ -2,7 +2,15 @@
   <h1>Relatório de clientes</h1>
   <div class="acoes">
     <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
+    <app-button [disabled]="carregando()" (click)="carregar()">Atualizar relatório</app-button>
   </div>
+  @if (carregando()) {
+    <p role="status">Carregando relatório...</p>
+  } @else if (erro()) {
+    <app-alert type="error">{{ erro() }}</app-alert>
+  } @else if (clientes().length === 0) {
+    <app-alert>Nenhum cliente para exibir no relatório.</app-alert>
+  } @else {
   <div class="tabela">
     <table>
       <caption class="visually-hidden">Clientes em ordem crescente por nome</caption>
@@ -19,14 +27,14 @@
         </tr>
       </thead>
       <tbody>
-        @for (cliente of clientesOrdenados; track cliente.cpf) {
+        @for (cliente of clientes(); track cliente.cpf) {
           <tr>
             <td>{{ cliente.cpf }}</td>
             <td>{{ cliente.nome }}</td>
             <td>{{ cliente.email }}</td>
-            <td>R$ {{ cliente.salario }}</td>
+            <td>{{ cliente.salario | moeda }}</td>
             <td>{{ cliente.numeroConta }}</td>
-            <td>R$ {{ cliente.saldo }}</td>
+            <td>{{ cliente.saldo | moeda }}</td>
             <td>{{ cliente.cpfGerente }}</td>
             <td>{{ cliente.nomeGerente }}</td>
           </tr>
@@ -34,7 +42,5 @@
       </tbody>
     </table>
   </div>
-  @if (clientes.length === 0) {
-    <app-alert>Nenhum cliente para exibir no relatório.</app-alert>
   }
 </main>
