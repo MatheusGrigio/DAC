@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ContaService } from '../../services';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 interface Operacao {
   rel: string; 
@@ -21,17 +22,48 @@ const OPERACOES: Operacao[] = [
 @Component({
   selector: 'app-dashboard-cliente',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
 export class DashboardClienteComponent {
   private authService = inject(AuthService);
-  
-  get usuario() {
-    return this.authService.usuarioLogado();
+  private contaService = inject(ContaService);
+
+  protected readonly usuario = this.authService.usuarioLogado;
+  protected readonly conta = this.contaService.conta;
+  protected readonly carregando = signal(true);
+  protected readonly erro = signal('');
+
+  protected readonly primeiroNome = computed(
+    () => this.usuario()?.nome.split(' ')[0] || '',
+  )
+
+  protected readonly operacoes = computed(() => 
+    OPERACOES.filter((op) =>  !!this.conta()?.links[op.rel]),
+  );
+
+  ngOnInit(): void {
+    this.carregar();
   }
-  
+
+  protected carregar(): void {
+    const cpf = this.usuario()?.cpf;
+    if (!cpf) {
+      return;
+    }
+    this.carregando.set(true);
+    this.erro.set('');
+
+    this.contaService.carregar(cpf).subscribe({
+      next: () => this.carregando.set(false),
+      error: (e) => {
+        this.carregando.set(false);
+        this.erro.set(mensagemDeErro(e, 'Não foi possível carregar sua conta.'));
+      },
+    });
+  }
+
   logout(): void {
     this.authService.logout();
   }
