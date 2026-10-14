@@ -25,9 +25,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let s of solicitacoes">
-        <td>{{ s.cpf }}</td>
+        <td>{{ s.cpf | cpf }}</td>
         <td>{{ s.nome }}</td>
-        <td>{{ s.salario | currency:'BRL' }}</td>
+        <td>{{ s.salario | moeda }}</td>
         <td>
           <span class="badge" [ngClass]="{
             'bg-warning': s.status === 'PENDENTE',
@@ -37,7 +37,7 @@
         </td>
         <td>
           <div *ngIf="s.motivo"><small>Motivo: {{ s.motivo }}</small></div>
-          <div *ngIf="s.dataHoraProcessamento"><small>Data: {{ s.dataHoraProcessamento | date:'short' }}</small></div>
+          <div *ngIf="s.dataHoraProcessamento"><small>Data: {{ s.dataHoraProcessamento | dataHora }}</small></div>
         </td>
         <td>
           <div class="d-flex gap-2" *ngIf="s.status === 'PENDENTE'">

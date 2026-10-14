@@ -4,11 +4,14 @@ import { RouterModule } from '@angular/router';
 import { AuthService, SolicitacaoService } from '../../services';
 import { Button } from '../../shared/components/button/button';
 import { Solicitacao } from '../../shared/models';
+import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
+import { CpfPipe } from '../../shared/pipes/cpf.pipe';
+import { DataHoraPipe } from '../../shared/pipes/data-hora.pipe';
 
 @Component({
   selector: 'app-dashboard-gerente',
   standalone: true,
-  imports: [CommonModule, RouterModule, Button],
+  imports: [CommonModule, RouterModule, Button, MoedaPipe, CpfPipe, DataHoraPipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })

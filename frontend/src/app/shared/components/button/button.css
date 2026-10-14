@@ -17,6 +17,16 @@ button.secondary {
   background: white;
 }
 
+button.danger {
+  color: white;
+  background: #dc3545;
+  border-color: #dc3545;
+}
+
+button.danger:hover:not(:disabled) {
+  background: #bb2d3b;
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.5;

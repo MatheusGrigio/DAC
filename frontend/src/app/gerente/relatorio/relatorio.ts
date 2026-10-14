@@ -2,28 +2,19 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
-
-interface ClienteRelatorio {
-  cpf: string;
-  nome: string;
-  email: string;
-  salario: string;
-  numeroConta: string;
-  saldo: string;
-  cpfGerente: string;
-  nomeGerente: string;
-}
+import { RelatorioClienteLinha } from '../../shared/models';
+import { CpfPipe, MoedaPipe } from '../../shared/pipes';
 
 @Component({
   selector: 'app-relatorio',
-  imports: [RouterLink, Button, Alert],
+  imports: [RouterLink, Button, Alert, CpfPipe, MoedaPipe],
   templateUrl: './relatorio.html',
   styleUrl: './relatorio.css',
 })
 export class Relatorio {
-  clientes: ClienteRelatorio[] = [];
+  clientes: RelatorioClienteLinha[] = [];
 
-  get clientesOrdenados(): ClienteRelatorio[] {
+  get clientesOrdenados(): RelatorioClienteLinha[] {
     return [...this.clientes].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   }
 }

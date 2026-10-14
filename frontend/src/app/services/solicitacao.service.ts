@@ -1,25 +1,55 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Solicitacao, SolicitacoesListModel } from '../shared/models';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { Decimal } from 'decimal.js';
+import { DateTime } from 'luxon';
+import { environment } from '../../environments/environment';
+import {
+  Solicitacao,
+  SolicitacoesListModel,
+  SolicitacaoResponse,
+  SolicitacaoListaResponse,
+} from '../shared/models';
+
+function paraSolicitacao(r: SolicitacaoResponse): Solicitacao {
+  return {
+    cpf: r.cpf,
+    nome: r.nome,
+    email: r.email,
+    telefone: r.telefone,
+    salario: new Decimal(r.salario),
+    status: r.status,
+    motivo: r.motivo ?? undefined,
+    dataHoraProcessamento: r.dataHoraProcessamento
+      ? DateTime.fromISO(r.dataHoraProcessamento)
+      : null,
+    _links: r._links,
+  };
+}
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SolicitacaoService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/solicitacoes';
+  private apiUrl = `${environment.apiUrl}/solicitacoes`;
 
   listar(status?: string): Observable<SolicitacoesListModel> {
-    const params = status ? { status } : {};
-    return this.http.get<SolicitacoesListModel>(this.apiUrl, { params });
+    const params = status ? new HttpParams().set('status', status) : undefined;
+    return this.http
+      .get<SolicitacaoListaResponse>(this.apiUrl, { params })
+      .pipe(
+        map((res) => ({
+          solicitacoes: (res.solicitacoes || []).map(paraSolicitacao),
+        })),
+      );
   }
 
   aprovar(cpf: string): Observable<{ jobId: string }> {
     return this.http.post<{ jobId: string }>(`${this.apiUrl}/${cpf}/aprovacao`, {});
   }
 
-  rejeitar(cpf: string, motivo: string): Observable<Solicitacao> {
-    return this.http.post<Solicitacao>(`${this.apiUrl}/${cpf}/rejeicao`, { motivo });
+  rejeitar(cpf: string, motivo: string): Observable<SolicitacaoResponse> {
+    return this.http.post<SolicitacaoResponse>(`${this.apiUrl}/${cpf}/rejeicao`, { motivo });
   }
 }
