@@ -1,19 +1,9 @@
-export type { 
-    LoginRequest, 
-    LoginResponse 
-} from './login.model';
-
-export type { 
-    Usuario, 
-    UsuarioAutenticado 
-} from './usuario.model';
-
-export type {
-  Link,
-  Links,
-  ContaResponse,
-  Conta,
-  OperacaoResponse,
-} from './conta.model';
-
+export * from './login.model';
+export * from './usuario.model';
+export * from './conta.model';
 export * from './solicitacao.model';
+export * from './cliente.model';
+export * from './gerente.model';
+export * from './extrato.model';
+export * from './relatorio.model';
+export * from './job.model';

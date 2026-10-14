@@ -28,11 +28,11 @@
         <tbody>
           @for (cliente of clientesFiltrados; track cliente.cpf) {
             <tr>
-              <td>{{ cliente.cpf }}</td>
+              <td>{{ cliente.cpf | cpf }}</td>
               <td>{{ cliente.nome }}</td>
               <td>{{ cliente.cidade }}</td>
               <td>{{ cliente.estado }}</td>
-              <td>R$ {{ cliente.saldo.toFixed(2).replace('.', ',') }}</td>
+              <td>{{ cliente.saldo | moeda }}</td>
             </tr>
           } @empty {
             <tr><td colspan="5">Nenhum cliente encontrado.</td></tr>

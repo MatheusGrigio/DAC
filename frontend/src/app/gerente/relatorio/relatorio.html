@@ -29,13 +29,14 @@
       <tbody>
         @for (cliente of clientes(); track cliente.cpf) {
           <tr>
-            <td>{{ cliente.cpf }}</td>
+            <td>{{ cliente.cpf | cpf }}</td>
             <td>{{ cliente.nome }}</td>
             <td>{{ cliente.email }}</td>
             <td>{{ cliente.salario | moeda }}</td>
             <td>{{ cliente.numeroConta }}</td>
             <td>{{ cliente.saldo | moeda }}</td>
             <td>{{ cliente.cpfGerente }}</td>
+            <td>{{ cliente.cpfGerente | cpf }}</td>
             <td>{{ cliente.nomeGerente }}</td>
           </tr>
         }
