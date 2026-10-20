@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 import { Login } from './pages/login/login';
 import { authGuard } from './auth/auth.guard';
-import { Transferencia } from './transferencia/transferencia';
 
 export const routes: Routes = [
+  // PUBLIC ROUTES
   { 
     path: 'login', 
     component: Login 
@@ -14,6 +14,7 @@ export const routes: Routes = [
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   
+  // CLIENTE ROUTES
   {
     path: 'cliente/dashboard',
     canActivate: [authGuard],
@@ -40,7 +41,15 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { role: 'CLIENTE' }
   },
-    {
+  { 
+    path: 'cliente/extrato',
+    data: { role: 'CLIENTE' },
+    canActivate: [authGuard],
+    loadComponent: () => import('./extrato/extrato').then(m => m.Extrato)
+  },
+  
+  // GERENTE ROUTES
+  {
     path: 'gerente/dashboard',
     canActivate: [authGuard],
     data: { role: 'GERENTE' },

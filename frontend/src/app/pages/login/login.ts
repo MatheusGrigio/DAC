@@ -42,7 +42,6 @@ export class Login implements OnInit {
     }
 
     this.carregando = true;
-
     this.authService.login(this.credenciais).subscribe({
       next: (response) => {
         this.carregando = false;

@@ -1,0 +1,16 @@
+.login-page {
+  background: var(--papel);
+}
+
+.login-card {
+  background: var(--superficie);
+  border: 1px solid var(--linha);
+  border-top: 3px solid var(--marca);
+  border-radius: var(--raio);
+  box-shadow: none !important;
+}
+
+.login-card h2 {
+  font-family: var(--fonte-titulo);
+  letter-spacing: 0.16em;
+}
