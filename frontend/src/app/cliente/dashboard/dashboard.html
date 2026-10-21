@@ -9,10 +9,10 @@
       
       <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Bem-vindo, {{ usuario?.nome }}!</h5>
+          <h5 class="card-title">Bem-vindo, {{ usuario()?.nome }}!</h5>
           <p class="card-text">
-            <strong>CPF:</strong> {{ usuario?.cpf }}<br>
-            <strong>Email:</strong> {{ usuario?.email }}
+            <strong>CPF:</strong> {{ usuario()?.cpf }}<br>
+            <strong>Email:</strong> {{ usuario()?.email }}
           </p>
         </div>
       </div>

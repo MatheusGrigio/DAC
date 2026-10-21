@@ -4,7 +4,7 @@ import { Decimal } from 'decimal.js';
 import { DateTime } from 'luxon';
 import { Observable, map, take, takeWhile, tap, timer, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Conta, ContaResponse, OperacaoResponse } from '../shared/models';
+import { Conta, ContaResponse, ExtratoResponse, OperacaoResponse } from '../shared/models';
 
 function paraConta(r: ContaResponse): Conta {
   return {
@@ -33,6 +33,15 @@ export class ContaService {
 
   carregar(cpf: string): Observable<Conta> {
     return this.obterPorCpf(cpf).pipe(tap((conta) => this.conta.set(conta)));
+  }
+
+  extrato(numero: string, inicio: DateTime, fim: DateTime): Observable<ExtratoResponse> {
+    return this.http.get<ExtratoResponse>(`${this.API_GATEWAY}/contas/${numero}/extrato`, {
+      params: {
+        inicio: inicio.toFormat('yyyy-MM-dd'),
+        fim: fim.toFormat('yyyy-MM-dd'),
+      },
+    });
   }
 
   depositar(numero: string, valor: Decimal): Observable<OperacaoResponse> {

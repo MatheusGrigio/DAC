@@ -6,7 +6,7 @@ import { exhaustMap, filter, finalize, of, switchMap, take, throwError, timeout,
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
 import { RelatorioClienteLinha, RelatorioClientes } from '../../shared/models/relatorio.model';
-import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
+import { CpfPipe, MoedaPipe } from '../../shared/pipes';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 interface JobRelatorio {
@@ -17,7 +17,7 @@ interface JobRelatorio {
 
 @Component({
   selector: 'app-relatorio',
-  imports: [RouterLink, Button, Alert, MoedaPipe],
+  imports: [RouterLink, Button, Alert, CpfPipe, MoedaPipe],
   templateUrl: './relatorio.html',
   styleUrl: './relatorio.css',
 })
@@ -66,19 +66,5 @@ export class Relatorio implements OnInit {
         ? 'O relatório demorou para responder. Tente novamente.'
         : mensagemDeErro(error, error.message || 'Não foi possível carregar o relatório.')),
     });
-import { RelatorioClienteLinha } from '../../shared/models';
-import { CpfPipe, MoedaPipe } from '../../shared/pipes';
-
-@Component({
-  selector: 'app-relatorio',
-  imports: [RouterLink, Button, Alert, CpfPipe, MoedaPipe],
-  templateUrl: './relatorio.html',
-  styleUrl: './relatorio.css',
-})
-export class Relatorio {
-  clientes: RelatorioClienteLinha[] = [];
-
-  get clientesOrdenados(): RelatorioClienteLinha[] {
-    return [...this.clientes].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   }
 }

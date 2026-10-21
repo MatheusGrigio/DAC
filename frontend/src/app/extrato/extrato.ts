@@ -48,7 +48,7 @@ export class Extrato implements OnInit {
     if (!cpf) {
       return;
     }
-    this.contaService.garantir(cpf).subscribe({
+    this.contaService.carregar(cpf).subscribe({
       next: (conta) => {
         this.numeroConta.set(conta.numero);
         this.consultar();
