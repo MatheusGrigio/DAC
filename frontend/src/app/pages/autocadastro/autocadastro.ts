@@ -1,8 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Button } from '../../shared/components/button/button';
+import { Decimal } from 'decimal.js';
+import { finalize } from 'rxjs';
+import { SolicitacaoService } from '../../services/solicitacao.service';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-autocadastro',
@@ -12,9 +17,11 @@ import { Button } from '../../shared/components/button/button';
   styleUrl: './autocadastro.css',
 })
 export class Autocadastro {
-  carregando = false;
-  mensagemSucesso = '';
-  mensagemErro = '';
+  private solicitacaoService = inject(SolicitacaoService);
+  private destroyRef = inject(DestroyRef);
+  carregando = signal(false);
+  mensagemSucesso = signal('');
+  mensagemErro = signal('');
 
   cadastro = {
     nome: '',
@@ -29,6 +36,33 @@ export class Autocadastro {
     cidade: '',
     uf: '',
   };
+
+  enviar(formulario: NgForm): void {
+    if (formulario.invalid || this.carregando() || this.mensagemSucesso()) return;
+
+    const { nome, cpf, email, telefone, salario, ...endereco } = this.cadastro;
+    this.mensagemErro.set('');
+    this.carregando.set(true);
+
+    this.solicitacaoService.cadastrar({
+      nome: nome.trim(),
+      cpf,
+      email: email.trim(),
+      telefone,
+      salario: new Decimal(salario).toFixed(2),
+      endereco,
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.carregando.set(false)),
+    ).subscribe({
+      next: () => this.mensagemSucesso.set(
+        'Solicitação enviada com sucesso! Aguarde a aprovação do gerente. Após a aprovação, você receberá sua senha por e-mail.',
+      ),
+      error: erro => this.mensagemErro.set(
+        mensagemDeErro(erro, 'Não foi possível enviar a solicitação. Tente novamente.'),
+      ),
+    });
+  }
 
   somenteNumeros(evento: Event, campo: 'cpf' | 'telefone' | 'cep'): void {
     const input = evento.target as HTMLInputElement;
