@@ -5,6 +5,7 @@ import { Decimal } from 'decimal.js';
 import { DateTime } from 'luxon';
 import { environment } from '../../environments/environment';
 import {
+  AutocadastroRequest,
   Solicitacao,
   SolicitacoesListModel,
   SolicitacaoResponse,
@@ -33,6 +34,10 @@ function paraSolicitacao(r: SolicitacaoResponse): Solicitacao {
 export class SolicitacaoService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/solicitacoes`;
+
+  cadastrar(cadastro: AutocadastroRequest): Observable<SolicitacaoResponse> {
+    return this.http.post<SolicitacaoResponse>(this.apiUrl, cadastro);
+  }
 
   listar(status?: string): Observable<SolicitacoesListModel> {
     const params = status ? new HttpParams().set('status', status) : undefined;

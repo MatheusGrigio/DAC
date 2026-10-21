@@ -5,15 +5,11 @@ import { RouterLink } from '@angular/router';
 import { exhaustMap, filter, finalize, of, switchMap, take, throwError, timeout, timer } from 'rxjs';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
+import { environment } from '../../../environments/environment';
+import { JobResponse } from '../../shared/models/job.model';
 import { RelatorioClienteLinha, RelatorioClientes } from '../../shared/models/relatorio.model';
 import { CpfPipe, MoedaPipe } from '../../shared/pipes';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
-
-interface JobRelatorio {
-  jobId: string;
-  status: 'PENDENTE' | 'CONCLUIDO' | 'FALHA';
-  erro?: string;
-}
 
 @Component({
   selector: 'app-relatorio',
@@ -24,7 +20,7 @@ interface JobRelatorio {
 export class Relatorio implements OnInit {
   private http = inject(HttpClient);
   private destroyRef = inject(DestroyRef);
-  private apiUrl = 'http://localhost:3000';
+  private readonly apiUrl = environment.apiUrl;
 
   clientes = signal<RelatorioClienteLinha[]>([]);
   carregando = signal(false);
@@ -40,18 +36,18 @@ export class Relatorio implements OnInit {
     this.erro.set('');
     this.clientes.set([]);
 
-    this.http.get<RelatorioClientes | JobRelatorio>(`${this.apiUrl}/relatorios/clientes`, {
+    this.http.get<RelatorioClientes | JobResponse>(`${this.apiUrl}/relatorios/clientes`, {
       observe: 'response',
     }).pipe(
       switchMap(response => {
         if (response.status !== 202) return of(response.body as RelatorioClientes);
-        const job = response.body as JobRelatorio;
+        const job = response.body as JobResponse;
         return timer(0, 1000).pipe(
-          exhaustMap(() => this.http.get<JobRelatorio>(`${this.apiUrl}/jobs/${job.jobId}/status`)),
+          exhaustMap(() => this.http.get<JobResponse>(`${this.apiUrl}/jobs/${job.jobId}/status`)),
           filter(status => status.status !== 'PENDENTE'),
           take(1),
           switchMap(status => status.status === 'FALHA'
-            ? throwError(() => new Error(status.erro || 'Falha ao gerar relatório.'))
+            ? throwError(() => ({ error: { mensagem: status.erro || 'Falha ao gerar relatório.' } }))
             : this.http.get<RelatorioClientes>(`${this.apiUrl}/jobs/${job.jobId}/result`)),
         );
       }),
@@ -64,7 +60,7 @@ export class Relatorio implements OnInit {
       ),
       error: error => this.erro.set(error.name === 'TimeoutError'
         ? 'O relatório demorou para responder. Tente novamente.'
-        : mensagemDeErro(error, error.message || 'Não foi possível carregar o relatório.')),
+        : mensagemDeErro(error, 'Não foi possível carregar o relatório. Tente novamente.')),
     });
   }
 }

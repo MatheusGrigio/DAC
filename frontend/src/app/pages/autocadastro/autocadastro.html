@@ -15,8 +15,8 @@
   </header>
   <h1>Solicitar autocadastro</h1>
   <p>Preencha seus dados. Todos os campos são obrigatórios, exceto complemento.</p>
-  <form #formulario="ngForm" class="mt-4">
-    <fieldset class="mb-4">
+  <form #formulario="ngForm" class="mt-4" (ngSubmit)="enviar(formulario)">
+    <fieldset class="mb-4" [disabled]="carregando() || !!mensagemSucesso()">
       <legend>Dados pessoais</legend>
       <div class="row g-3">
         <div class="col-12">
@@ -51,7 +51,7 @@
         </div>
       </div>
     </fieldset>
-    <fieldset class="mb-4">
+    <fieldset class="mb-4" [disabled]="carregando() || !!mensagemSucesso()">
       <legend>Endereço</legend>
       <div class="row g-3">
         <div class="col-md-4">
@@ -89,11 +89,17 @@
     @if (formulario.invalid && formulario.touched) {
       <p class="text-danger" role="status">Confira os campos obrigatórios e os formatos informados.</p>
     }
+    @if (mensagemSucesso()) {
+      <p class="text-success" role="status">{{ mensagemSucesso() }}</p>
+    }
+    @if (mensagemErro()) {
+      <p class="text-danger" role="alert">{{ mensagemErro() }}</p>
+    }
     <app-button
       type="submit"
-      [disabled]="formulario.invalid ?? false"
+      [disabled]="!!formulario.invalid || carregando() || !!mensagemSucesso()"
     >
-      Continuar
+      {{ carregando() ? 'Enviando...' : 'Solicitar cadastro' }}
     </app-button>
   </form>
 </main>
