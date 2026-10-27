@@ -1,15 +1,20 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { AppConfig } from '../config.js';
+import { Erros } from '../http/errors.js';
 import { applyHateoas, rewriteLinks } from '../http/hateoas.js';
 import { msRequest, type MsFetch, type MsResponse } from '../http/ms-client.js';
 import { sortByNome } from '../http/pt-br.js';
 import type { KeyValueStore } from '../redis/store.js';
 import { DINHEIRO_PATTERN } from '../types/patterns.js';
 
+const SALDO_TENTATIVAS = 3;
+const SALDO_INTERVALO_MS = 200;
+
 export type CompositionDeps = {
   config: AppConfig;
   store: KeyValueStore;
   fetchImpl?: MsFetch;
+  sleep?: (ms: number) => Promise<void>;
 };
 
 export function identityHeadersFrom(user?: { cpf: string; tipo: string }): Record<string, string> {
@@ -227,35 +232,92 @@ export function composeGerentes(lista: unknown, contagens: unknown, publicUrl: s
   return rewriteLinks({ gerentes, _links: root._links }, publicUrl);
 }
 
+function cpfsDaLista(lista: unknown): string[] {
+  const root = asRecord(lista);
+  const rows = Array.isArray(root?.clientes) ? root.clientes : [];
+  return rows.flatMap((row) => {
+    const cpf = textField(row, 'cpf');
+    return cpf ? [cpf] : [];
+  });
+}
+
+function faltaEndereco(lista: unknown): boolean {
+  const root = asRecord(lista);
+  const rows = Array.isArray(root?.clientes) ? root.clientes : [];
+  return rows.some((row) => {
+    const item = asRecord(row);
+    if (!item || !textField(item, 'cpf')) {
+      return false;
+    }
+    const endereco = asRecord(item.endereco);
+    return !textField(endereco, 'cidade') || !textField(endereco, 'uf');
+  });
+}
+
+function faltaSaldo(lista: unknown, saldos: unknown): boolean {
+  const map = asRecord(saldos) ?? {};
+  return cpfsDaLista(lista).some((cpf) => !dinheiro(asRecord(map[cpf])?.saldo));
+}
+
+async function saldosComRetentativa(
+  request: FastifyRequest,
+  deps: CompositionDeps,
+  lista: unknown,
+): Promise<MsResponse> {
+  const esperar = deps.sleep ?? ((ms: number) => new Promise((resolve) => setTimeout(resolve, ms)));
+  let ultimo: MsResponse = { status: 503, body: null };
+  for (let tentativa = 0; tentativa < SALDO_TENTATIVAS; tentativa += 1) {
+    if (tentativa > 0) {
+      await esperar(SALDO_INTERVALO_MS);
+    }
+    ultimo = await msRequest({
+      baseUrl: deps.config.contaUrl,
+      method: 'GET',
+      path: '/internal/saldos',
+      headers: identityHeaders(request),
+      fetchImpl: deps.fetchImpl,
+    });
+    if (ultimo.status !== 200) {
+      return ultimo;
+    }
+    if (!faltaSaldo(lista, ultimo.body)) {
+      return ultimo;
+    }
+  }
+  return ultimo;
+}
+
 export async function listarClientes(
   request: FastifyRequest,
   reply: FastifyReply,
   deps: CompositionDeps,
 ): Promise<void> {
   const path = request.url.startsWith('/') ? request.url : `/${request.url}`;
-  const [lista, saldos] = await Promise.all([
-    msRequest({
-      baseUrl: deps.config.clienteUrl,
-      method: 'GET',
-      path,
-      headers: identityHeaders(request),
-      fetchImpl: deps.fetchImpl,
-    }),
-    msRequest({
-      baseUrl: deps.config.contaUrl,
-      method: 'GET',
-      path: '/internal/saldos',
-      headers: identityHeaders(request),
-      fetchImpl: deps.fetchImpl,
-    }),
-  ]);
+  const lista = await msRequest({
+    baseUrl: deps.config.clienteUrl,
+    method: 'GET',
+    path,
+    headers: identityHeaders(request),
+    fetchImpl: deps.fetchImpl,
+  });
   if (lista.status !== 200) {
     sendMs(reply, lista, deps.config.publicUrl);
     return;
   }
+  if (faltaEndereco(lista.body)) {
+    return reply
+      .code(502)
+      .send(Erros.badGateway('Cadastro de cliente sem cidade ou estado'));
+  }
+  const saldos = await saldosComRetentativa(request, deps, lista.body);
   if (saldos.status !== 200) {
     sendMs(reply, saldos, deps.config.publicUrl);
     return;
+  }
+  if (faltaSaldo(lista.body, saldos.body)) {
+    return reply
+      .code(503)
+      .send(Erros.unavailable('Saldo ainda não projetado; tente novamente'));
   }
   reply.code(200).send(
     applyHateoas(composeClientes(lista.body, saldos.body, deps.config.publicUrl), {

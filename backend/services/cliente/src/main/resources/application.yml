@@ -32,3 +32,7 @@ spring:
     port: ${RABBIT_PORT:5672}
     username: ${RABBIT_USER:bantads}
     password: ${RABBIT_PASSWORD:change-me}
+
+bantads:
+  rabbit:
+    retry-dlq: true

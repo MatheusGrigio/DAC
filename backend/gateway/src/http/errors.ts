@@ -17,4 +17,6 @@ export const Erros = {
   notFound: (mensagem = 'Recurso não encontrado') => erro(404, 'Not Found', mensagem),
   unprocessable: (mensagem: string) => erro(422, 'Unprocessable Entity', mensagem),
   conflict: (mensagem: string) => erro(409, 'Conflict', mensagem),
+  badGateway: (mensagem: string) => erro(502, 'Bad Gateway', mensagem),
+  unavailable: (mensagem: string) => erro(503, 'Service Unavailable', mensagem),
 };

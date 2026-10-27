@@ -12,6 +12,7 @@ import br.ufpr.dac.bantads.shared.money.Money
 import br.ufpr.dac.bantads.shared.time.DateTimes
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ClienteCommandHandler(
@@ -21,6 +22,7 @@ class ClienteCommandHandler(
 ) {
     private val mapper = BantadsJson.mapper()
 
+    @Transactional
     fun handle(envelope: MessageEnvelope): ReplyEnvelope {
         val sagaId = envelope.sagaId ?: return falha(envelope, "sagaId ausente")
         inbox.findBySagaIdAndTipo(sagaId, envelope.tipo)?.let { saved ->

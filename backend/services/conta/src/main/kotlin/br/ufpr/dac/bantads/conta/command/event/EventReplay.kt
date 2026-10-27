@@ -51,12 +51,8 @@ object EventReplay {
         key: String,
     ): BigDecimal? {
         val raw = payload[key] ?: return null
-        val bruto =
-            when (raw) {
-                is String -> raw
-                else -> Money.format(BigDecimal(raw.toString()))
-            }
-        return Money.parse(bruto)
+        if (raw !is String) error("payload.$key deve ser string decimal")
+        return Money.parse(raw)
     }
 
     fun texto(

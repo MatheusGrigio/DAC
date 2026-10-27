@@ -31,6 +31,10 @@ spring:
     username: ${RABBIT_USER:bantads}
     password: ${RABBIT_PASSWORD:change-me}
 
+bantads:
+  rabbit:
+    retry-dlq: true
+
 query:
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:bantads}?currentSchema=conta_query

@@ -73,3 +73,7 @@ Ordem pt-BR do seed: Catharyna, Catianna, Cleuddônio, Coândrya, Cutardo. Cada 
 ## Erros
 
 **HTTP 403** com `tokenCliente`. **HTTP 401** sem token.
+
+**HTTP 503** se algum cliente da lista ainda não tem saldo projetado, depois de três consultas internas a `/internal/saldos`. O corpo é `{ status, erro, mensagem }` e **não** traz `"0.00"` no lugar do saldo. Espere 1–2 s e **Send** de novo.
+
+**HTTP 502** se o cadastro vier sem cidade ou UF. A lista não omite essa linha em silêncio.

@@ -1,3 +1,5 @@
+import re
+
 import requests
 
 from helpers import CPF_GERENTE, CPF_NOVO, URL, auth_headers, login_gerente
@@ -29,7 +31,9 @@ def test_t10_rejeicao():
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["status"] == "NAO_APROVADA"
-    assert body["motivo"]
+    assert body["motivo"] == "Renda incompatível com a política do banco"
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", body["dataHoraProcessamento"])
+    assert "aprovacao" not in body["_links"]
     assert "rejeicao" not in body["_links"]
     again = requests.post(
         URL + f"/solicitacoes/{CPF_NOVO}/rejeicao",
@@ -38,6 +42,11 @@ def test_t10_rejeicao():
         timeout=10,
     )
     assert again.status_code == 409, again.text
+    assert again.json() == {
+        "status": 409,
+        "erro": "Conflict",
+        "mensagem": "Solicitação não está PENDENTE",
+    }
 
 
 def test_t14_atualiza_gerente():
@@ -49,8 +58,15 @@ def test_t14_atualiza_gerente():
         timeout=10,
     )
     assert ok.status_code == 200, ok.text
-    assert ok.json()["nome"] == "Geniéve Silva"
-    assert ok.json()["telefone"] == "41988889999"
+    atualizado = ok.json()
+    assert atualizado["cpf"] == CPF_GERENTE
+    assert atualizado["nome"] == "Geniéve Silva"
+    assert atualizado["email"] == "ger1@bantads.com.br"
+    assert atualizado["telefone"] == "41988889999"
+    assert atualizado["ativo"] is True
+    assert "self" in atualizado["_links"]
+    assert "atualizacao" in atualizado["_links"]
+    assert "remocao" not in atualizado["_links"]
     bad = requests.put(
         URL + f"/gerentes/{CPF_GERENTE}",
         headers=auth_headers(token),
@@ -62,3 +78,8 @@ def test_t14_atualiza_gerente():
         timeout=10,
     )
     assert bad.status_code == 400, bad.text
+    assert bad.json() == {
+        "status": 400,
+        "erro": "Bad Request",
+        "mensagem": "CPF e e-mail são imutáveis",
+    }

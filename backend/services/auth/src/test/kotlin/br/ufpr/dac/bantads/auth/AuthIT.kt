@@ -1,6 +1,7 @@
 package br.ufpr.dac.bantads.auth
 
 import br.ufpr.dac.bantads.auth.saga.AuthCommandHandler
+import br.ufpr.dac.bantads.auth.saga.SagaInboxRepository
 import br.ufpr.dac.bantads.auth.seed.SeedUsers
 import br.ufpr.dac.bantads.auth.user.UsuarioRepository
 import br.ufpr.dac.bantads.shared.amqp.CommandTypes
@@ -44,6 +45,9 @@ class AuthIT {
 
     @Autowired
     lateinit var commands: AuthCommandHandler
+
+    @Autowired
+    lateinit var inbox: SagaInboxRepository
 
     @BeforeEach
     fun seed() {
@@ -188,7 +192,11 @@ class AuthIT {
         val first = commands.handle(envelope)
         val second = commands.handle(envelope)
         assertEquals(ReplyStatus.SUCESSO, first.status)
-        assertEquals(first.payload["senha"], second.payload["senha"])
+        assertTrue(first.payload["senha"] is String)
+        assertEquals(ReplyStatus.SUCESSO, second.status)
+        assertEquals(null, second.payload["senha"])
+        val stored = checkNotNull(inbox.findBySagaIdAndTipo("saga-idemp", CommandTypes.AUTH_CRIAR_CLIENTE))
+        assertTrue(!stored.replyJson.contains("senha"))
         assertEquals(1, usuarios.findAll().count { it.login == "idemp@bantads.com.br" })
     }
 

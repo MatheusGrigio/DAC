@@ -258,7 +258,7 @@ class ClienteIT {
                 ),
             )
         assertEquals(ReplyStatus.FALHA, notPending.status)
-        assertEquals("Solicitação não está PENDENTE", notPending.erro)
+        assertEquals("Solicitação não encontrada ou já processada", notPending.erro)
     }
 
     @Test

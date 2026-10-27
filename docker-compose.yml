@@ -141,8 +141,6 @@ services:
       CLIENTE_URL: http://cliente:8080
       GERENTE_URL: http://gerente:8080
       CONTA_URL: http://conta:8080
-      SAGA_URL: http://saga:8080
-      EMAIL_URL: http://email:8080
     mem_limit: 256m
     networks:
       - bantads
@@ -158,6 +156,10 @@ services:
       gerente:
         condition: service_healthy
       conta:
+        condition: service_healthy
+      saga:
+        condition: service_healthy
+      email:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health | grep -q UP"]

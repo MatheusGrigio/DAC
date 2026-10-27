@@ -28,11 +28,9 @@ class AuthService(
         email: String,
     ): ResultadoCriacao {
         val login = normalizeLogin(email)
+        mesmoCpf(cpf, login)?.let { return it }
         if (usuarios.findByLogin(login) != null) {
             return ResultadoCriacao.Falha(EMAIL_DUPLICADO)
-        }
-        if (usuarios.findByCpf(cpf) != null) {
-            return ResultadoCriacao.Falha(CPF_DUPLICADO)
         }
         val senha = RandomPassword.generate()
         return persist(cpf, login, senha, Perfil.CLIENTE.wire, senha)
@@ -44,11 +42,9 @@ class AuthService(
         senha: String,
     ): ResultadoCriacao {
         val login = normalizeLogin(email)
+        mesmoCpf(cpf, login)?.let { return it }
         if (usuarios.findByLogin(login) != null) {
             return ResultadoCriacao.Falha(EMAIL_DUPLICADO)
-        }
-        if (usuarios.findByCpf(cpf) != null) {
-            return ResultadoCriacao.Falha(CPF_DUPLICADO)
         }
         return persist(cpf, login, senha, Perfil.GERENTE.wire, senhaClara = null)
     }
@@ -97,7 +93,19 @@ class AuthService(
             usuarios.save(usuario)
             ResultadoCriacao.Sucesso(cpf = cpf, senhaClara = senhaClara)
         } catch (_: DuplicateKeyException) {
-            ResultadoCriacao.Falha(EMAIL_DUPLICADO)
+            mesmoCpf(cpf, login) ?: ResultadoCriacao.Falha(EMAIL_DUPLICADO)
+        }
+    }
+
+    private fun mesmoCpf(
+        cpf: String,
+        login: String,
+    ): ResultadoCriacao? {
+        val existente = usuarios.findByCpf(cpf) ?: return null
+        return if (existente.login == login) {
+            ResultadoCriacao.Sucesso(cpf = cpf, senhaClara = null)
+        } else {
+            ResultadoCriacao.Falha(CPF_DUPLICADO)
         }
     }
 

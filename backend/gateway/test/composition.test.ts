@@ -194,6 +194,118 @@ describe('F13 composition', () => {
     await app.close();
   });
 
+  it('R11 inclui o cliente quando o saldo aparece na segunda consulta', async () => {
+    let consultasSaldo = 0;
+    const fetchImpl = mockFetch((url) => {
+      if (url.endsWith('/auth/verificar')) {
+        return { status: 200, body: { cpf: GERENTE, tipo: 'GERENTE' } };
+      }
+      if (url.endsWith(`/gerentes/${GERENTE}`)) {
+        return { status: 200, body: { cpf: GERENTE, nome: 'Geniéve', email: 'ger1@bantads.com.br' } };
+      }
+      if (url.includes('/clientes')) {
+        return {
+          status: 200,
+          body: {
+            clientes: [
+              {
+                cpf: '12912861012',
+                nome: 'Catharyna',
+                endereco: { cidade: 'Curitiba', uf: 'PR' },
+              },
+            ],
+          },
+        };
+      }
+      if (url.endsWith('/internal/saldos')) {
+        consultasSaldo += 1;
+        if (consultasSaldo === 1) {
+          return { status: 200, body: {} };
+        }
+        return { status: 200, body: { '12912861012': { saldo: '800.00', numero: '1291' } } };
+      }
+      return { status: 404, body: {} };
+    });
+    const app = await buildApp({
+      config: testConfig(),
+      store: new MemoryStore(),
+      fetchImpl,
+      sleep: async () => {},
+    });
+    const login = await app.inject({
+      method: 'POST',
+      url: '/login',
+      payload: { email: 'ger1@bantads.com.br', senha: 'tads' },
+    });
+    const token = (login.json() as { token: string }).token;
+    const response = await app.inject({
+      method: 'GET',
+      url: '/clientes',
+      headers: { 'x-access-token': token },
+    });
+    assert.equal(response.statusCode, 200);
+    assert.equal(consultasSaldo, 2);
+    const body = response.json() as { clientes: Array<{ cpf: string; saldo: string }> };
+    assert.equal(body.clientes.length, 1);
+    assert.equal(body.clientes[0]?.saldo, '800.00');
+    await app.close();
+  });
+
+  it('R11 retenta saldo ausente e responde 503 se a projeção não fechar', async () => {
+    let consultasSaldo = 0;
+    const fetchImpl = mockFetch((url) => {
+      if (url.endsWith('/auth/verificar')) {
+        return { status: 200, body: { cpf: GERENTE, tipo: 'GERENTE' } };
+      }
+      if (url.endsWith(`/gerentes/${GERENTE}`)) {
+        return { status: 200, body: { cpf: GERENTE, nome: 'Geniéve', email: 'ger1@bantads.com.br' } };
+      }
+      if (url.includes('/clientes')) {
+        return {
+          status: 200,
+          body: {
+            clientes: [
+              {
+                cpf: '12912861012',
+                nome: 'Catharyna',
+                endereco: { cidade: 'Curitiba', uf: 'PR' },
+              },
+            ],
+          },
+        };
+      }
+      if (url.endsWith('/internal/saldos')) {
+        consultasSaldo += 1;
+        return { status: 200, body: {} };
+      }
+      return { status: 404, body: {} };
+    });
+    const app = await buildApp({
+      config: testConfig(),
+      store: new MemoryStore(),
+      fetchImpl,
+      sleep: async () => {},
+    });
+    const login = await app.inject({
+      method: 'POST',
+      url: '/login',
+      payload: { email: 'ger1@bantads.com.br', senha: 'tads' },
+    });
+    const token = (login.json() as { token: string }).token;
+    const response = await app.inject({
+      method: 'GET',
+      url: '/clientes',
+      headers: { 'x-access-token': token },
+    });
+    assert.equal(response.statusCode, 503);
+    assert.equal(consultasSaldo, 3);
+    const body = response.json() as { status: number; mensagem: string; _links?: unknown };
+    assert.equal(body._links, undefined);
+    assert.equal(body.status, 503);
+    assert.match(body.mensagem, /projetado/i);
+    await app.close();
+  });
+
   it('T16 joins conta and gerente and sorts by nome', () => {
     const composed = composeRelatorioClientes(
       {

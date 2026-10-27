@@ -1,3 +1,5 @@
+import time
+
 import requests
 
 from helpers import (
@@ -56,9 +58,11 @@ def test_t09f_sem_prevalidacao():
     again = _aprovar(token, CPF_T09)
     job_again = poll_job(again["jobId"], token)
     assert job_again["status"] == "FALHA", job_again
+    assert job_again["erro"] == "Solicitação não encontrada ou já processada"
     missing = _aprovar(token, CPF_INEXISTENTE)
     job_missing = poll_job(missing["jobId"], token)
     assert job_missing["status"] == "FALHA", job_missing
+    assert job_missing["erro"] == "Solicitação não encontrada ou já processada"
 
 
 def test_t09f_email_de_gerente():
@@ -73,12 +77,19 @@ def test_t09f_email_de_gerente():
     accepted = _aprovar(token, CPF_T09_DUP)
     job = poll_job(accepted["jobId"], token)
     assert job["status"] == "FALHA", job
-    solicitacao = requests.get(
-        URL + f"/solicitacoes/{CPF_T09_DUP}",
-        headers=auth_headers(token),
-        timeout=10,
-    )
-    assert solicitacao.status_code == 200, solicitacao.text
-    body = solicitacao.json()
+    assert job["erro"] == "E-mail já cadastrado"
+    body = {}
+    deadline = time.time() + 15
+    while time.time() < deadline:
+        solicitacao = requests.get(
+            URL + f"/solicitacoes/{CPF_T09_DUP}",
+            headers=auth_headers(token),
+            timeout=10,
+        )
+        assert solicitacao.status_code == 200, solicitacao.text
+        body = solicitacao.json()
+        if body.get("status") == "NAO_APROVADA":
+            break
+        time.sleep(0.5)
     assert body["status"] == "NAO_APROVADA"
     assert body["motivo"] == "E-mail já cadastrado"

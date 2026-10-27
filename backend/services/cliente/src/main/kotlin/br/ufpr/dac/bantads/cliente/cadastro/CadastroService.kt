@@ -5,6 +5,7 @@ import br.ufpr.dac.bantads.cliente.dto.ClienteNomeView
 import br.ufpr.dac.bantads.cliente.seed.SeedClientes
 import br.ufpr.dac.bantads.cliente.solicitacao.SolicitacaoEntity
 import br.ufpr.dac.bantads.cliente.solicitacao.SolicitacaoRepository
+import br.ufpr.dac.bantads.cliente.solicitacao.StatusSolicitacao
 import br.ufpr.dac.bantads.cliente.web.ApiException
 import br.ufpr.dac.bantads.shared.error.ErroBody
 import org.springframework.stereotype.Service
@@ -27,15 +28,18 @@ class CadastroService(
         return clientes.findByCpfIn(cpfs).map { ClienteNomeView(it.cpf, it.nome, it.email) }
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun criarAPartirDaSolicitacao(cpf: String): ClienteEntity {
         val solicitacao =
             solicitacoes.findByCpf(cpf) ?: throw IllegalStateException("Solicitação não encontrada")
         clientes.findByCpf(cpf)?.let { return it }
+        if (solicitacao.status != StatusSolicitacao.APROVADA) {
+            throw IllegalStateException("Solicitação não está APROVADA")
+        }
         return clientes.save(copyFrom(solicitacao))
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun remover(cpf: String) {
         clientes.findByCpf(cpf)?.let { clientes.delete(it) }
     }

@@ -10,4 +10,6 @@ import java.util.UUID
 @Table(name = "projecao_aplicada")
 class ProjecaoAplicadaEntity(
     @Id @Column(name = "evento_id") var eventoId: UUID = UUID.randomUUID(),
+    @Column(name = "numero_conta", nullable = false) var numeroConta: String = "",
+    @Column(nullable = false) var versao: Int = 0,
 )

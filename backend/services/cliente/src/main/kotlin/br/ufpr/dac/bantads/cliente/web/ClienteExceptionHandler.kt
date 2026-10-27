@@ -1,6 +1,7 @@
 package br.ufpr.dac.bantads.cliente.web
 
 import br.ufpr.dac.bantads.shared.error.ErroBody
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -13,6 +14,18 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 class ClienteExceptionHandler {
     @ExceptionHandler(ApiException::class)
     fun api(ex: ApiException): ResponseEntity<ErroBody> = ResponseEntity.status(ex.body.status).body(ex.body)
+
+    @ExceptionHandler(DataIntegrityViolationException::class)
+    fun integridade(ex: DataIntegrityViolationException): ResponseEntity<ErroBody> {
+        val texto = ex.mostSpecificCause.message.orEmpty()
+        val mensagem =
+            when {
+                texto.contains("email", ignoreCase = true) -> "E-mail já cadastrado"
+                texto.contains("cpf", ignoreCase = true) -> "CPF já cadastrado"
+                else -> "Cadastro já existente"
+            }
+        return ResponseEntity.status(409).body(ErroBody.conflict(mensagem))
+    }
 
     @ExceptionHandler(
         MethodArgumentNotValidException::class,

@@ -1,39 +1,146 @@
 {
   "rabbit_version": "3.13.0",
-  "vhosts": [
-    { "name": "/" }
+  "users": [
+    {
+      "name": "bantads",
+      "password_hash": "HT26RkPfaKfVTOzScmxzeXjjrnFEy2UzfSyyOPCqntfX04rm",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [{ "name": "/" }],
+  "permissions": [
+    {
+      "user": "bantads",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
   ],
   "queues": [
+    { "name": "saga.cmd", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} },
+    { "name": "orquestrador.reply", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} },
+    { "name": "ms.email.cmd", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} },
+
+    {
+      "name": "ms.cliente.cmd",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "bantads.dlx",
+        "x-dead-letter-routing-key": "ms.cliente.cmd.wait"
+      }
+    },
+    {
+      "name": "ms.cliente.cmd.wait",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 5000,
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "ms.cliente.cmd"
+      }
+    },
+    { "name": "ms.cliente.cmd.dlq", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} },
+
+    {
+      "name": "ms.conta.cmd",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "bantads.dlx",
+        "x-dead-letter-routing-key": "ms.conta.cmd.wait"
+      }
+    },
+    {
+      "name": "ms.conta.cmd.wait",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 5000,
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "ms.conta.cmd"
+      }
+    },
+    { "name": "ms.conta.cmd.dlq", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} },
+
+    {
+      "name": "ms.gerente.cmd",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "bantads.dlx",
+        "x-dead-letter-routing-key": "ms.gerente.cmd.wait"
+      }
+    },
+    {
+      "name": "ms.gerente.cmd.wait",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 5000,
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "ms.gerente.cmd"
+      }
+    },
+    { "name": "ms.gerente.cmd.dlq", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} },
+
     {
       "name": "ms.auth.cmd",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "ms.auth.dlx",
-        "x-dead-letter-routing-key": "ms.auth.cmd.dlq"
+        "x-dead-letter-exchange": "bantads.dlx",
+        "x-dead-letter-routing-key": "ms.auth.cmd.wait"
       }
     },
     {
-      "name": "ms.auth.cmd.dlq",
+      "name": "ms.auth.cmd.wait",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
-      "arguments": {}
-    }
+      "arguments": {
+        "x-message-ttl": 5000,
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "ms.auth.cmd"
+      }
+    },
+    { "name": "ms.auth.cmd.dlq", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} },
+
+    {
+      "name": "ms.conta.events",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "bantads.dlx",
+        "x-dead-letter-routing-key": "ms.conta.events.wait"
+      }
+    },
+    {
+      "name": "ms.conta.events.wait",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 5000,
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "ms.conta.events"
+      }
+    },
+    { "name": "ms.conta.events.dlq", "vhost": "/", "durable": true, "auto_delete": false, "arguments": {} }
   ],
   "exchanges": [
     {
-      "name": "ms.auth.exchange",
-      "vhost": "/",
-      "type": "direct",
-      "durable": true,
-      "auto_delete": false,
-      "internal": false,
-      "arguments": {}
-    },
-    {
-      "name": "ms.auth.dlx",
+      "name": "bantads.dlx",
       "vhost": "/",
       "type": "direct",
       "durable": true,
@@ -43,21 +150,15 @@
     }
   ],
   "bindings": [
-    {
-      "source": "ms.auth.exchange",
-      "vhost": "/",
-      "destination": "ms.auth.cmd",
-      "destination_type": "queue",
-      "routing_key": "ms.auth.cmd",
-      "arguments": {}
-    },
-    {
-      "source": "ms.auth.dlx",
-      "vhost": "/",
-      "destination": "ms.auth.cmd.dlq",
-      "destination_type": "queue",
-      "routing_key": "ms.auth.cmd.dlq",
-      "arguments": {}
-    }
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.cliente.cmd.wait", "destination_type": "queue", "routing_key": "ms.cliente.cmd.wait", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.cliente.cmd.dlq", "destination_type": "queue", "routing_key": "ms.cliente.cmd.dlq", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.conta.cmd.wait", "destination_type": "queue", "routing_key": "ms.conta.cmd.wait", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.conta.cmd.dlq", "destination_type": "queue", "routing_key": "ms.conta.cmd.dlq", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.gerente.cmd.wait", "destination_type": "queue", "routing_key": "ms.gerente.cmd.wait", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.gerente.cmd.dlq", "destination_type": "queue", "routing_key": "ms.gerente.cmd.dlq", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.auth.cmd.wait", "destination_type": "queue", "routing_key": "ms.auth.cmd.wait", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.auth.cmd.dlq", "destination_type": "queue", "routing_key": "ms.auth.cmd.dlq", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.conta.events.wait", "destination_type": "queue", "routing_key": "ms.conta.events.wait", "arguments": {} },
+    { "source": "bantads.dlx", "vhost": "/", "destination": "ms.conta.events.dlq", "destination_type": "queue", "routing_key": "ms.conta.events.dlq", "arguments": {} }
   ]
 }

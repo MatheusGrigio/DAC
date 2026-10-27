@@ -172,6 +172,11 @@ describe('F14 gateway jobs and R9', () => {
       headers: { 'x-access-token': token },
     });
     assert.equal(missing.statusCode, 404);
+    assert.deepEqual(missing.json(), {
+      status: 404,
+      erro: 'Not Found',
+      mensagem: 'Job inexistente ou expirado',
+    });
 
     const created = await app.inject({
       method: 'POST',
@@ -212,6 +217,11 @@ describe('F14 gateway jobs and R9', () => {
       headers: { 'x-access-token': token },
     });
     assert.equal(resourceResult.statusCode, 409);
+    assert.deepEqual(resourceResult.json(), {
+      status: 409,
+      erro: 'Conflict',
+      mensagem: 'Job ainda não concluído, falhou ou não é inline',
+    });
 
     const inlineId = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
     await store.set(
@@ -221,6 +231,7 @@ describe('F14 gateway jobs and R9', () => {
         status: JobStatus.CONCLUIDO,
         resultType: ResultType.INLINE,
         resultado: { mensagem: 'ok' },
+        cpf: GERENTE,
       }),
     );
     const inline = await app.inject({
@@ -239,6 +250,11 @@ describe('F14 gateway jobs and R9', () => {
       headers: { 'x-access-token': cliente },
     });
     assert.equal(owned.statusCode, 403);
+    assert.deepEqual(owned.json(), {
+      status: 403,
+      erro: 'Forbidden',
+      mensagem: 'Job não pertence ao usuário autenticado',
+    });
     await app.close();
   });
 
@@ -305,6 +321,11 @@ describe('F14 gateway jobs and R9', () => {
       headers: { 'x-access-token': token },
     });
     assert.equal(self.statusCode, 403);
+    assert.deepEqual(self.json(), {
+      status: 403,
+      erro: 'Forbidden',
+      mensagem: 'Não é permitido remover a si mesmo',
+    });
     assert.equal(publisher.published.length, 0);
     const other = await app.inject({
       method: 'DELETE',

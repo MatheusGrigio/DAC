@@ -16,7 +16,11 @@ def test_t15_nao_remove_a_si_mesmo():
     token = login_gerente()
     resp = requests.delete(URL + f"/gerentes/{CPF_GERENTE}", headers=auth_headers(token), timeout=10)
     assert resp.status_code == 403, resp.text
-    assert resp.json()["status"] == 403
+    assert resp.json() == {
+        "status": 403,
+        "erro": "Forbidden",
+        "mensagem": "Não é permitido remover a si mesmo",
+    }
 
 
 def test_t15_remove_gadamantio_e_inativo_nao_loga():
@@ -51,6 +55,18 @@ def test_t15_remove_gadamantio_e_inativo_nao_loga():
     )
     assert login.status_code == 401, login.text
     assert login.json() == {"auth": False, "message": "Login inválido!"}
+    atualizacao = requests.put(
+        URL + f"/gerentes/{CPF_GADAMANTIO}",
+        headers=auth_headers(token),
+        json={"nome": "Gadamântio", "telefone": "41999990000"},
+        timeout=10,
+    )
+    assert atualizacao.status_code == 409, atualizacao.text
+    assert atualizacao.json() == {
+        "status": 409,
+        "erro": "Conflict",
+        "mensagem": "Gerente inativo",
+    }
 
 
 def test_t15_inexistente_ou_ja_inativo_falha_no_job():
@@ -63,6 +79,7 @@ def test_t15_inexistente_ou_ja_inativo_falha_no_job():
     assert again.status_code == 202, again.text
     job = poll_job(again.json()["jobId"], token)
     assert job["status"] == "FALHA", job
+    assert job["erro"] == "Gerente não encontrado ou já inativo"
     missing = requests.delete(
         URL + "/gerentes/00000000000",
         headers=auth_headers(token),
@@ -71,3 +88,4 @@ def test_t15_inexistente_ou_ja_inativo_falha_no_job():
     assert missing.status_code == 202, missing.text
     missing_job = poll_job(missing.json()["jobId"], token)
     assert missing_job["status"] == "FALHA", missing_job
+    assert missing_job["erro"] == "Gerente não encontrado ou já inativo"

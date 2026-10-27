@@ -37,7 +37,7 @@ export function registerJobs(app: FastifyInstance, store: KeyValueStore): void {
 
 function isJobOwner(job: { cpf?: string | null }, cpf: string | undefined): boolean {
   if (!job.cpf) {
-    return true;
+    return false;
   }
   return Boolean(cpf) && job.cpf === cpf;
 }

@@ -23,6 +23,7 @@ class GerenteService(
         update: GerenteUpdate,
     ): GerenteEntity {
         val atual = obter(cpf)
+        if (!atual.ativo) throw ApiException(ErroBody.conflict("Gerente inativo"))
         val cpfBody = update.cpf?.trim()?.takeIf { it.isNotEmpty() }
         val emailBody =
             update.email
@@ -40,7 +41,7 @@ class GerenteService(
         return gerentes.save(atual)
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun inserir(
         cpf: String,
         nome: String,
@@ -65,23 +66,23 @@ class GerenteService(
         )
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun remover(cpf: String) {
         gerentes.findByCpf(cpf)?.let { gerentes.delete(it) }
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun inativar(cpf: String): GerenteEntity {
-        val atual = gerentes.findByCpf(cpf) ?: throw IllegalStateException("Gerente não encontrado")
-        if (!GerenteRules.canInativar(atual.ativo, gerentes.countByAtivoTrue())) {
-            if (!atual.ativo) throw IllegalStateException("Gerente não encontrado")
+        val atual = gerentes.findByCpf(cpf) ?: throw IllegalStateException("Gerente não encontrado ou já inativo")
+        if (!atual.ativo) throw IllegalStateException("Gerente não encontrado ou já inativo")
+        if (!GerenteRules.canInativar(true, gerentes.countByAtivoTrue())) {
             throw IllegalStateException(GerenteRules.ULTIMO_ATIVO)
         }
         atual.ativo = false
         return gerentes.save(atual)
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun reativar(cpf: String): GerenteEntity {
         val atual = gerentes.findByCpf(cpf) ?: throw IllegalStateException("Gerente não encontrado")
         atual.ativo = true

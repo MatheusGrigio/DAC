@@ -4,20 +4,20 @@ import br.ufpr.dac.bantads.conta.command.event.AccountState
 import br.ufpr.dac.bantads.conta.command.event.EventTypes
 import br.ufpr.dac.bantads.conta.command.event.StoredEvent
 import br.ufpr.dac.bantads.conta.command.numbering.AccountNumberGenerator
-import br.ufpr.dac.bantads.conta.command.publish.ContaEventPublisher
+import br.ufpr.dac.bantads.conta.command.publish.EventOutboxEntity
+import br.ufpr.dac.bantads.conta.command.publish.EventOutboxRepository
 import br.ufpr.dac.bantads.conta.command.r13.R13Selecao
 import br.ufpr.dac.bantads.conta.command.store.EventStore
 import br.ufpr.dac.bantads.conta.command.store.toStored
 import br.ufpr.dac.bantads.conta.web.ApiException
 import br.ufpr.dac.bantads.conta.web.Identity
 import br.ufpr.dac.bantads.shared.error.ErroBody
+import br.ufpr.dac.bantads.shared.json.BantadsJson
 import br.ufpr.dac.bantads.shared.money.Money
 import br.ufpr.dac.bantads.shared.time.DateTimes
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionSynchronization
-import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -26,10 +26,11 @@ import java.time.LocalDateTime
 @Service
 class ContaCommandService(
     private val store: EventStore,
-    private val publisher: ContaEventPublisher,
+    private val outbox: EventOutboxRepository,
     transactionManager: PlatformTransactionManager,
 ) {
     private val tx = TransactionTemplate(transactionManager)
+    private val mapper = BantadsJson.mapper()
 
     fun depositar(
         numero: String,
@@ -109,6 +110,8 @@ class ContaCommandService(
     ): String =
         retry {
             tx.execute {
+                val jaExiste = store.allStates().firstOrNull { it.existe && it.cpfCliente == cpfCliente }
+                if (jaExiste != null) return@execute jaExiste.numero
                 val numero = AccountNumberGenerator.generate(cpfCliente, store::exists)
                 val event =
                     store.append(
@@ -138,6 +141,7 @@ class ContaCommandService(
     fun removerSeSoCriado(numero: String) {
         tx.execute {
             val state = store.state(numero)
+            if (!state.existe) return@execute null
             if (state.versao <= 1) {
                 val tombstone =
                     store.newEvent(
@@ -161,6 +165,7 @@ class ContaCommandService(
         retry {
             tx.execute {
                 val state = requireExisting(numero)
+                if (state.cpfGerente == cpfGerente) return@execute null
                 val event =
                     store.append(
                         store.newEvent(
@@ -275,17 +280,25 @@ class ContaCommandService(
     )
 
     private fun publishAfterCommit(events: List<StoredEvent>) {
-        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            publisher.publish(events)
-            return
+        events.forEach { event ->
+            outbox.save(
+                EventOutboxEntity(
+                    id = event.id,
+                    body =
+                        mapper.writeValueAsString(
+                            mapOf(
+                                "id" to event.id.toString(),
+                                "objetoId" to event.objetoId,
+                                "tipo" to event.tipo,
+                                "payload" to event.payload,
+                                "versao" to event.versao,
+                                "timestamp" to DateTimes.format(event.timestamp),
+                            ),
+                        ),
+                    createdAt = event.timestamp,
+                ),
+            )
         }
-        TransactionSynchronizationManager.registerSynchronization(
-            object : TransactionSynchronization {
-                override fun afterCommit() {
-                    publisher.publish(events)
-                }
-            },
-        )
     }
 
     private fun <T> retry(block: () -> T): T {

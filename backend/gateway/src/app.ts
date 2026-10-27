@@ -22,6 +22,7 @@ export type BuildAppOptions = {
   store?: KeyValueStore;
   fetchImpl?: MsFetch;
   publisher?: SagaPublisher;
+  sleep?: (ms: number) => Promise<void>;
 };
 
 export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyInstance> {
@@ -48,7 +49,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
   registerRemoverGerente(app, { store, publisher });
   registerRelatorio(app, { config, store, fetchImpl: options.fetchImpl });
   registerJobs(app, store);
-  registerProxy(app, { config, store, fetchImpl: options.fetchImpl });
+  registerProxy(app, { config, store, fetchImpl: options.fetchImpl, sleep: options.sleep });
 
   return app;
 }

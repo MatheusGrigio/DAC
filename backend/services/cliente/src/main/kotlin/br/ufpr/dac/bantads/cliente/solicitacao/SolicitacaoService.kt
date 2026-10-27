@@ -80,11 +80,12 @@ class SolicitacaoService(
         return saved
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun marcarAprovada(cpf: String): SolicitacaoEntity {
-        val solicitacao = solicitacoes.findByCpf(cpf) ?: throw IllegalStateException("Solicitação não encontrada")
+        val solicitacao =
+            solicitacoes.findByCpf(cpf) ?: throw IllegalStateException("Solicitação não encontrada ou já processada")
         if (!SolicitacaoRules.canProcess(solicitacao.status)) {
-            throw IllegalStateException("Solicitação não está PENDENTE")
+            throw IllegalStateException("Solicitação não encontrada ou já processada")
         }
         solicitacao.status = StatusSolicitacao.APROVADA
         solicitacao.motivo = null
@@ -92,7 +93,7 @@ class SolicitacaoService(
         return solicitacoes.save(solicitacao)
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun desmarcarAprovada(cpf: String): SolicitacaoEntity {
         val solicitacao = solicitacoes.findByCpf(cpf) ?: throw IllegalStateException("Solicitação não encontrada")
         if (solicitacao.status == StatusSolicitacao.APROVADA) {
@@ -104,7 +105,7 @@ class SolicitacaoService(
         return solicitacao
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = [IllegalStateException::class])
     fun marcarNaoAprovada(cpf: String): SolicitacaoEntity {
         val solicitacao = solicitacoes.findByCpf(cpf) ?: throw IllegalStateException("Solicitação não encontrada")
         solicitacao.status = StatusSolicitacao.NAO_APROVADA

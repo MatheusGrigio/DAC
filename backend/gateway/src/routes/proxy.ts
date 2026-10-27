@@ -1,14 +1,20 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { type AppConfig } from '../config.js';
-import { Erros } from '../http/errors.js';
+import { Erros, authError } from '../http/errors.js';
 import { applyHateoas, cacheableCadastro, rewriteLocation } from '../http/hateoas.js';
 import { msRequest, type MsFetch, type MsResponse } from '../http/ms-client.js';
 import { clienteCacheKey, gerenteCacheKey, readCache, writeCache } from '../redis/cache.js';
 import type { KeyValueStore } from '../redis/store.js';
+import { AuthMessages } from '../types/enums.js';
 import { transferenciaInputSchema } from '../types/schemas.js';
 import { listarClientes, listarGerentes } from './composition.js';
 
-type ProxyDeps = { config: AppConfig; store: KeyValueStore; fetchImpl?: MsFetch };
+type ProxyDeps = {
+  config: AppConfig;
+  store: KeyValueStore;
+  fetchImpl?: MsFetch;
+  sleep?: (ms: number) => Promise<void>;
+};
 
 function identityHeaders(request: FastifyRequest): Record<string, string> {
   const user = request.user;
@@ -144,7 +150,7 @@ async function transferir(
   }
   const user = request.user;
   if (!user) {
-    return reply.code(401).send(Erros.forbidden());
+    return reply.code(401).send(authError(AuthMessages.TOKEN_INVALIDO));
   }
   const destino = await msRequest({
     baseUrl: deps.config.contaUrl,

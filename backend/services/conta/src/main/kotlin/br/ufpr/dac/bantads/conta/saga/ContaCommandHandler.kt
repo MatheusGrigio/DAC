@@ -1,6 +1,7 @@
 package br.ufpr.dac.bantads.conta.saga
 
 import br.ufpr.dac.bantads.conta.command.http.ContaCommandService
+import br.ufpr.dac.bantads.conta.web.ApiException
 import br.ufpr.dac.bantads.shared.amqp.CommandTypes
 import br.ufpr.dac.bantads.shared.amqp.MessageEnvelope
 import br.ufpr.dac.bantads.shared.amqp.ReplyEnvelope
@@ -86,6 +87,8 @@ class ContaCommandHandler(
                 }
                 else -> falha(envelope, "tipo desconhecido", sagaId)
             }
+        } catch (ex: ApiException) {
+            falha(envelope, ex.body.mensagem, sagaId)
         } catch (ex: IllegalStateException) {
             falha(envelope, ex.message ?: "Falha", sagaId)
         }

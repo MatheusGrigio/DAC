@@ -49,6 +49,7 @@ class EventProjector(
 
     private fun applyInternal(event: StoredEvent) {
         if (aplicadas.existsById(event.id)) return
+        if (aplicadas.existsByNumeroContaAndVersao(event.objetoId, event.versao)) return
         when (event.tipo) {
             EventTypes.CRIADO -> criar(event)
             EventTypes.DEPOSITO -> dinheiro(event, MovimentacaoTipos.DEPOSITO, credito = true)
@@ -58,7 +59,13 @@ class EventProjector(
             EventTypes.GERENTE_ALTERADO -> alterarGerente(event)
             EventTypes.REMOVIDO -> remover(event)
         }
-        aplicadas.save(ProjecaoAplicadaEntity(event.id))
+        aplicadas.save(
+            ProjecaoAplicadaEntity(
+                eventoId = event.id,
+                numeroConta = event.objetoId,
+                versao = event.versao,
+            ),
+        )
     }
 
     private fun criar(event: StoredEvent) {

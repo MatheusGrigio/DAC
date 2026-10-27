@@ -63,6 +63,7 @@ subprojects {
 
         dependencies {
             add("implementation", "org.springframework.boot:spring-boot-starter-json")
+            add("implementation", "org.springframework.amqp:spring-rabbit")
             add("implementation", "com.fasterxml.jackson.module:jackson-module-kotlin")
             add("implementation", "com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
             add("testImplementation", "org.jetbrains.kotlin:kotlin-test")

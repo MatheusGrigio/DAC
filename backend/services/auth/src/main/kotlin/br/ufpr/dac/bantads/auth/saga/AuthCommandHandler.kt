@@ -9,6 +9,7 @@ import br.ufpr.dac.bantads.shared.amqp.ReplyStatus
 import br.ufpr.dac.bantads.shared.json.BantadsJson
 import br.ufpr.dac.bantads.shared.time.DateTimes
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,12 +21,39 @@ class AuthCommandHandler(
 
     fun handle(envelope: MessageEnvelope): ReplyEnvelope {
         val sagaId = envelope.sagaId ?: return falha(envelope, "sagaId ausente")
-        inbox.findBySagaIdAndTipo(sagaId, envelope.tipo)?.let { saved ->
-            return mapper.readValue(saved.replyJson)
-        }
+        inboxCompleto(sagaId, envelope.tipo)?.let { return it }
+        reservarInbox(sagaId, envelope.tipo)?.let { return it }
         val reply = executar(envelope, sagaId)
-        inbox.save(SagaInbox(sagaId = sagaId, tipo = envelope.tipo, replyJson = mapper.writeValueAsString(reply)))
+        val atual = inbox.findBySagaIdAndTipo(sagaId, envelope.tipo)
+        val persistido = reply.copy(payload = reply.payload - "senha")
+        inbox.save(
+            (atual ?: SagaInbox(sagaId = sagaId, tipo = envelope.tipo, replyJson = "")).copy(
+                replyJson = mapper.writeValueAsString(persistido),
+            ),
+        )
         return reply
+    }
+
+    private fun inboxCompleto(
+        sagaId: String,
+        tipo: String,
+    ): ReplyEnvelope? {
+        val saved = inbox.findBySagaIdAndTipo(sagaId, tipo) ?: return null
+        if (saved.replyJson.isBlank()) return null
+        return mapper.readValue(saved.replyJson)
+    }
+
+    private fun reservarInbox(
+        sagaId: String,
+        tipo: String,
+    ): ReplyEnvelope? {
+        if (inbox.findBySagaIdAndTipo(sagaId, tipo) != null) return null
+        return try {
+            inbox.insert(SagaInbox(sagaId = sagaId, tipo = tipo, replyJson = ""))
+            null
+        } catch (_: DuplicateKeyException) {
+            inboxCompleto(sagaId, tipo)
+        }
     }
 
     private fun executar(
@@ -63,8 +91,7 @@ class AuthCommandHandler(
         val cpf = texto(payload, "cpf") ?: return falha(envelope, "cpf ausente", sagaId)
         val email = texto(payload, "email", "login") ?: return falha(envelope, "email ausente", sagaId)
         return when (val resultado = authService.criarCliente(cpf, email)) {
-            is ResultadoCriacao.Sucesso ->
-                sucesso(envelope, sagaId, mapOf("cpf" to resultado.cpf, "senha" to resultado.senhaClara))
+            is ResultadoCriacao.Sucesso -> sucesso(envelope, sagaId, payloadCriacao(resultado))
             is ResultadoCriacao.Falha -> falha(envelope, resultado.erro, sagaId)
         }
     }
@@ -78,9 +105,16 @@ class AuthCommandHandler(
         val email = texto(payload, "email", "login") ?: return falha(envelope, "email ausente", sagaId)
         val senha = texto(payload, "senha") ?: return falha(envelope, "senha ausente", sagaId)
         return when (val resultado = authService.criarGerente(cpf, email, senha)) {
-            is ResultadoCriacao.Sucesso -> sucesso(envelope, sagaId, mapOf("cpf" to resultado.cpf))
+            is ResultadoCriacao.Sucesso -> sucesso(envelope, sagaId, payloadCriacao(resultado))
             is ResultadoCriacao.Falha -> falha(envelope, resultado.erro, sagaId)
         }
+    }
+
+    private fun payloadCriacao(resultado: ResultadoCriacao.Sucesso): Map<String, Any?> {
+        val payload = linkedMapOf<String, Any?>("cpf" to resultado.cpf)
+        val senha = resultado.senhaClara
+        if (!senha.isNullOrBlank()) payload["senha"] = senha
+        return payload
     }
 
     private fun sucesso(

@@ -66,4 +66,14 @@
 }
 ```
 
+**HTTP 409** — gerente já inativo (R15):
+
+```json
+{
+  "status": 409,
+  "erro": "Conflict",
+  "mensagem": "Gerente inativo"
+}
+```
+
 **HTTP 404** — CPF inexistente. **HTTP 403** — cliente.

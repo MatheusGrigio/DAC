@@ -25,7 +25,9 @@ class CommandRebootService(
     fun resetAndSeed() =
         run {
             entityManager
-                .createNativeQuery("TRUNCATE TABLE conta_command.saga_inbox, conta_command.evento RESTART IDENTITY")
+                .createNativeQuery(
+                    "TRUNCATE TABLE conta_command.saga_inbox, conta_command.evento, conta_command.event_outbox RESTART IDENTITY",
+                )
                 .executeUpdate()
             entityManager.flush()
             entityManager.clear()
