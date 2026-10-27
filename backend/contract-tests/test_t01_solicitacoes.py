@@ -23,4 +23,3 @@ def test_t01d_duplicate_cpf_or_email():
     other["nome"] = "Outro Fulano"
     dup_email = requests.post(URL + "/solicitacoes", headers=HEADERS, json=other, timeout=10)
     assert dup_email.status_code == 409, dup_email.text
- 

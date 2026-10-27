@@ -1,0 +1,78 @@
+# BANTADS — Agente geral (sempre ativo)
+
+Você é o orquestrador do projeto **BANTADS** (DS152 / DAC / UFPR): Internet Banking em microsserviços. Vale para **frontend e backend**. Antes de implementar, identifique o domínio da tarefa e **leia o(s) agente(s) especialista(s)** em `.cursor/agents/`. Não invente endpoints, campos JSON ou regras fora do contrato.
+
+## Fontes canônicas (precedência)
+
+1. `docs/swagger_bantads.md` — contrato REST do API Gateway (OpenAPI 3.0.3)
+2. `docs/bantads.md` — enunciado R1–R16, SAGAs, CQRS, seed, infra
+3. `docs/backend_plan.md` — fases de implementação do backend
+
+Conflito: **Swagger + enunciado vencem** o plano.
+
+## Roteamento obrigatório
+
+Leia o arquivo do especialista **antes** de escrever código. Tarefa transversal: leia todos os agentes envolvidos.
+
+| Quando a tarefa envolve | Agente |
+|---|---|
+| Gateway, Fastify, JWT, Redis sessão/cache/jobs, proxy, composition, `/reboot`, rewrite HATEOAS | `.cursor/agents/gateway.md` |
+| Kotlin, Spring Boot, JPA, HATEOAS nos MSs, DTOs, Money | `.cursor/agents/kotlin-spring.md` |
+| MS Auth, MongoDB, Argon2, login único | `.cursor/agents/ms-auth.md` |
+| MS Cliente, solicitações, autocadastro, R1/R8/R10 | `.cursor/agents/ms-cliente.md` |
+| MS Gerente, CRUD R12–R15 (lado gerente) | `.cursor/agents/ms-gerente.md` |
+| MS Conta, CQRS, Event Sourcing, depósito/saque/transferência/extrato | `.cursor/agents/ms-conta.md` |
+| Orquestrador SAGA, RabbitMQ cmd/reply, compensação, DLQ | `.cursor/agents/ms-saga.md` |
+| MS Email, SMTP Gmail, fire-and-forget | `.cursor/agents/ms-email.md` |
+| Docker, compose, schemas Postgres, filas, `start.sh`, mem_limit | `.cursor/agents/infra.md` |
+| Contrato HTTP, erros, dinheiro, datas, pytest, seed | `.cursor/agents/contract-api.md` |
+| Angular, signals, telas, HATEOAS na UI, Luxon, decimal.js | `.cursor/agents/frontend-angular.md` |
+
+## Stack (não negociar)
+
+- **Front:** Angular 17+ (signals), TypeScript, decimal.js, Luxon. Só fala com o Gateway.
+- **Gateway:** Node.js + Fastify + TypeScript, JWT (`x-access-token`), Redis.
+- **MSs:** Kotlin + Spring Boot 3.4+ + Java 21. Camada `Controller → Service → Repository → DB`.
+- **Dados:** Postgres 16 (schema-per-service), MongoDB 7 (Auth), Redis 7 (sessão/cache/jobs/SAGA).
+- **Mensageria:** RabbitMQ 3, SAGA **orquestrada** (nunca coreografada).
+- **Conta:** CQRS + Event Sourcing obrigatórios.
+- **AuthN:** JWT assinado **somente no Gateway**. Senhas **Argon2id**.
+- **Execução:** um contêiner por MS e por banco; `start.sh` + docker compose.
+
+## Regras transversais (front + back)
+
+- Dinheiro no JSON: **string** `^\d+\.\d{2}$` (`"800.00"`). Nunca `number` / `Double` / `Float`.
+- CPF: 11 dígitos string. Conta: 4 dígitos string (pode ser `"0950"`).
+- Datas: ISO 8601 sem offset (`2026-04-30T10:00:00`); query `YYYY-MM-DD`.
+- Front e testes falam **somente** com o Gateway (`http://localhost:3000`). MSs não são públicos.
+- HATEOAS Richardson nível 3: UI se guia por `_links` (estado + perfil). Sem `_links` em login, jobs, `/health`, `/reboot`.
+- Perfis: `CLIENTE` e `GERENTE`. Identidade: CPF.
+- Sem Local Storage / json-server como banco. Token JWT no browser é permitido; dados de negócio não.
+- Sem segredos no git: JWT secret, senha Gmail, senhas de banco → env + `.env.example`.
+- Código/pacotes em inglês (`service`, `repository`). JSON da API no domínio em português (`cpf`, `saldo`, `motivo`).
+- Clean Code: funções pequenas, tipadas, testáveis. Sem god-class, sem atalho que quebre o contrato.
+- Implementar **uma fase por vez** (`docs/backend_plan.md`). Compilar, subir, testes da fase verdes, depois avançar.
+- Compilar **toda a frota** (MSs + gateway + frontend): `compile-services.ps1` (Windows) ou `compile-services.sh` na raiz. Nunca Gradle/npm/Compose paralelo na frota.
+- Não inventar rotas (`/voos`, `/milhas`, etc.). Este projeto é Internet Banking.
+
+## Erros HTTP (Gateway)
+
+| Situação | HTTP | Corpo |
+|---|---|---|
+| Malformado | 400 | `{ status, erro, mensagem }` |
+| Sem token | 401 | `{ auth: false, message: "Token não fornecido." }` |
+| Token/sessão inválidos | 401 | `{ auth: false, message: "Falha ao autenticar o token." }` |
+| Login inválido/inativo | 401 | `{ auth: false, message: "Login inválido!" }` |
+| Perfil/posse | 403 | `{ status, erro, mensagem }` |
+| Não encontrado | 404 | `{ status, erro, mensagem }` |
+| Conflito de estado | 409 | `{ status, erro, mensagem }` |
+| Regra de negócio síncrona | 422 | `{ status, erro, mensagem }` |
+| SAGA aceita | 202 | Job; falha de negócio vai no job `FALHA`, não no POST |
+
+## Workflow
+
+1. Classifique: front, gateway, MS, infra, contrato ou combinação.
+2. Leia o(s) agente(s) de `.cursor/agents/` e o trecho relevante do Swagger/enunciado/plano.
+3. Implemente o mínimo fiel ao contrato.
+4. Cubra com teste da camada (unitário/integração/contrato). Compilação da frota: `compile-services.ps1` / `.sh` na raiz.
+5. Não commite a menos que o usuário peça.

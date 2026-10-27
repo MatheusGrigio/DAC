@@ -7,20 +7,27 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: false
+    serialization:
+      write-dates-as-timestamps: false
+      write-bigdecimal-as-plain: true
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:bantads}
+    password: ${RABBIT_PASSWORD:change-me}
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${GMAIL_USER:email@gmail.com}
-    password: ${GMAIL_PASSWORD:change-me}
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${GMAIL_USER:}
+    password: ${GMAIL_APP_PASSWORD:}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-            required: true
-  rabbitmq:
-    host: ${RABBIT_HOST:localhost}
-    port: ${RABBIT_PORT:5672}
-    username: ${RABBIT_USER:bantads}
-    password: ${RABBIT_PASSWORD:change-me}
+
+mail:
+  dev: ${MAIL_DEV:true}
+  outbox-dir: ${MAIL_OUTBOX_DIR:/tmp/outbox}
+  from: ${MAIL_FROM:${GMAIL_USER:bantads@localhost}}

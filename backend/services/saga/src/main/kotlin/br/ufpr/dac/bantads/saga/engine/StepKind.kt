@@ -5,4 +5,3 @@ enum class StepKind {
     TRANSACTIONAL,
     FIRE_AND_FORGET,
 }
-    
