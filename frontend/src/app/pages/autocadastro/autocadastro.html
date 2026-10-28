@@ -22,12 +22,18 @@
         <div class="col-12">
           <label for="nome" class="form-label">Nome completo</label>
           <input id="nome" name="nome" class="form-control" autocomplete="name"
-            [(ngModel)]="cadastro.nome" required>
+            [(ngModel)]="cadastro.nome" #nome="ngModel" pattern=".*\S.*" required>
+          @if (nome.invalid && nome.touched) {
+            <small class="text-danger" role="status">Informe o nome; ele não pode conter apenas espaços.</small>
+          }
         </div>
         <div class="col-md-6">
           <label for="cpf" class="form-label">CPF</label>
           <input id="cpf" name="cpf" class="form-control" inputmode="numeric" maxlength="11"
-            [(ngModel)]="cadastro.cpf" (input)="somenteNumeros($event, 'cpf')" pattern="[0-9]{11}" required>
+            [(ngModel)]="cadastro.cpf" #cpf="ngModel" (input)="somenteNumeros($event, 'cpf')" pattern="[0-9]{11}" required>
+          @if (cpf.invalid && cpf.touched) {
+            <small class="text-danger" role="status">Informe o CPF com 11 dígitos.</small>
+          }
         </div>
         <div class="col-md-6">
           <label for="email" class="form-label">E-mail</label>
@@ -40,14 +46,20 @@
         <div class="col-md-6">
           <label for="telefone" class="form-label">Telefone com DDD</label>
           <input id="telefone" name="telefone" type="tel" class="form-control" autocomplete="tel-national"
-            [(ngModel)]="cadastro.telefone" (input)="somenteNumeros($event, 'telefone')"
+            [(ngModel)]="cadastro.telefone" #telefone="ngModel" (input)="somenteNumeros($event, 'telefone')"
             maxlength="11" pattern="[0-9]{10,11}" required>
+          @if (telefone.invalid && telefone.touched) {
+            <small class="text-danger" role="status">Informe o telefone com DDD e 10 ou 11 dígitos.</small>
+          }
         </div>
         <div class="col-md-6">
           <label for="salario" class="form-label">Salário (R$)</label>
           <input id="salario" name="salario" class="form-control" inputmode="decimal" placeholder="0,00"
-            [(ngModel)]="cadastro.salario" (input)="formatarSalario($event)"
+            [(ngModel)]="cadastro.salario" #salario="ngModel" (input)="formatarSalario($event)"
             pattern="[0-9]+([.,][0-9]{1,2})?" required>
+          @if (salario.invalid && salario.touched) {
+            <small class="text-danger" role="status">Informe o salário com até duas casas decimais, por exemplo 1500,00.</small>
+          }
         </div>
       </div>
     </fieldset>
@@ -57,17 +69,26 @@
         <div class="col-md-4">
           <label for="cep" class="form-label">CEP</label>
           <input id="cep" name="cep" class="form-control" inputmode="numeric" autocomplete="postal-code"
-            [(ngModel)]="cadastro.cep" (input)="somenteNumeros($event, 'cep')"
+            [(ngModel)]="cadastro.cep" #cep="ngModel" (input)="somenteNumeros($event, 'cep')"
             maxlength="8" pattern="[0-9]{8}" required>
+          @if (cep.invalid && cep.touched) {
+            <small class="text-danger" role="status">Informe o CEP com 8 dígitos.</small>
+          }
         </div>
         <div class="col-md-8">
           <label for="logradouro" class="form-label">Logradouro</label>
           <input id="logradouro" name="logradouro" class="form-control" autocomplete="address-line1"
-            [(ngModel)]="cadastro.logradouro" required>
+            [(ngModel)]="cadastro.logradouro" #logradouro="ngModel" pattern=".*\S.*" required>
+          @if (logradouro.invalid && logradouro.touched) {
+            <small class="text-danger" role="status">Informe o logradouro; ele não pode conter apenas espaços.</small>
+          }
         </div>
         <div class="col-md-4">
           <label for="numero" class="form-label">Número</label>
-          <input id="numero" name="numero" class="form-control" [(ngModel)]="cadastro.numero" required>
+          <input id="numero" name="numero" class="form-control" [(ngModel)]="cadastro.numero" #numero="ngModel" pattern=".*\S.*" required>
+          @if (numero.invalid && numero.touched) {
+            <small class="text-danger" role="status">Informe o número; ele não pode conter apenas espaços.</small>
+          }
         </div>
         <div class="col-md-8">
           <label for="complemento" class="form-label">Complemento (opcional)</label>
@@ -77,12 +98,18 @@
         <div class="col-md-8">
           <label for="cidade" class="form-label">Cidade</label>
           <input id="cidade" name="cidade" class="form-control" autocomplete="address-level2"
-            [(ngModel)]="cadastro.cidade" required>
+            [(ngModel)]="cadastro.cidade" #cidade="ngModel" pattern=".*\S.*" required>
+          @if (cidade.invalid && cidade.touched) {
+            <small class="text-danger" role="status">Informe a cidade; ela não pode conter apenas espaços.</small>
+          }
         </div>
         <div class="col-md-4">
           <label for="uf" class="form-label">UF</label>
           <input id="uf" name="uf" class="form-control" autocomplete="address-level1" maxlength="2"
-            [(ngModel)]="cadastro.uf" (ngModelChange)="converterUfParaMaiusculo()" pattern="[A-Z]{2}" required>
+            [(ngModel)]="cadastro.uf" #uf="ngModel" (ngModelChange)="converterUfParaMaiusculo()" pattern="[A-Z]{2}" required>
+          @if (uf.invalid && uf.touched) {
+            <small class="text-danger" role="status">Informe a UF com duas letras, por exemplo PR.</small>
+          }
         </div>
       </div>
     </fieldset>

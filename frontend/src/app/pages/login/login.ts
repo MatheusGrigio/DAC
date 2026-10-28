@@ -20,6 +20,7 @@ export class Login implements OnInit {
   
   erroLogin: string = '';
   carregando: boolean = false;
+  mostrarSenha = false;
 
   private authService = inject(AuthService);
   private router = inject(Router);

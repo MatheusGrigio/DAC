@@ -17,6 +17,21 @@
         </div>
       </div>
       
+      <section class="card mb-4" aria-label="Resumo da conta" [attr.aria-busy]="carregando()">
+        <div class="card-body">
+          @if (carregando()) {
+            <p class="mb-0" role="status">Carregando sua conta...</p>
+          } @else if (erro()) {
+            <p class="text-danger" role="alert">{{ erro() }}</p>
+            <button type="button" class="btn btn-outline-primary" (click)="carregar()">Tentar novamente</button>
+          } @else if (conta(); as dadosConta) {
+            <h2 class="h5">Sua conta</h2>
+            <p><strong>Número da conta:</strong> {{ dadosConta.numero }}</p>
+            <p class="mb-0"><strong>Saldo atual:</strong> {{ dadosConta.saldo | moeda }}</p>
+          }
+        </div>
+      </section>
+
       <div class="row">
         <div class="col-md-3 mb-3">
           <div class="card text-center h-100">
