@@ -21,10 +21,17 @@ export class Clientes implements OnInit {
   busca = '';
   filtro = '';
   clientes = signal<ClienteLista[]>([]);
-  carregando = signal(true);
+  carregando = signal(false);
   erro = signal('');
 
   ngOnInit(): void {
+    this.carregar();
+  }
+
+  carregar(): void {
+    if (this.carregando()) return;
+    this.carregando.set(true);
+    this.erro.set('');
     this.http.get<ClienteListaResponse>(`${environment.apiUrl}/clientes`).subscribe({
       next: (response) => {
         this.clientes.set(

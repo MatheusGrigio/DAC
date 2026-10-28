@@ -12,6 +12,7 @@
     <p role="status">Carregando clientes...</p>
   } @else if (erro()) {
     <app-alert type="error">{{ erro() }}</app-alert>
+    <app-button (click)="carregar()" [disabled]="carregando()">Tentar novamente</app-button>
   } @else {
     <div class="tabela">
       <table>

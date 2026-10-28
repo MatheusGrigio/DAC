@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ContaService } from '../../services';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
+import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
 
 interface Operacao {
   rel: string; 
@@ -22,7 +23,7 @@ const OPERACOES: Operacao[] = [
 @Component({
   selector: 'app-dashboard-cliente',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, MoedaPipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -50,6 +51,8 @@ export class DashboardClienteComponent {
   protected carregar(): void {
     const cpf = this.usuario()?.cpf;
     if (!cpf) {
+      this.carregando.set(false);
+      this.erro.set('Sua sessão não contém os dados do cliente. Entre novamente.');
       return;
     }
     this.carregando.set(true);
