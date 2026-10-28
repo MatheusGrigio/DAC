@@ -1,1 +1,59 @@
-<p>deposito works!</p>
+<header class="cabecalho">
+  <h1>Depósito</h1>
+  <p>Adicione dinheiro à sua conta.</p>
+</header>
+
+<div class="area">
+  @if (conta(); as c) {
+    <dl class="resumo">
+      <div>
+        <dt>Conta</dt>
+        <dd class="valor">{{ c.numero }}</dd>
+      </div>
+      <div>
+        <dt>Saldo atual</dt>
+        <dd class="valor">{{ c.saldo | moeda }}</dd>
+      </div>
+    </dl>
+  } @else if (!erro()) {
+    <p class="estado">Carregando sua conta…</p>
+  }
+
+  <form (submit)="enviar($event)" novalidate>
+    <label for="valor" class="form-label">Valor do depósito</label>
+    <input
+      id="valor"
+      name="valor"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off"
+      class="form-control form-control-lg valor"
+      placeholder="R$ 0,00"
+      [value]="valorTexto()"
+      (input)="aoDigitar($event)"
+      [disabled]="enviando() || atualizandoSaldo()"
+    />
+    <div class="form-text">Digite só os números: os centavos entram automaticamente.</div>
+
+    @if (erro()) {
+      <div class="aviso aviso-erro mt-3" role="alert">{{ erro() }}</div>
+    }
+    @if (atualizandoSaldo()) {
+      <div class="aviso mt-3" role="status">Atualizando seu saldo…</div>
+    } @else if (sucesso()) {
+      <div class="aviso mt-3" role="status">{{ sucesso() }}</div>
+    }
+
+    <div class="acoes">
+      <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary">Voltar</a>
+      <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar()">
+        @if (enviando()) {
+          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          Depositando…
+        } @else {
+          Depositar
+        }
+      </button>
+    </div>
+  </form>
+</div>

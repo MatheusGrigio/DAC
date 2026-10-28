@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Decimal } from 'decimal.js';
 import { DateTime } from 'luxon';
-import { Observable, map, take, takeWhile, tap, timer, switchMap } from 'rxjs';
+import { Observable, map, of, take, takeWhile, tap, timer, switchMap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Conta, ContaResponse, ExtratoResponse, OperacaoResponse } from '../shared/models';
 
@@ -33,6 +33,11 @@ export class ContaService {
 
   carregar(cpf: string): Observable<Conta> {
     return this.obterPorCpf(cpf).pipe(tap((conta) => this.conta.set(conta)));
+  }
+
+  garantir(cpf: string): Observable<Conta> {
+    const atual = this.conta();
+    return atual && atual.cpfCliente === cpf ? of(atual) : this.carregar(cpf);
   }
 
   extrato(numero: string, inicio: DateTime, fim: DateTime): Observable<ExtratoResponse> {
