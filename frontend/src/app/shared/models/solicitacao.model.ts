@@ -2,7 +2,7 @@ import { Decimal } from 'decimal.js';
 import { DateTime } from 'luxon';
 import { Links } from './conta.model';
 
-export type StatusSolicitacao = 'PENDENTE' | 'APROVADA' | 'REJEITADA';
+export type StatusSolicitacao = 'PENDENTE' | 'APROVADA' | 'NAO_APROVADA' | 'REJEITADA';
 
 export interface Endereco {
   logradouro: string;

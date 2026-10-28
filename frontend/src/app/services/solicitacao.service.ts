@@ -10,6 +10,7 @@ import {
   SolicitacoesListModel,
   SolicitacaoResponse,
   SolicitacaoListaResponse,
+  JobResponse,
 } from '../shared/models';
 
 function paraSolicitacao(r: SolicitacaoResponse): Solicitacao {
@@ -50,8 +51,8 @@ export class SolicitacaoService {
       );
   }
 
-  aprovar(cpf: string): Observable<{ jobId: string }> {
-    return this.http.post<{ jobId: string }>(`${this.apiUrl}/${cpf}/aprovacao`, {});
+  aprovar(cpf: string): Observable<JobResponse> {
+    return this.http.post<JobResponse>(`${this.apiUrl}/${cpf}/aprovacao`, {});
   }
 
   rejeitar(cpf: string, motivo: string): Observable<SolicitacaoResponse> {

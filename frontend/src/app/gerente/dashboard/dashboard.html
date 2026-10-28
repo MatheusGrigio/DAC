@@ -1,54 +1,77 @@
-<main class="container mt-4">
-  <h1>BANTADS - Área do Gerente</h1>
-  <p>Bem-vindo, {{ usuario?.nome }}!</p>
-  <div class="d-flex gap-3 flex-wrap mb-4">
+<main class="dashboard-gerente-page">
+  <div class="header">
+    <h1>BANTADS - Área do Gerente</h1>
+    <p>Bem-vindo, <strong>{{ usuario?.nome }}</strong>!</p>
+  </div>
+
+  <div class="acoes">
     <app-button routerLink="/gerente/clientes">Consultar clientes</app-button>
     <app-button routerLink="/gerente/relatorio">Relatório de clientes</app-button>
     <app-button variant="secondary" (click)="logout()">Sair</app-button>
   </div>
 
-  <h2>Solicitações de Autocadastro</h2>
-  
-  <div *ngIf="loading" class="alert alert-info">Carregando solicitações...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <section class="solicitacoes-section">
+    <h2>Solicitações de Autocadastro</h2>
+    
+    <div *ngIf="loading" class="carregando">Carregando solicitações...</div>
+    <div class="avisos">
+      <app-alert *ngIf="mensagemSucesso" type="success">{{ mensagemSucesso }}</app-alert>
+      <app-alert *ngIf="error" type="error">{{ error }}</app-alert>
+    </div>
 
-  <table class="table table-striped table-hover mt-3" *ngIf="!loading && !error">
-    <thead>
-      <tr>
-        <th>CPF</th>
-        <th>Nome</th>
-        <th>Salário</th>
-        <th>Status</th>
-        <th>Motivo/Data</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of solicitacoes">
-        <td>{{ s.cpf | cpf }}</td>
-        <td>{{ s.nome }}</td>
-        <td>{{ s.salario | moeda }}</td>
-        <td>
-          <span class="badge" [ngClass]="{
-            'bg-warning': s.status === 'PENDENTE',
-            'bg-success': s.status === 'APROVADA',
-            'bg-danger': s.status === 'REJEITADA'
-          }">{{ s.status }}</span>
-        </td>
-        <td>
-          <div *ngIf="s.motivo"><small>Motivo: {{ s.motivo }}</small></div>
-          <div *ngIf="s.dataHoraProcessamento"><small>Data: {{ s.dataHoraProcessamento | dataHora }}</small></div>
-        </td>
-        <td>
-          <div class="d-flex gap-2" *ngIf="s.status === 'PENDENTE'">
-            <app-button variant="primary" (click)="aprovar(s.cpf)">Aprovar</app-button>
-            <app-button variant="danger" (click)="rejeitar(s.cpf)">Recusar</app-button>
-          </div>
-        </td>
-      </tr>
-      <tr *ngIf="solicitacoes.length === 0">
-        <td colspan="6" class="text-center">Nenhuma solicitação encontrada.</td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="tabela" *ngIf="!loading">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">CPF</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Salário</th>
+            <th scope="col">Status</th>
+            <th scope="col">Motivo / Processamento</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of solicitacoes">
+            <td>{{ s.cpf | cpf }}</td>
+            <td>{{ s.nome }}</td>
+            <td>{{ s.salario | moeda }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'bg-warning': s.status === 'PENDENTE',
+                'bg-success': s.status === 'APROVADA',
+                'bg-danger': s.status === 'NAO_APROVADA' || s.status === 'REJEITADA'
+              }">
+                {{ s.status === 'NAO_APROVADA' ? 'Não aprovado' : (s.status === 'APROVADA' ? 'Aprovado' : 'Pendente') }}
+              </span>
+            </td>
+            <td>
+              <div *ngIf="s.motivo"><small><strong>Motivo:</strong> {{ s.motivo }}</small></div>
+              <div *ngIf="s.dataHoraProcessamento"><small><strong>Data:</strong> {{ s.dataHoraProcessamento | dataHora }}</small></div>
+              <span *ngIf="!s.motivo && !s.dataHoraProcessamento">-</span>
+            </td>
+            <td>
+              <div class="botoes-acao" *ngIf="s.status === 'PENDENTE'">
+                <app-button
+                  variant="primary"
+                  [disabled]="processandoCpf === s.cpf"
+                  (click)="aprovar(s.cpf)">
+                  {{ processandoCpf === s.cpf ? 'Processando...' : 'Aprovar' }}
+                </app-button>
+                <app-button
+                  variant="danger"
+                  [disabled]="processandoCpf === s.cpf"
+                  (click)="rejeitar(s.cpf)">
+                  Recusar
+                </app-button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="solicitacoes.length === 0">
+            <td colspan="6" class="sem-registros">Nenhuma solicitação encontrada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </main>
