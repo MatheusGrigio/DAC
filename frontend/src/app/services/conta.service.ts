@@ -55,6 +55,12 @@ export class ContaService {
       { valor: valor.toFixed(2) },
     );
   }
+  sacar(numero: string, valor: Decimal): Observable<OperacaoResponse> {
+    return this.http.post<OperacaoResponse>(
+      `${this.API_GATEWAY}/contas/${numero}/saque`,
+      { valor: valor.toFixed(2) },
+    );
+  }
 
   aguardarSaldo(cpf: string, esperado: Decimal): Observable<Conta> {
     return timer(0, 1000).pipe(
