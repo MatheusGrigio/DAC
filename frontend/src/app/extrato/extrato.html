@@ -1,1 +1,69 @@
-<p>extrato works!</p>
+<header class="pagina-cabecalho">
+  <div>
+    <h1>Extrato</h1>
+    <p>Conta {{ numeroConta() }}</p>
+  </div>
+  <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary btn-sm">Voltar</a>
+</header>
+
+<form class="filtro" [formGroup]="filtro" (ngSubmit)="consultar()">
+  <div>
+    <label class="form-label" for="inicio">De</label>
+    <input id="inicio" type="date" class="form-control" formControlName="inicio" [max]="hoje" />
+  </div>
+  <div>
+    <label class="form-label" for="fim">Até</label>
+    <input id="fim" type="date" class="form-control" formControlName="fim" [max]="hoje" />
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="carregando() || !numeroConta()">
+    Consultar
+  </button>
+</form>
+
+@if (erro()) {
+  <div class="aviso aviso-erro mb-3" role="alert">{{ erro() }}</div>
+}
+
+@if (carregando()) {
+  <p class="estado">Carregando extrato…</p>
+} @else if (dias(); as lista) {
+  <div class="tabela-wrap">
+    <table class="tabela extrato">
+      <thead>
+        <tr>
+          <th>Data/hora</th>
+          <th>Operação</th>
+          <th>Cliente origem → destino</th>
+          <th class="num">Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="saldo-dia">
+          <td colspan="3">Saldo anterior ao período</td>
+          <td class="num">{{ saldoAbertura() | moeda }}</td>
+        </tr>
+
+        @for (dia of lista; track dia.data.toISODate()) {
+          @for (mov of dia.movimentos; track $index) {
+            <tr [class.entrada]="mov.sentido === 'entrada'" [class.saida]="mov.sentido === 'saida'">
+              <td class="valor">{{ mov.dataHora | dataHora }}</td>
+              <td>{{ mov.operacao }}</td>
+              <td>{{ mov.descricao }}</td>
+              <td class="num">{{ mov.sentido === 'saida' ? '−' : '+' }} {{ mov.valor | moeda }}</td>
+            </tr>
+          }
+          <tr class="saldo-dia">
+            <td colspan="3">
+              Saldo em {{ dia.data | dataHora: 'dd/MM/yyyy' }}
+              @if (dia.movimentos.length === 0) {
+                <span class="sem-mov">· sem movimentações</span>
+              }
+            </td>
+            <td class="num">{{ dia.saldoFinal | moeda }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
