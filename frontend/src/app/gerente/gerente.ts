@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Button } from '../shared/components/button/button';
 import { Alert } from '../shared/components/alert/alert';
@@ -10,7 +11,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-gerente',
-  imports: [RouterLink, Button, Alert, CpfPipe, TelefonePipe],
+  imports: [FormsModule, RouterLink, Button, Alert, CpfPipe, TelefonePipe],
   templateUrl: './gerente.html',
   styleUrl: './gerente.css',
 })
@@ -20,6 +21,7 @@ export class Gerente implements OnInit {
   gerentes = signal<GerenteResponse[]>([]);
   carregando = signal(true);
   erro = signal('');
+  mostrarFormulario = signal(false);
 
   ngOnInit(): void {
     this.http.get<GerenteListaResponse>(`${environment.apiUrl}/gerentes`).subscribe({

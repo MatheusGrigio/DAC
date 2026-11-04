@@ -1,6 +1,69 @@
 <main class="gerentes-page">
   <h1>Gerentes</h1>
-  <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
+    @if (!mostrarFormulario()) {
+      <app-button (click)="mostrarFormulario.set(true)">Novo gerente</app-button>
+    }
+  </div>
+
+  @if (mostrarFormulario()) {
+    <section class="card card-body mb-3" aria-labelledby="titulo-novo-gerente">
+      <h2 id="titulo-novo-gerente" class="h5">Novo gerente</h2>
+      <form #formulario="ngForm">
+        <div class="row g-3">
+          <div class="col-12">
+            <label for="nome-gerente" class="form-label">Nome completo</label>
+            <input id="nome-gerente" name="nome" class="form-control" autocomplete="name"
+              ngModel #nome="ngModel" pattern=".*\S.*" required>
+            @if (nome.invalid && (nome.touched || formulario.submitted)) {
+              <small class="text-danger">Informe o nome completo.</small>
+            }
+          </div>
+          <div class="col-md-6">
+            <label for="cpf-gerente" class="form-label">CPF</label>
+            <input id="cpf-gerente" name="cpf" class="form-control" inputmode="numeric"
+              ngModel #cpf="ngModel" maxlength="11" pattern="[0-9]{11}" required>
+            @if (cpf.invalid && (cpf.touched || formulario.submitted)) {
+              <small class="text-danger">Informe o CPF com 11 dígitos.</small>
+            }
+          </div>
+          <div class="col-md-6">
+            <label for="email-gerente" class="form-label">E-mail</label>
+            <input id="email-gerente" name="email" type="email" class="form-control" autocomplete="email"
+              ngModel #email="ngModel" email required>
+            @if (email.invalid && (email.touched || formulario.submitted)) {
+              <small class="text-danger">Informe um e-mail válido.</small>
+            }
+          </div>
+          <div class="col-md-6">
+            <label for="telefone-gerente" class="form-label">Telefone com DDD</label>
+            <input id="telefone-gerente" name="telefone" type="tel" class="form-control" autocomplete="tel-national"
+              ngModel #telefone="ngModel" maxlength="11" pattern="[0-9]{10,11}" required>
+            @if (telefone.invalid && (telefone.touched || formulario.submitted)) {
+              <small class="text-danger">Informe o telefone com DDD e 10 ou 11 dígitos.</small>
+            }
+          </div>
+          <div class="col-md-6">
+            <label for="senha-gerente" class="form-label">Senha</label>
+            <input id="senha-gerente" name="senha" type="password" class="form-control" autocomplete="new-password"
+              ngModel #senha="ngModel" pattern=".*\S.*" required>
+            @if (senha.invalid && (senha.touched || formulario.submitted)) {
+              <small class="text-danger">Informe uma senha.</small>
+            }
+          </div>
+        </div>
+        @if (formulario.submitted && formulario.valid) {
+          <p class="mt-3 mb-0" role="status">Dados válidos. Nenhum cadastro foi enviado.</p>
+        }
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <app-button type="submit">Validar dados</app-button>
+          <app-button variant="secondary" (click)="mostrarFormulario.set(false)">Cancelar</app-button>
+        </div>
+      </form>
+    </section>
+  }
+
   @if (carregando()) {
     <p role="status">Carregando gerentes...</p>
   } @else if (erro()) {
