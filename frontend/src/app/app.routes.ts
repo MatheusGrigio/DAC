@@ -71,6 +71,12 @@ export const routes: Routes = [
     data: { role: 'GERENTE' },
     loadComponent: () => import('./gerente/relatorio/relatorio').then(m => m.Relatorio)
   },
+  {
+    path: 'gerente/gerentes',
+    canActivate: [authGuard],
+    data: { role: 'GERENTE' },
+    loadComponent: () => import('./gerente/gerente').then(m => m.Gerente)
+  },
   { 
     path: 'transferencia', 
     redirectTo: '/cliente/transferencia', 

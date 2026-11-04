@@ -1,1 +1,37 @@
-<p>gerente works!</p>
+<main class="gerentes-page">
+  <h1>Gerentes</h1>
+  <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
+  @if (carregando()) {
+    <p role="status">Carregando gerentes...</p>
+  } @else if (erro()) {
+    <app-alert type="error">{{ erro() }}</app-alert>
+  } @else {
+    <div class="tabela">
+      <table>
+        <caption class="visually-hidden">Lista de gerentes ativos</caption>
+        <thead>
+          <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">CPF</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Telefone</th>
+            <th scope="col">Quantidade de Clientes</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (gerente of gerentes(); track gerente.cpf) {
+            <tr>
+              <td>{{ gerente.nome }}</td>
+              <td>{{ gerente.cpf | cpf }}</td>
+              <td>{{ gerente.email }}</td>
+              <td>{{ gerente.telefone | telefone }}</td>
+              <td>{{ gerente.quantidadeClientes ?? 0 }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5">Nenhum gerente encontrado.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</main>
