@@ -2,15 +2,22 @@
   <h1>Gerentes</h1>
   <div class="d-flex flex-wrap gap-2 mb-3">
     <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
-    @if (!mostrarFormulario()) {
-      <app-button (click)="mostrarFormulario.set(true)">Novo gerente</app-button>
+    @if (!mostrarFormulario() && !gerenteEditando()) {
+      <app-button (click)="mostrarFormulario.set(true); erro.set(''); sucesso.set('')">Novo gerente</app-button>
     }
   </div>
+
+  @if (sucesso()) {
+    <app-alert type="success">{{ sucesso() }}</app-alert>
+  }
+  @if (erro()) {
+    <app-alert type="error">{{ erro() }}</app-alert>
+  }
 
   @if (mostrarFormulario()) {
     <section class="card card-body mb-3" aria-labelledby="titulo-novo-gerente">
       <h2 id="titulo-novo-gerente" class="h5">Novo gerente</h2>
-      <form #formulario="ngForm">
+      <form #formulario="ngForm" (ngSubmit)="inserir(formulario)">
         <div class="row g-3">
           <div class="col-12">
             <label for="nome-gerente" class="form-label">Nome completo</label>
@@ -53,12 +60,37 @@
             }
           </div>
         </div>
-        @if (formulario.submitted && formulario.valid) {
-          <p class="mt-3 mb-0" role="status">Dados válidos. Nenhum cadastro foi enviado.</p>
-        }
         <div class="d-flex flex-wrap gap-2 mt-3">
-          <app-button type="submit">Validar dados</app-button>
-          <app-button variant="secondary" (click)="mostrarFormulario.set(false)">Cancelar</app-button>
+          <app-button type="submit" [disabled]="salvando()">
+            {{ salvando() ? 'Salvando...' : 'Cadastrar gerente' }}
+          </app-button>
+          <app-button variant="secondary" [disabled]="salvando()" (click)="mostrarFormulario.set(false)">Cancelar</app-button>
+        </div>
+      </form>
+    </section>
+  }
+
+  @if (gerenteEditando(); as emEdicao) {
+    <section class="card card-body mb-3" aria-labelledby="titulo-editar-gerente">
+      <h2 id="titulo-editar-gerente" class="h5">Editar gerente ({{ emEdicao.cpf | cpf }})</h2>
+      <form #formEdicao="ngForm" (ngSubmit)="salvarEdicao(formEdicao)">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="edit-nome-gerente" class="form-label">Nome completo</label>
+            <input id="edit-nome-gerente" name="nome" class="form-control"
+              [(ngModel)]="edicaoModel.nome" #editNome="ngModel" pattern=".*\S.*" required>
+          </div>
+          <div class="col-md-6">
+            <label for="edit-telefone-gerente" class="form-label">Telefone com DDD</label>
+            <input id="edit-telefone-gerente" name="telefone" type="tel" class="form-control"
+              [(ngModel)]="edicaoModel.telefone" #editTel="ngModel" maxlength="11" pattern="[0-9]{10,11}" required>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <app-button type="submit" [disabled]="salvando()">
+            {{ salvando() ? 'Salvando...' : 'Salvar alterações' }}
+          </app-button>
+          <app-button variant="secondary" [disabled]="salvando()" (click)="gerenteEditando.set(null)">Cancelar</app-button>
         </div>
       </form>
     </section>
@@ -66,8 +98,6 @@
 
   @if (carregando()) {
     <p role="status">Carregando gerentes...</p>
-  } @else if (erro()) {
-    <app-alert type="error">{{ erro() }}</app-alert>
   } @else {
     <div class="tabela">
       <table>
@@ -79,6 +109,7 @@
             <th scope="col">E-mail</th>
             <th scope="col">Telefone</th>
             <th scope="col">Quantidade de Clientes</th>
+            <th scope="col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -89,9 +120,22 @@
               <td>{{ gerente.email }}</td>
               <td>{{ gerente.telefone | telefone }}</td>
               <td>{{ gerente.quantidadeClientes ?? 0 }}</td>
+              <td class="d-flex flex-wrap gap-2">
+                @if (!gerente._links || gerente._links['atualizacao']) {
+                  <app-button variant="secondary" (click)="iniciarEdicao(gerente)">Editar</app-button>
+                }
+                @if (!gerente._links || gerente._links['remocao']) {
+                  <app-button
+                    variant="danger"
+                    [disabled]="processandoCpf() === gerente.cpf"
+                    (click)="remover(gerente)">
+                    {{ processandoCpf() === gerente.cpf ? 'Removendo...' : 'Remover' }}
+                  </app-button>
+                }
+              </td>
             </tr>
           } @empty {
-            <tr><td colspan="5">Nenhum gerente encontrado.</td></tr>
+            <tr><td colspan="6">Nenhum gerente encontrado.</td></tr>
           }
         </tbody>
       </table>
