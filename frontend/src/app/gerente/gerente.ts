@@ -76,11 +76,14 @@ export class Gerente implements OnInit {
       })
       .pipe(
         switchMap((job) => this.jobService.aguardarConclusao(job.jobId)),
+        switchMap((job) => this.jobService.obterRecursoDoJob<GerenteResponse>(job)),
         finalize(() => this.salvando.set(false)),
       )
       .subscribe({
-        next: () => {
-          this.sucesso.set('Gerente cadastrado com sucesso!');
+        next: (gerente) => {
+          this.sucesso.set(gerente
+            ? `Gerente ${gerente.nome} cadastrado com sucesso!`
+            : 'Gerente cadastrado, mas não foi possível carregar seus dados.');
           this.mostrarFormulario.set(false);
           formulario.resetForm();
           this.carregarGerentes();
