@@ -1,12 +1,13 @@
 import requests
 
+from catalog_assert import assert_catalog_json
 from helpers import HEADERS, URL, auth_headers, salvar_token
 
 
 def test_t02a_without_token():
     resp = requests.get(URL + "/clientes/12912861012", headers=HEADERS, timeout=10)
     assert resp.status_code == 401
-    assert resp.json() == {"auth": False, "message": "Token não fornecido."}
+    assert_catalog_json("TX-R2A.md", "401 — Token ausente", resp.json())
 
 
 def test_t02b_invalid_token():
@@ -16,7 +17,7 @@ def test_t02b_invalid_token():
         timeout=10,
     )
     assert resp.status_code == 401
-    assert resp.json() == {"auth": False, "message": "Falha ao autenticar o token."}
+    assert_catalog_json("TX-R2A.md", "401 — Token inválido", resp.json())
 
 
 def test_t02c_login_invalid():
@@ -27,7 +28,7 @@ def test_t02c_login_invalid():
         timeout=10,
     )
     assert resp.status_code == 401
-    assert resp.json() == {"auth": False, "message": "Login inválido!"}
+    assert_catalog_json("TX-R2A.md", "401 — Credenciais inválidas", resp.json())
 
 
 def test_t02d_login_seed_cliente():
@@ -39,10 +40,7 @@ def test_t02d_login_seed_cliente():
     )
     assert resp.status_code == 200
     body = resp.json()
-    assert body["auth"] is True
-    assert body["tipo"] == "CLIENTE"
-    assert body["usuario"]["cpf"] == "12912861012"
-    assert "_links" not in body
+    assert_catalog_json("TX-R2A.md", "Response 200 — Autenticado (CLIENTE)", body)
     salvar_token(body["token"])
 
 
@@ -54,11 +52,7 @@ def test_t02e_login_seed_gerente():
         timeout=10,
     )
     assert resp.status_code == 200
-    body = resp.json()
-    assert body["auth"] is True
-    assert body["tipo"] == "GERENTE"
-    assert body["usuario"]["cpf"] == "98574307084"
-    assert "_links" not in body
+    assert_catalog_json("TX-R2A.md", "Response 200 — Autenticado (GERENTE)", resp.json())
 
 
 def test_t02f_logout_then_reuse_token():
@@ -71,10 +65,11 @@ def test_t02f_logout_then_reuse_token():
     token = login.json()["token"]
     logout = requests.post(URL + "/logout", headers=auth_headers(token), timeout=10)
     assert logout.status_code == 204
+    assert logout.text == ""
     reuse = requests.get(
         URL + "/clientes/12912861012",
         headers=auth_headers(token),
         timeout=10,
     )
     assert reuse.status_code == 401
-    assert reuse.json() == {"auth": False, "message": "Falha ao autenticar o token."}
+    assert_catalog_json("TX-R2A.md", "401 — Token inválido", reuse.json())

@@ -242,6 +242,24 @@ Cada arquivo é uma transação ponta a ponta. IDs são estáveis (letras + núm
 7. `TX-R16` + `TX-JOB-01` / `TX-JOB-02`  
 8. `TX-R2B` por último (invalida o token)
 
+### Suíte E2E automatizada (HTTPie CLI)
+
+Para rodar **todas** as transações acima em sequência (equivalente ao roteiro `transacoes/` + tutoriais `httpie/TX-*.md`), com cada resposta JSON validada contra `json-catalog/` (mesmo matcher de `backend/contract-tests`), RabbitMQ (SAGA) e senha em `outbox/` após R9:
+
+```powershell
+.\httpie\run-transacoes-e2e.ps1
+```
+
+ou:
+
+```powershell
+python httpie/run-transacoes-e2e.py
+```
+
+Opções: `--skip-rabbit` (sem checagem na porta 15672); `--with-pytest` (encadeia os 73 testes pytest depois). Relatório: `RELATORIO-HTTPIE-E2E.md` na raiz.
+
+**Não coberto de forma determinística no E2E live:** R11 502/503 (ver `backend/gateway` com mock), como no relatório de contract-tests.
+
 ---
 
 ## 10. Parar o ambiente

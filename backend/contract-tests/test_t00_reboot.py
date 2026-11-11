@@ -1,23 +1,20 @@
 import requests
 
+from catalog_assert import assert_catalog_json
 from helpers import HEADERS, URL
 
 
 def test_t00_reboot():
-    expected = {"status": "ok", "clientes": 5, "gerentes": 4, "contas": 5}
     first = requests.post(URL + "/reboot", headers=HEADERS, timeout=90)
     assert first.status_code == 200
-    assert first.json() == expected
-    assert "_links" not in first.json()
+    assert_catalog_json("TX-INFRA-02.md", "Response 200 — Seed recriado", first.json())
 
     second = requests.post(URL + "/reboot", headers=HEADERS, timeout=90)
     assert second.status_code == 200
-    assert second.json() == expected
-    assert second.json() == first.json()
+    assert_catalog_json("TX-INFRA-02.md", "Response 200 — Seed recriado", second.json())
 
 
 def test_t00b_health():
     resp = requests.get(URL + "/health", headers=HEADERS, timeout=10)
     assert resp.status_code == 200
-    assert resp.json() == {"status": "UP"}
-    assert "_links" not in resp.json()
+    assert_catalog_json("TX-INFRA-01.md", "Response 200 — Gateway no ar", resp.json())

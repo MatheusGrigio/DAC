@@ -1,5 +1,6 @@
 import requests
 
+from catalog_assert import assert_catalog_json, assert_job_accepted
 from helpers import (
     CPF_GADAMANTIO,
     CPF_GERENTE,
@@ -16,11 +17,7 @@ def test_t15_nao_remove_a_si_mesmo():
     token = login_gerente()
     resp = requests.delete(URL + f"/gerentes/{CPF_GERENTE}", headers=auth_headers(token), timeout=10)
     assert resp.status_code == 403, resp.text
-    assert resp.json() == {
-        "status": 403,
-        "erro": "Forbidden",
-        "mensagem": "Não é permitido remover a si mesmo",
-    }
+    assert_catalog_json("TX-R15.md", "Response 403 — sem job", resp.json())
 
 
 def test_t15_remove_gadamantio_e_inativo_nao_loga():
@@ -30,23 +27,16 @@ def test_t15_remove_gadamantio_e_inativo_nao_loga():
         headers=auth_headers(token),
         timeout=10,
     )
-    assert accepted.status_code == 202, accepted.text
-    body = accepted.json()
-    assert body["status"] == "PENDENTE"
-    assert "_links" not in body
+    body = assert_job_accepted(accepted, "TX-R15.md", "Response 202 — Job aceito")
     job = poll_job(body["jobId"], token)
-    assert job["status"] == "CONCLUIDO", job
-    assert job["resultType"] == "inline"
+    assert_catalog_json("TX-R15.md", "CONCLUIDO inline", job)
     result = requests.get(
         URL + f"/jobs/{body['jobId']}/result",
         headers=auth_headers(token),
         timeout=10,
     )
     assert result.status_code == 200, result.text
-    mensagem = result.json()["mensagem"]
-    assert mensagem.startswith("Gerente removido")
-    assert "contas transferidas para" in mensagem
-    assert "_links" not in result.json()
+    assert_catalog_json("TX-JOB-02.md", "Response 200 — Resultado R15", result.json())
     login = requests.post(
         URL + "/login",
         headers=HEADERS,
@@ -54,7 +44,7 @@ def test_t15_remove_gadamantio_e_inativo_nao_loga():
         timeout=10,
     )
     assert login.status_code == 401, login.text
-    assert login.json() == {"auth": False, "message": "Login inválido!"}
+    assert_catalog_json("TX-R2A.md", "401 — Credenciais inválidas", login.json())
     atualizacao = requests.put(
         URL + f"/gerentes/{CPF_GADAMANTIO}",
         headers=auth_headers(token),
@@ -62,11 +52,7 @@ def test_t15_remove_gadamantio_e_inativo_nao_loga():
         timeout=10,
     )
     assert atualizacao.status_code == 409, atualizacao.text
-    assert atualizacao.json() == {
-        "status": 409,
-        "erro": "Conflict",
-        "mensagem": "Gerente inativo",
-    }
+    assert_catalog_json("TX-R14.md", "409 — Gerente inativo", atualizacao.json())
 
 
 def test_t15_inexistente_ou_ja_inativo_falha_no_job():
@@ -76,16 +62,14 @@ def test_t15_inexistente_ou_ja_inativo_falha_no_job():
         headers=auth_headers(token),
         timeout=10,
     )
-    assert again.status_code == 202, again.text
-    job = poll_job(again.json()["jobId"], token)
-    assert job["status"] == "FALHA", job
-    assert job["erro"] == "Gerente não encontrado ou já inativo"
+    body = assert_job_accepted(again, "TX-R15.md", "Response 202 — Job aceito")
+    job = poll_job(body["jobId"], token)
+    assert_catalog_json("TX-R15.md", "Job FALHA (já inativo", job)
     missing = requests.delete(
         URL + "/gerentes/00000000000",
         headers=auth_headers(token),
         timeout=10,
     )
-    assert missing.status_code == 202, missing.text
-    missing_job = poll_job(missing.json()["jobId"], token)
-    assert missing_job["status"] == "FALHA", missing_job
-    assert missing_job["erro"] == "Gerente não encontrado ou já inativo"
+    missing_body = assert_job_accepted(missing, "TX-R15.md", "Response 202 — Job aceito")
+    missing_job = poll_job(missing_body["jobId"], token)
+    assert_catalog_json("TX-R15.md", "Job FALHA (já inativo", missing_job)

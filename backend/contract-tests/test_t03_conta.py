@@ -1,6 +1,7 @@
 import requests
 
-from helpers import CPF_CATHARYNA, CPF_CLEUDDONIO, URL, login_cliente, poll_saldo
+from catalog_assert import assert_catalog_json
+from helpers import CPF_CATHARYNA, CPF_CLEUDDONIO, URL, login_cliente
 
 
 def test_t03_own_account():
@@ -11,13 +12,7 @@ def test_t03_own_account():
         timeout=10,
     )
     assert resp.status_code == 200, resp.text
-    body = resp.json()
-    assert body["numero"] == "1291"
-    assert body["saldo"] == "800.00"
-    assert "deposito" in body["_links"]
-    assert "saque" in body["_links"]
-    assert "transferencia" in body["_links"]
-    assert "extrato" in body["_links"]
+    assert_catalog_json("TX-R3A.md", "Response 200 — CLIENTE dono", resp.json())
 
 
 def test_t03p_other_account_forbidden():
@@ -28,3 +23,4 @@ def test_t03p_other_account_forbidden():
         timeout=10,
     )
     assert resp.status_code == 403, resp.text
+    assert_catalog_json("TX-R3A.md", "403 — CLIENTE tentando conta de outro", resp.json())
