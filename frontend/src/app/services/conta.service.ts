@@ -62,6 +62,13 @@ export class ContaService {
     );
   }
 
+  transferir(numero: string, contaDestino: string, valor: Decimal): Observable<OperacaoResponse> {
+    return this.http.post<OperacaoResponse>(
+      `${this.API_GATEWAY}/contas/${numero}/transferencia`,
+      { contaDestino, valor: valor.toFixed(2) },
+    );
+  }
+
   aguardarSaldo(cpf: string, esperado: Decimal): Observable<Conta> {
     return timer(0, 1000).pipe(
       switchMap(() => this.carregar(cpf)),
