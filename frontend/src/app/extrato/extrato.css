@@ -1,0 +1,28 @@
+.filtro {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.extrato tr.saida td {
+  color: var(--saida);
+  background: rgba(179, 55, 47, 0.06);
+}
+
+.extrato tr.entrada td {
+  color: var(--entrada);
+  background: rgba(31, 79, 154, 0.06);
+}
+
+.extrato tr.saldo-dia td {
+  font-weight: 600;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--linha);
+}
+
+.sem-mov {
+  font-weight: 400;
+  color: var(--tinta-suave);
+}
