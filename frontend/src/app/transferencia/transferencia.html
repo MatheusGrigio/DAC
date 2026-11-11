@@ -4,7 +4,7 @@
       <h3 class="mb-0">Realizar Transferência</h3>
     </div>
     <div class="card-body">
-      <div *ngIf="mensagemFeedback" class="alert" [ngClass]="isError ? 'alert-danger' : 'alert-success'">
+      <div *ngIf="mensagemFeedback" class="alert" role="status" [ngClass]="isError ? 'alert-danger' : 'alert-success'">
         {{ mensagemFeedback }}
       </div>
       <form [formGroup]="transferenciaForm" (ngSubmit)="realizarTransferencia()">
@@ -16,31 +16,35 @@
             class="form-control" 
             formControlName="contaDestino" 
             placeholder="Ex: 1291"
+            inputmode="numeric"
+            maxlength="4"
+            [readOnly]="enviando"
             [ngClass]="{'is-invalid': transferenciaForm.get('contaDestino')?.invalid && transferenciaForm.get('contaDestino')?.touched}"
           >
           <div class="invalid-feedback">
-            Informe um número de conta válido.
+            Informe um número de conta com 4 dígitos.
           </div>
         </div>
 
         <div class="mb-3">
           <label for="valor" class="form-label">Valor (R$)</label>
           <input 
-            type="number" 
+            type="text"
             id="valor" 
             class="form-control" 
             formControlName="valor" 
-            placeholder="0.00" 
-            step="0.01"
+            placeholder="0,00"
+            inputmode="decimal"
+            [readOnly]="enviando"
             [ngClass]="{'is-invalid': transferenciaForm.get('valor')?.invalid && transferenciaForm.get('valor')?.touched}"
           >
           <div class="invalid-feedback">
-            O valor deve ser maior que zero.
+            Informe um valor com até duas casas decimais.
           </div>
         </div>
         <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary" [disabled]="transferenciaForm.invalid">
-            Confirmar Transferência
+          <button type="submit" class="btn btn-primary" [disabled]="transferenciaForm.invalid || enviando">
+            {{ enviando ? 'Processando...' : 'Confirmar Transferência' }}
           </button>
         </div>
       </form>
