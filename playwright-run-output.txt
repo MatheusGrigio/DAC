@@ -1,0 +1,14 @@
+Error: Gateway http://localhost:3000/health não respondeu UP a tempo
+
+   at ..\global-setup.ts:17
+
+  15 |     await new Promise((r) => setTimeout(r, 2000));
+  16 |   }
+> 17 |   throw new Error(`Gateway ${gateway}/health não respondeu UP a tempo`);
+     |         ^
+  18 | }
+  19 |
+  20 | async function reboot(): Promise<void> {
+    at waitHealth (C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\global-setup.ts:17:9)
+    at globalSetup (C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\global-setup.ts:32:3)
+

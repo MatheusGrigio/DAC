@@ -1,0 +1,402 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.6, pytest-8.3.5, pluggy-1.6.0 -- C:\Program Files\Python313\python.exe
+cachedir: .pytest_cache
+código de verificação da suíte: 344FA766AAC4
+integridade: OK — suíte idêntica à publicada
+rootdir: C:\Users\zuria\CODE\UFPR\DAC\DAC\test_bantads-main
+configfile: pytest.ini
+plugins: anyio-4.11.0, Faker-37.4.0, timeout-2.3.1
+collecting ... collected 81 items
+
+test_00_reboot.py::REBOOT_1 PASSED                                       [  1%]
+test_00_reboot.py::REBOOT_verifica_login_seed_2 PASSED                   [  2%]
+test_00_reboot.py::REBOOT_verifica_gerentes_seed_3 PASSED                [  3%]
+test_00_reboot.py::REBOOT_verifica_saldo_seed_4 PASSED                   [  4%]
+test_01_health.py::HEALTH_status_1 PASSED                                [  6%]
+test_02_login.py::R02_login_sucesso_1 PASSED                             [  7%]
+test_02_login.py::R02_login_invalido_2 PASSED                            [  8%]
+test_02_login.py::R02_token_nao_fornecido_3 PASSED                       [  9%]
+test_02_login.py::R02_token_invalido_4 PASSED                            [ 11%]
+test_02_login.py::R02_logout_5 PASSED                                    [ 12%]
+test_03_solicitacoes.py::R01_autocadastro_sucesso_1 PASSED               [ 13%]
+test_03_solicitacoes.py::R01_autocadastro_cpf_duplicado_2 PASSED         [ 14%]
+test_03_solicitacoes.py::R01_autocadastro_dados_invalidos_3 PASSED       [ 16%]
+test_03_solicitacoes.py::R08_listar_solicitacoes_1 FAILED                [ 17%]
+test_03_solicitacoes.py::R08_obter_solicitacao_2 FAILED                  [ 18%]
+test_03_solicitacoes.py::R09_aprovar_cliente_1 FAILED                    [ 19%]
+test_03_solicitacoes.py::R09_aprovar_novamente_falha_2 FAILED            [ 20%]
+test_03_solicitacoes.py::R10_rejeitar_cliente_1 FAILED                   [ 22%]
+test_03_solicitacoes.py::R10_rejeitar_inexistente_2 FAILED               [ 23%]
+test_04_clientes.py::R03_conta_do_cliente_1 PASSED                       [ 24%]
+test_04_clientes.py::R03_conta_de_outro_cliente_negada_2 PASSED          [ 25%]
+test_04_clientes.py::R11_listar_clientes_1 FAILED                        [ 27%]
+test_04_clientes.py::R11_buscar_cliente_2 FAILED                         [ 28%]
+test_04_clientes.py::R11_obter_cliente_3 FAILED                          [ 29%]
+test_05_contas.py::R03_obter_conta_por_numero_1 PASSED                   [ 30%]
+test_05_contas.py::R04_deposito_1 PASSED                                 [ 32%]
+test_05_contas.py::R04_deposito_em_conta_alheia_negado_2 PASSED          [ 33%]
+test_05_contas.py::R05_saque_1 PASSED                                    [ 34%]
+test_05_contas.py::R05_saque_saldo_insuficiente_2 PASSED                 [ 35%]
+test_05_contas.py::R06_transferencia_1 FAILED                            [ 37%]
+test_05_contas.py::R06_transferencia_conta_inexistente_2 PASSED          [ 38%]
+test_05_contas.py::R06_transferencia_para_si_mesmo_3 PASSED              [ 39%]
+test_05_contas.py::R07_extrato_1 PASSED                                  [ 40%]
+test_05_contas.py::R07_extrato_intervalo_maior_que_365_2 PASSED          [ 41%]
+test_06_gerentes.py::R12_listar_gerentes_1 FAILED                        [ 43%]
+test_06_gerentes.py::R12_obter_gerente_2 FAILED                          [ 44%]
+test_06_gerentes.py::R13_inserir_gerente_1 FAILED                        [ 45%]
+test_06_gerentes.py::R13_inserir_email_duplicado_2 FAILED                [ 46%]
+test_06_gerentes.py::R14_atualizar_gerente_1 SKIPPED (requer
+'gerente_novo' no cache.json — rode a bateria completa (ex.: 'pytest'))  [ 48%]
+test_06_gerentes.py::R14_email_imutavel_2 SKIPPED (requer 'gerente_novo'
+no cache.json — rode a bateria completa (ex.: 'pytest'))                 [ 49%]
+test_06_gerentes.py::R15_remover_gerente_1 SKIPPED (requer
+'gerente_novo' no cache.json — rode a bateria completa (ex.: 'pytest'))  [ 50%]
+test_06_gerentes.py::R15_remover_a_si_mesmo_2 FAILED                     [ 51%]
+test_06_gerentes.py::R15_logout_forcado_3 FAILED                         [ 53%]
+test_07_relatorio.py::R16_relatorio_clientes_1 FAILED                    [ 54%]
+test_08_jobs.py::JOB_status_1 FAILED                                     [ 55%]
+test_08_jobs.py::JOB_result_2 SKIPPED (requer 'job_inline' no cache.json
+— rode a bateria completa (ex.: 'pytest'))                               [ 56%]
+test_08_jobs.py::JOB_status_inexistente_3 FAILED                         [ 58%]
+test_09_novos_usuarios.py::R13_gerente_novo_inserir_1 FAILED             [ 59%]
+test_09_novos_usuarios.py::R13_gerente_novo_inserir_2 FAILED             [ 60%]
+test_09_novos_usuarios.py::R02_gerente_novo_login_3 SKIPPED (requer
+'ger_novo_1' no cache.json — rode a bateria completa (ex.: 'pytest'))    [ 61%]
+test_09_novos_usuarios.py::R12_gerente_novo_lista_gerentes_4 SKIPPEDex.:
+'pytest'))                                                               [ 62%]
+test_09_novos_usuarios.py::R01_cliente_novo_autocadastro_5 PASSED        [ 64%]
+test_09_novos_usuarios.py::R09_gerente_novo_aprova_cliente_6 SKIPPEDex.:
+'pytest'))                                                               [ 65%]
+test_09_novos_usuarios.py::R02_login_cliente_novo_1_7 SKIPPED (teste
+interativo: rode 'pytest' num terminal real para digitar a senha)        [ 66%]
+test_09_novos_usuarios.py::R01_cliente_novo_autocadastro_8 PASSED        [ 67%]
+test_09_novos_usuarios.py::R09_aprova_cliente_novo_9 FAILED              [ 69%]
+test_09_novos_usuarios.py::R02_login_cliente_novo_2_10 SKIPPED (teste
+interativo: rode 'pytest' num terminal real para digitar a senha)        [ 70%]
+test_09_novos_usuarios.py::R11_cliente_novo_na_listagem_11 SKIPPED (ex.:
+'pytest'))                                                               [ 71%]
+test_09_novos_usuarios.py::R16_cliente_novo_no_relatorio_12 SKIPPED(ex.:
+'pytest'))                                                               [ 72%]
+test_09_novos_usuarios.py::R02_gerente_novo_login_2_13 SKIPPED (requer
+'ger_novo_2' no cache.json — rode a bateria completa (ex.: 'pytest'))    [ 74%]
+test_09_novos_usuarios.py::R12_gerente_novo_2_lista_gerentes_14 SKIPPED:
+'pytest'))                                                               [ 75%]
+test_09_novos_usuarios.py::R11_gerente_novo_2_lista_clientes_15 SKIPPED:
+'pytest'))                                                               [ 76%]
+test_09_novos_usuarios.py::R16_gerente_novo_2_relatorio_16 SKIPPED (ex.:
+'pytest'))                                                               [ 77%]
+test_09_novos_usuarios.py::R14_gerente_novo_atualizar_17 SKIPPED (requer
+'ger_novo_1' no cache.json — rode a bateria completa (ex.: 'pytest'))    [ 79%]
+test_09_novos_usuarios.py::R15_gerente_novo_remover_18 SKIPPED (requer
+'token_ger_novo_1' no cache.json — rode a bateria completa (ex.:
+'pytest'))                                                               [ 80%]
+test_10_contas_cliente_novo.py::R03_cliente_novo_conta_alheia_negada_1 SKIPPED: 'pytest')) [ 81%]
+test_10_contas_cliente_novo.py::R04_cliente_novo_deposito_conta_alheia_negado_2 SKIPPED: 'pytest')) [ 82%]
+test_10_contas_cliente_novo.py::R04_cliente_novo_deposito_3 SKIPPED(ex.:
+'pytest'))                                                               [ 83%]
+test_10_contas_cliente_novo.py::R05_cliente_novo_saque_4 SKIPPED (requer
+'token_cli_novo_1' no cache.json — rode a bateria completa (ex.:
+'pytest'))                                                               [ 85%]
+test_10_contas_cliente_novo.py::R05_cliente_novo_saque_insuficiente_5 SKIPPED: 'pytest')) [ 86%]
+test_10_contas_cliente_novo.py::R06_cliente_novo_transferencia_6 SKIPPED: 'pytest')) [ 87%]
+test_10_contas_cliente_novo.py::R06_cliente_novo_transferencia_para_si_7 SKIPPED: 'pytest')) [ 88%]
+test_10_contas_cliente_novo.py::R06_cliente_novo_transferencia_conta_inexistente_8 SKIPPED: 'pytest')) [ 90%]
+test_10_contas_cliente_novo.py::R07_cliente_novo_extrato_9 SKIPPED (ex.:
+'pytest'))                                                               [ 91%]
+test_10_contas_cliente_novo.py::R07_cliente_novo_extrato_intervalo_10 SKIPPED: 'pytest')) [ 92%]
+test_11_autorizacao.py::R04_gerente_novo_nao_deposita_1 SKIPPED (requer
+'token_ger_novo_1' no cache.json — rode a bateria completa (ex.:
+'pytest'))                                                               [ 93%]
+test_11_autorizacao.py::R05_gerente_novo_nao_saca_2 SKIPPED (requer
+'token_ger_novo_1' no cache.json — rode a bateria completa (ex.:
+'pytest'))                                                               [ 95%]
+test_11_autorizacao.py::R06_gerente_novo_nao_transfere_3 SKIPPED (requer
+'token_ger_novo_1' no cache.json — rode a bateria completa (ex.:
+'pytest'))                                                               [ 96%]
+test_11_autorizacao.py::R03_gerente_novo_ve_conta_4 SKIPPED (requer
+'token_ger_novo_1' no cache.json — rode a bateria completa (ex.:
+'pytest'))                                                               [ 97%]
+test_11_autorizacao.py::R07_gerente_novo_ve_extrato_5 SKIPPED (requer
+'token_ger_novo_1' no cache.json — rode a bateria completa (ex.:
+'pytest'))                                                               [ 98%]
+test_11_autorizacao.py::R12_cliente_novo_nao_lista_gerentes_6 SKIPPEDx.:
+'pytest'))                                                               [100%]
+
+================================== FAILURES ===================================
+__________________________ R08_listar_solicitacoes_1 __________________________
+
+    def R08_listar_solicitacoes_1():
+        r = b.get("/solicitacoes", token=b.token("gerente"))
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_03_solicitacoes.py:34: AssertionError
+___________________________ R08_obter_solicitacao_2 ___________________________
+
+    def R08_obter_solicitacao_2():
+        cpf = b.exigir("solicitacao")["cpf"]
+        r = b.get(f"/solicitacoes/{cpf}", token=b.token("gerente"))
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_03_solicitacoes.py:41: AssertionError
+____________________________ R09_aprovar_cliente_1 ____________________________
+
+    def R09_aprovar_cliente_1():
+        cpf = b.exigir("solicitacao")["cpf"]
+        r = b.post(f"/solicitacoes/{cpf}/aprovacao", token=b.token("gerente"))
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_03_solicitacoes.py:49: AssertionError
+________________________ R09_aprovar_novamente_falha_2 ________________________
+
+    def R09_aprovar_novamente_falha_2():
+        cpf = b.exigir("solicitacao")["cpf"]
+        r = b.post(f"/solicitacoes/{cpf}/aprovacao", token=b.token("gerente"))
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_03_solicitacoes.py:63: AssertionError
+___________________________ R10_rejeitar_cliente_1 ____________________________
+
+    def R10_rejeitar_cliente_1():
+        cpf = b.novo_cpf()
+        b.post("/solicitacoes", {"cpf": cpf, "nome": "Beltrano", "email": b.novo_email("beltrano"),
+                                 "telefone": "41999990001", "salario": "800.00", "endereco": _endereco()})
+        r = b.post(f"/solicitacoes/{cpf}/rejeicao", {"motivo": "renda insuficiente"},
+                   token=b.token("gerente"))
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_03_solicitacoes.py:75: AssertionError
+_________________________ R10_rejeitar_inexistente_2 __________________________
+
+    def R10_rejeitar_inexistente_2():
+        r = b.post("/solicitacoes/00000000000/rejeicao", {"motivo": "x"}, token=b.token("gerente"))
+>       assert r.status_code == 404
+E       assert 401 == 404
+E        +  where 401 = <Response [401]>.status_code
+
+test_03_solicitacoes.py:82: AssertionError
+____________________________ R11_listar_clientes_1 ____________________________
+
+    def R11_listar_clientes_1():
+        r = b.get("/clientes", token=b.token("gerente"))
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_04_clientes.py:23: AssertionError
+____________________________ R11_buscar_cliente_2 _____________________________
+
+    def R11_buscar_cliente_2():
+        r = b.get("/clientes", token=b.token("gerente"), busca="cat")
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_04_clientes.py:30: AssertionError
+_____________________________ R11_obter_cliente_3 _____________________________
+
+    def R11_obter_cliente_3():
+        r = b.get("/clientes/12912861012", token=b.token("gerente"))
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_04_clientes.py:37: AssertionError
+_____________________________ R06_transferencia_1 _____________________________
+
+    def R06_transferencia_1():
+        tok = b.token("cliente")
+        ger = b.token("gerente")
+        origem_antes = b.saldo_conta(CONTA, tok)
+>       destino_antes = b.saldo_conta("0950", ger)  # conta do cli2, lida pelo gerente
+
+test_05_contas.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+numero = '0950'
+token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjcGYiOiI5ODU3NDMwNzA4NCIsInRpcG8iOiJHRVJFTlRFIiwianRpIjoiYjY0N2Y5YmEtM2M5Yy00MjExLTlhNmItZjI0ZDcwNTFiNmJhIiwiaWF0IjoxNzk0NjkwMjE5LCJleHAiOjE3OTQ3MTkwMTl9.Dkwty_h00OBB6AVmytIXgxndSlQmxtqV6P3eJgnMgRs'
+
+    def saldo_conta(numero, token):
+>       return dec(get(f"/contas/{numero}", token=token).json()["saldo"])
+E       KeyError: 'saldo'
+
+bantads.py:222: KeyError
+____________________________ R12_listar_gerentes_1 ____________________________
+
+    def R12_listar_gerentes_1():
+        r = b.get("/gerentes", token=b.token("gerente"))
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_06_gerentes.py:9: AssertionError
+_____________________________ R12_obter_gerente_2 _____________________________
+
+    def R12_obter_gerente_2():
+        r = b.get(f"/gerentes/{GER1}", token=b.token("gerente"))
+>       assert r.status_code == 200
+E       assert 401 == 200
+E        +  where 401 = <Response [401]>.status_code
+
+test_06_gerentes.py:19: AssertionError
+____________________________ R13_inserir_gerente_1 ____________________________
+
+    def R13_inserir_gerente_1():
+        cpf = b.novo_cpf()
+        corpo = {"cpf": cpf, "nome": "Gerente Novo", "email": b.novo_email("ger"),
+                 "telefone": "41988887777", "senha": "tads"}
+        r = b.post("/gerentes", corpo, token=b.token("gerente"))
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_06_gerentes.py:29: AssertionError
+________________________ R13_inserir_email_duplicado_2 ________________________
+
+    def R13_inserir_email_duplicado_2():
+        corpo = {"cpf": b.novo_cpf(), "nome": "Colide", "email": "ger1@bantads.com.br",
+                 "telefone": "41000", "senha": "tads"}
+        r = b.post("/gerentes", corpo, token=b.token("gerente"))
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_06_gerentes.py:41: AssertionError
+__________________________ R15_remover_a_si_mesmo_2 ___________________________
+
+    def R15_remover_a_si_mesmo_2():
+        # o gerente logado (ger1) tentando remover a si mesmo -> 403 (antes da SAGA)
+        r = b.delete(f"/gerentes/{GER1}", token=b.token("gerente"))
+>       assert r.status_code == 403
+E       assert 401 == 403
+E        +  where 401 = <Response [401]>.status_code
+
+test_06_gerentes.py:76: AssertionError
+____________________________ R15_logout_forcado_3 _____________________________
+
+    def R15_logout_forcado_3():
+        # ao remover um gerente, sua sessão é encerrada no Redis (logout forçado):
+        # um token que ele tinha deixa de valer imediatamente.
+        cpf, email = b.novo_cpf(), b.novo_email("efemero")
+        r = b.post("/gerentes", {"cpf": cpf, "nome": "Efêmero", "email": email,
+                                 "telefone": "41000", "senha": "tads"}, token=b.token("gerente"))
+>       b.poll_job(r.json()["jobId"], b.token("gerente"))
+E       KeyError: 'jobId'
+
+test_06_gerentes.py:85: KeyError
+__________________________ R16_relatorio_clientes_1 ___________________________
+
+    def R16_relatorio_clientes_1():
+        tok = b.token("gerente")
+        r = b.get("/relatorios/clientes", token=tok)
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_07_relatorio.py:10: AssertionError
+________________________________ JOB_status_1 _________________________________
+
+    def JOB_status_1():
+        tok = b.token("gerente")
+        # dispara um relatório (operação assíncrona) para ter um job
+>       job_id = b.get("/relatorios/clientes", token=tok).json()["jobId"]
+E       KeyError: 'jobId'
+
+test_08_jobs.py:8: KeyError
+__________________________ JOB_status_inexistente_3 ___________________________
+
+    def JOB_status_inexistente_3():
+        r = b.get("/jobs/nao-existe-123/status", token=b.token("gerente"))
+>       assert r.status_code == 404
+E       assert 401 == 404
+E        +  where 401 = <Response [401]>.status_code
+
+test_08_jobs.py:28: AssertionError
+_________________________ R13_gerente_novo_inserir_1 __________________________
+
+    def R13_gerente_novo_inserir_1():
+        cpf, email = b.novo_cpf(), b.CONFIG["novos_gerentes"][0]
+        r = b.post("/gerentes", {"cpf": cpf, "nome": "Gerente Novo 1", "email": email,
+                                 "telefone": "41990000001", "senha": SENHA_GER},
+                   token=b.token("gerente"))
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_09_novos_usuarios.py:40: AssertionError
+_________________________ R13_gerente_novo_inserir_2 __________________________
+
+    def R13_gerente_novo_inserir_2():
+        cpf, email = b.novo_cpf(), b.CONFIG["novos_gerentes"][1]
+        r = b.post("/gerentes", {"cpf": cpf, "nome": "Gerente Novo 2", "email": email,
+                                 "telefone": "41990000002", "senha": SENHA_GER},
+                   token=b.token("gerente"))
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_09_novos_usuarios.py:52: AssertionError
+__________________________ R09_aprova_cliente_novo_9 __________________________
+
+    def R09_aprova_cliente_novo_9():
+        # o cliente novo 2 é aprovado por um gerente do seed
+        cpf = b.exigir("cli_novo_2")["cpf"]
+        r = b.post(f"/solicitacoes/{cpf}/aprovacao", token=b.token("gerente"))
+>       assert r.status_code == 202
+E       assert 401 == 202
+E        +  where 401 = <Response [401]>.status_code
+
+test_09_novos_usuarios.py:128: AssertionError
+=========================== short test summary info ===========================
+FAILED test_03_solicitacoes.py::R08_listar_solicitacoes_1 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_03_solicitacoes.py::R08_obter_solicitacao_2 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_03_solicitacoes.py::R09_aprovar_cliente_1 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+FAILED test_03_solicitacoes.py::R09_aprovar_novamente_falha_2 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+FAILED test_03_solicitacoes.py::R10_rejeitar_cliente_1 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_03_solicitacoes.py::R10_rejeitar_inexistente_2 - assert 401 == 404
+ +  where 401 = <Response [401]>.status_code
+FAILED test_04_clientes.py::R11_listar_clientes_1 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_04_clientes.py::R11_buscar_cliente_2 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_04_clientes.py::R11_obter_cliente_3 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_05_contas.py::R06_transferencia_1 - KeyError: 'saldo'
+FAILED test_06_gerentes.py::R12_listar_gerentes_1 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_06_gerentes.py::R12_obter_gerente_2 - assert 401 == 200
+ +  where 401 = <Response [401]>.status_code
+FAILED test_06_gerentes.py::R13_inserir_gerente_1 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+FAILED test_06_gerentes.py::R13_inserir_email_duplicado_2 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+FAILED test_06_gerentes.py::R15_remover_a_si_mesmo_2 - assert 401 == 403
+ +  where 401 = <Response [401]>.status_code
+FAILED test_06_gerentes.py::R15_logout_forcado_3 - KeyError: 'jobId'
+FAILED test_07_relatorio.py::R16_relatorio_clientes_1 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+FAILED test_08_jobs.py::JOB_status_1 - KeyError: 'jobId'
+FAILED test_08_jobs.py::JOB_status_inexistente_3 - assert 401 == 404
+ +  where 401 = <Response [401]>.status_code
+FAILED test_09_novos_usuarios.py::R13_gerente_novo_inserir_1 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+FAILED test_09_novos_usuarios.py::R13_gerente_novo_inserir_2 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+FAILED test_09_novos_usuarios.py::R09_aprova_cliente_novo_9 - assert 401 == 202
+ +  where 401 = <Response [401]>.status_code
+================== 22 failed, 26 passed, 33 skipped in 5.05s ==================

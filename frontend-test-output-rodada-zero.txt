@@ -1,0 +1,97 @@
+
+> bantads-frontend@0.0.0 test
+> ng test --watch=false
+
+❯ Building...
+✔ Building...
+Initial chunk files                         | Names                                    |  Raw size
+styles.css                                  | styles                                   | 279.66 kB | 
+scripts.js                                  | scripts                                  |  78.70 kB | 
+spec-app-gerente-gerente.js                 | spec-app-gerente-gerente                 |  35.65 kB | 
+spec-app-gerente-dashboard-dashboard.js     | spec-app-gerente-dashboard-dashboard     |  33.76 kB | 
+spec-app-pages-home-home.js                 | spec-app-pages-home-home                 |  30.67 kB | 
+spec-app-pages-login-login.js               | spec-app-pages-login-login               |  13.00 kB | 
+spec-app-saque-saque.js                     | spec-app-saque-saque                     |  12.98 kB | 
+spec-app-deposito-deposito.js               | spec-app-deposito-deposito               |  12.62 kB | 
+chunk-AI6WFBRS.js                           | -                                        |   5.20 kB | 
+chunk-CGZBV6BD.js                           | -                                        |   4.07 kB | 
+chunk-VQJBMPEL.js                           | -                                        |   3.04 kB | 
+chunk-HUBRJX6X.js                           | -                                        |   2.63 kB | 
+spec-app-services-job.service.js            | spec-app-services-job.service            |   2.07 kB | 
+chunk-L2TBL2QO.js                           | -                                        |   1.91 kB | 
+chunk-DC5FPLS6.js                           | -                                        |   1.89 kB | 
+chunk-26QBGKTA.js                           | -                                        |   1.70 kB | 
+spec-app-app.js                             | spec-app-app                             |   1.70 kB | 
+spec-app-pages-admin-admin.js               | spec-app-pages-admin-admin               |   1.63 kB | 
+chunk-HOU7MSVD.js                           | -                                        |   1.33 kB | 
+init-testbed.js                             | init-testbed                             |   1.21 kB | 
+spec-app-services-login.js                  | spec-app-services-login                  |   1.01 kB | 
+vitest-mock-patch.js                        | vitest-mock-patch                        | 974 bytes | 
+spec-app-services-auth.js                   | spec-app-services-auth                   | 730 bytes | 
+spec-app-shared-components-button-button.js | spec-app-shared-components-button-button | 633 bytes | 
+spec-app-shared-components-alert-alert.js   | spec-app-shared-components-alert-alert   | 625 bytes | 
+chunk-PFXUJ42W.js                           | -                                        | 447 bytes | 
+chunk-YP2C7IUU.js                           | -                                        | 183 bytes | 
+spec-app-pages-autocadastro-autocadastro.js | spec-app-pages-autocadastro-autocadastro |  69 bytes | 
+
+                                            | Initial total                            | 530.07 kB
+
+Application bundle generation complete. [3.557 seconds] - 2026-11-14T23:25:48.957Z
+
+
+ RUN  v4.1.10 C:/Users/zuria/CODE/UFPR/DAC/DAC/frontend
+
+ ❯ |hello-world| src/app/pages/autocadastro/autocadastro.spec.ts (0 test)
+ ❯ |hello-world| src/app/deposito/deposito.spec.ts (1 test | 1 failed) 180ms
+     × should create 176ms
+ ❯ |hello-world| src/app/saque/saque.spec.ts (1 test | 1 failed) 217ms
+     × should create 214ms
+ ❯ |hello-world| src/app/pages/login/login.spec.ts (1 test | 1 failed) 155ms
+     × should create 153ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |hello-world| src/app/pages/autocadastro/autocadastro.spec.ts [ src/app/pages/autocadastro/autocadastro.spec.ts ]
+Error: No test suite found in file C:/Users/zuria/CODE/UFPR/DAC/DAC/frontend/src/app/pages/autocadastro/autocadastro.spec.ts
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |hello-world| src/app/deposito/deposito.spec.ts > Deposito > should create
+ FAIL  |hello-world| src/app/saque/saque.spec.ts > Saque > should create
+ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: DynamicTestModule. Find more at https://v21.angular.dev/errors/NG0201
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:16
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:20
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/chained_injector.ts:43:31
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:426:63
+ ❯ lookupTokenUsingModuleInjector ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:493:9
+ ❯ getOrCreateInjectable ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/di.ts:58:16
+ ❯ NodeInjectorFactory.RouterLink_Factory [as factory] ng:/RouterLink/ɵfac.js:6:7
+ ❯ factory ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:785:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |hello-world| src/app/pages/login/login.spec.ts > Login > should create
+ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[_Login]. Find more at https://v21.angular.dev/errors/NG0201
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:16
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:20
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/chained_injector.ts:43:31
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:426:63
+ ❯ lookupTokenUsingModuleInjector ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:493:9
+ ❯ getOrCreateInjectable ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/di.ts:58:16
+ ❯ NodeInjectorFactory.RouterLink_Factory [as factory] ng:/RouterLink/ɵfac.js:6:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  4 failed | 10 passed (14)
+      Tests  3 failed | 13 passed (16)
+   Start at  20:25:51
+   Duration  22.70s (transform 2.21s, setup 13.61s, import 4.76s, tests 2.21s, environment 243.66s)
+

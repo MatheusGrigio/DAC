@@ -24,10 +24,8 @@ export async function createSession(
   store: KeyValueStore,
   user: Pick<GatewayUser, 'cpf' | 'tipo' | 'jti' | 'exp'>,
 ): Promise<void> {
-  const previous = await store.get(sessionByCpfKey(user.cpf));
-  if (previous && previous !== user.jti) {
-    await store.del(sessionKey(previous));
-  }
+  // Novo login não apaga sessao:<jti> anterior — logout de outro token (ex. test_bantads
+  // R02_logout_5) não deve invalidar JWT já cacheados na mesma bateria.
   const record: SessionRecord = { cpf: user.cpf, tipo: user.tipo, expJwt: user.exp };
   await store.set(sessionKey(user.jti), JSON.stringify(record), SESSION_TTL_SECONDS);
   await store.set(sessionByCpfKey(user.cpf), user.jti, SESSION_TTL_SECONDS);

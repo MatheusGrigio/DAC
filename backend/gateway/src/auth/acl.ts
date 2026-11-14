@@ -56,7 +56,7 @@ export function accessFor(method: string, path: string): Access | { kind: 'unkno
     return { kind: 'gerenteOrSelf' };
   }
   if (method === 'GET' && /^\/contas\/\d{4}\/extrato$/.test(path)) {
-    return { kind: 'cliente' };
+    return { kind: 'gerenteOrSelf' };
   }
   if (method === 'POST' && /^\/contas\/\d{4}\/(deposito|saque|transferencia)$/.test(path)) {
     return { kind: 'cliente' };

@@ -22,9 +22,10 @@ function paraSolicitacao(r: SolicitacaoResponse): Solicitacao {
     salario: new Decimal(r.salario),
     status: r.status,
     motivo: r.motivo ?? undefined,
-    dataHoraProcessamento: r.dataHoraProcessamento
-      ? DateTime.fromISO(r.dataHoraProcessamento)
-      : null,
+    dataHoraProcessamento:
+      r.dataHoraProcessamento && DateTime.fromISO(r.dataHoraProcessamento).isValid
+        ? DateTime.fromISO(r.dataHoraProcessamento)
+        : null,
     endereco: r.endereco,
     _links: r._links,
   };
@@ -53,7 +54,15 @@ export class SolicitacaoService {
       .get<SolicitacaoListaResponse>(this.apiUrl, { params })
       .pipe(
         map((res) => ({
-          solicitacoes: (res.solicitacoes || []).map(paraSolicitacao),
+          solicitacoes: (res.solicitacoes || [])
+            .map((item) => {
+              try {
+                return paraSolicitacao(item);
+              } catch {
+                return null;
+              }
+            })
+            .filter((item): item is Solicitacao => item !== null),
         })),
       );
   }

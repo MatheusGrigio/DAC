@@ -1,8 +1,8 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs';
 import { AuthService, SolicitacaoService, JobService } from '../../services';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
@@ -25,68 +25,73 @@ export class DashboardGerenteComponent implements OnInit {
   private jobService = inject(JobService);
   private destroyRef = inject(DestroyRef);
 
-  solicitacoes: Solicitacao[] = [];
-  loading = false;
-  processandoCpf: string | null = null;
-  error = '';
-  mensagemSucesso = '';
-  detalheCpf: string | null = null;
-  detalhe: Solicitacao | null = null;
-  carregandoDetalhe = false;
+  readonly solicitacoes = signal<Solicitacao[]>([]);
+  readonly loading = signal(false);
+  readonly processandoCpf = signal<string | null>(null);
+  readonly error = signal('');
+  readonly mensagemSucesso = signal('');
+  readonly detalheCpf = signal<string | null>(null);
+  readonly detalhe = signal<Solicitacao | null>(null);
+  readonly carregandoDetalhe = signal(false);
 
   get usuario() {
     return this.authService.usuarioLogado();
   }
 
   ngOnInit() {
-    this.carregarSolicitacoes();
+    queueMicrotask(() => this.carregarSolicitacoes());
   }
 
   carregarSolicitacoes() {
-    this.loading = true;
-    this.error = '';
-    this.solicitacaoService.listar().subscribe({
-      next: (res) => {
-        this.solicitacoes = res.solicitacoes || [];
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Falha ao carregar solicitações.';
-        this.loading = false;
-      },
-    });
+    if (this.loading()) return;
+    this.loading.set(true);
+    this.error.set('');
+    this.solicitacaoService
+      .listar()
+      .pipe(
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (res) => {
+          this.solicitacoes.set(res.solicitacoes ?? []);
+        },
+        error: () => {
+          this.error.set('Falha ao carregar solicitações.');
+        },
+      });
   }
 
   verDetalhes(cpf: string) {
-    if (this.detalheCpf === cpf && this.detalhe) {
-      this.detalheCpf = null;
-      this.detalhe = null;
+    if (this.detalheCpf() === cpf && this.detalhe()) {
+      this.detalheCpf.set(null);
+      this.detalhe.set(null);
       return;
     }
-    this.carregandoDetalhe = true;
-    this.detalheCpf = cpf;
-    this.detalhe = null;
+    this.carregandoDetalhe.set(true);
+    this.detalheCpf.set(cpf);
+    this.detalhe.set(null);
     this.solicitacaoService
       .obter(cpf)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (s) => {
-          this.detalhe = s;
-          this.carregandoDetalhe = false;
+          this.detalhe.set(s);
+          this.carregandoDetalhe.set(false);
         },
         error: () => {
-          this.error = 'Não foi possível carregar os detalhes da solicitação.';
-          this.detalheCpf = null;
-          this.carregandoDetalhe = false;
+          this.error.set('Não foi possível carregar os detalhes da solicitação.');
+          this.detalheCpf.set(null);
+          this.carregandoDetalhe.set(false);
         },
       });
   }
 
   aprovar(cpf: string) {
     if (!confirm('Deseja realmente aprovar este cliente?')) return;
-    this.processandoCpf = cpf;
-    this.error = '';
-    this.mensagemSucesso = '';
+    this.processandoCpf.set(cpf);
+    this.error.set('');
+    this.mensagemSucesso.set('');
 
     this.solicitacaoService
       .aprovar(cpf)
@@ -96,16 +101,17 @@ export class DashboardGerenteComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.processandoCpf = null;
-          this.mensagemSucesso = 'Cliente aprovado com sucesso!';
+          this.processandoCpf.set(null);
+          this.mensagemSucesso.set('Cliente aprovado com sucesso!');
           this.carregarSolicitacoes();
         },
         error: (err) => {
-          this.processandoCpf = null;
-          this.error =
+          this.processandoCpf.set(null);
+          this.error.set(
             err.name === 'TimeoutError'
               ? 'A aprovação demorou para concluir. Verifique a lista e tente novamente.'
-              : mensagemDeErro(err, 'Erro ao processar aprovação do cliente.');
+              : mensagemDeErro(err, 'Erro ao processar aprovação do cliente.'),
+          );
           this.carregarSolicitacoes();
         },
       });
@@ -114,22 +120,22 @@ export class DashboardGerenteComponent implements OnInit {
   rejeitar(cpf: string) {
     const motivo = prompt('Informe o motivo da rejeição:');
     if (motivo && motivo.trim()) {
-      this.processandoCpf = cpf;
-      this.error = '';
-      this.mensagemSucesso = '';
+      this.processandoCpf.set(cpf);
+      this.error.set('');
+      this.mensagemSucesso.set('');
 
       this.solicitacaoService
         .rejeitar(cpf, motivo.trim())
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
-            this.processandoCpf = null;
-            this.mensagemSucesso = 'Cliente rejeitado com sucesso.';
+            this.processandoCpf.set(null);
+            this.mensagemSucesso.set('Cliente rejeitado com sucesso.');
             this.carregarSolicitacoes();
           },
           error: (err) => {
-            this.processandoCpf = null;
-            this.error = mensagemDeErro(err, 'Erro ao rejeitar cliente.');
+            this.processandoCpf.set(null);
+            this.error.set(mensagemDeErro(err, 'Erro ao rejeitar cliente.'));
           },
         });
     }

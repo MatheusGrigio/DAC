@@ -1,0 +1,140 @@
+
+> bantads-frontend@0.0.0 test
+> ng test --watch=false
+
+> Building...
+√ Building...
+Initial chunk files                         | Names                                    |  Raw size
+styles.css                                  | styles                                   | 279.66 kB | 
+scripts.js                                  | scripts                                  |  78.70 kB | 
+spec-app-gerente-gerente.js                 | spec-app-gerente-gerente                 |  35.62 kB | 
+spec-app-gerente-dashboard-dashboard.js     | spec-app-gerente-dashboard-dashboard     |  31.46 kB | 
+spec-app-pages-home-home.js                 | spec-app-pages-home-home                 |  30.67 kB | 
+spec-app-saque-saque.js                     | spec-app-saque-saque                     |  12.94 kB | 
+spec-app-pages-login-login.js               | spec-app-pages-login-login               |  12.91 kB | 
+spec-app-deposito-deposito.js               | spec-app-deposito-deposito               |  12.58 kB | 
+chunk-CGZBV6BD.js                           | -                                        |   4.07 kB | 
+chunk-FBRRYRPG.js                           | -                                        |   3.04 kB | 
+chunk-Y2RUL7W4.js                           | -                                        |   2.94 kB | 
+chunk-HUBRJX6X.js                           | -                                        |   2.63 kB | 
+spec-app-services-job.service.js            | spec-app-services-job.service            |   2.07 kB | 
+chunk-L2TBL2QO.js                           | -                                        |   1.91 kB | 
+chunk-DC5FPLS6.js                           | -                                        |   1.89 kB | 
+chunk-7URNR6JH.js                           | -                                        |   1.73 kB | 
+chunk-26QBGKTA.js                           | -                                        |   1.70 kB | 
+spec-app-app.js                             | spec-app-app                             |   1.70 kB | 
+spec-app-pages-admin-admin.js               | spec-app-pages-admin-admin               |   1.63 kB | 
+init-testbed.js                             | init-testbed                             |   1.21 kB | 
+spec-app-services-login.js                  | spec-app-services-login                  |   1.01 kB | 
+vitest-mock-patch.js                        | vitest-mock-patch                        | 974 bytes | 
+spec-app-services-auth.js                   | spec-app-services-auth                   | 730 bytes | 
+spec-app-shared-components-button-button.js | spec-app-shared-components-button-button | 633 bytes | 
+spec-app-shared-components-alert-alert.js   | spec-app-shared-components-alert-alert   | 625 bytes | 
+chunk-YP2C7IUU.js                           | -                                        | 183 bytes | 
+spec-app-pages-autocadastro-autocadastro.js | spec-app-pages-autocadastro-autocadastro |  69 bytes | 
+
+                                            | Initial total                            | 525.27 kB
+
+Application bundle generation complete. [9.138 seconds] - 2026-11-14T21:21:10.769Z
+
+
+ RUN  v4.1.10 C:/Users/zuria/CODE/UFPR/DAC/DAC/frontend
+
+ ❯ |hello-world| src/app/pages/autocadastro/autocadastro.spec.ts (0 test)
+ ❯ |hello-world| src/app/deposito/deposito.spec.ts (1 test | 1 failed) 89ms
+     × should create 86ms
+ ❯ |hello-world| src/app/saque/saque.spec.ts (1 test | 1 failed) 83ms
+     × should create 80ms
+ ❯ |hello-world| src/app/pages/login/login.spec.ts (1 test | 1 failed) 123ms
+     × should create 120ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |hello-world| src/app/pages/autocadastro/autocadastro.spec.ts [ src/app/pages/autocadastro/autocadastro.spec.ts ]
+Error: No test suite found in file C:/Users/zuria/CODE/UFPR/DAC/DAC/frontend/src/app/pages/autocadastro/autocadastro.spec.ts
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |hello-world| src/app/deposito/deposito.spec.ts > Deposito > should create
+ FAIL  |hello-world| src/app/saque/saque.spec.ts > Saque > should create
+ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: DynamicTestModule. Find more at https://v21.angular.dev/errors/NG0201
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:16
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:20
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/chained_injector.ts:43:31
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:426:63
+ ❯ lookupTokenUsingModuleInjector ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:493:9
+ ❯ getOrCreateInjectable ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/di.ts:58:16
+ ❯ NodeInjectorFactory.RouterLink_Factory [as factory] ng:/RouterLink/ɵfac.js:6:7
+ ❯ factory ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:785:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |hello-world| src/app/pages/login/login.spec.ts > Login > should create
+ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[_Login]. Find more at https://v21.angular.dev/errors/NG0201
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/errors_di.ts:130:16
+ ❯ createRuntimeError ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/null_injector.ts:20:20
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/di/r3_injector.ts:383:26
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/chained_injector.ts:43:31
+ ❯ get ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:426:63
+ ❯ lookupTokenUsingModuleInjector ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/di.ts:493:9
+ ❯ getOrCreateInjectable ../k8-fastbuild-ST-fdfa778d11ba/bin/packages/core/src/render3/instructions/di.ts:58:16
+ ❯ NodeInjectorFactory.RouterLink_Factory [as factory] ng:/RouterLink/ɵfac.js:6:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  4 failed | 10 passed (14)
+      Tests  3 failed | 13 passed (16)
+   Start at  18:21:14
+   Duration  31.22s (transform 2.98s, setup 29.69s, import 7.01s, tests 1.88s, environment 343.60s)
+
+
+> bantads-frontend@0.0.0 build
+> ng build
+
+> Building...
+√ Building...
+Initial chunk files | Names            |  Raw size | Estimated transfer size
+chunk-6QVMQ6WT.js   | -                | 269.95 kB |                72.43 kB
+styles-JCAWOLOO.css | styles           | 233.12 kB |                23.19 kB
+scripts-3XTIANUT.js | scripts          |  60.33 kB |                14.98 kB
+chunk-DGTKZ4AX.js   | -                |  37.13 kB |                 7.82 kB
+main-Q6ANYAIE.js    | main             |   7.29 kB |                 2.51 kB
+chunk-QHEGKD73.js   | -                |   1.52 kB |               670 bytes
+
+                    | Initial total    | 609.35 kB |               121.59 kB
+
+Lazy chunk files    | Names            |  Raw size | Estimated transfer size
+chunk-JE6JXH7M.js   | -                | 103.56 kB |                30.90 kB
+chunk-ELBO6WOU.js   | gerente          |  11.18 kB |                 3.21 kB
+chunk-4JQ26YSX.js   | autocadastro     |  10.52 kB |                 2.86 kB
+chunk-L2GIAGDW.js   | dashboard        |   9.53 kB |                 2.91 kB
+chunk-RASQBS4X.js   | extrato          |   6.23 kB |                 2.56 kB
+chunk-RFKKEBN2.js   | transferencia    |   6.13 kB |                 2.17 kB
+chunk-EAUNWSBV.js   | saque            |   4.76 kB |                 1.83 kB
+chunk-IG7YE3R2.js   | deposito         |   4.42 kB |                 1.79 kB
+chunk-6S5OCTQM.js   | dashboard        |   4.17 kB |                 1.73 kB
+chunk-P5OAKZFP.js   | clientes         |   3.89 kB |                 1.58 kB
+chunk-V2WXXR3Z.js   | relatorio        |   3.89 kB |                 1.61 kB
+chunk-ZICSGMLL.js   | dados-cadastrais |   2.74 kB |                 1.22 kB
+chunk-SJYT5HMU.js   | -                |   1.36 kB |               612 bytes
+chunk-VHU2NSJN.js   | -                |   1.09 kB |               461 bytes
+chunk-2BBMOAYO.js   | -                | 994 bytes |               994 bytes
+...and 9 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [14.927 seconds] - 2026-11-14T21:22:05.405Z
+
+Output location: C:\Users\zuria\CODE\UFPR\DAC\DAC\frontend\dist\hello-world
+
+▲ [WARNING] bundle initial exceeded maximum budget. Budget 500.00 kB was not met by 109.35 kB with a total of 609.35 kB.
+
+
+▲ [WARNING] src/app/pages/home/home.css exceeded maximum budget. Budget 4.00 kB was not met by 438 bytes with a total of 4.44 kB.
+
+

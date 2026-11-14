@@ -49,6 +49,8 @@ export class AuthService {
           localStorage.setItem(this.TOKEN_KEY, response.token);
           localStorage.setItem(this.USUARIO_KEY, JSON.stringify(response.usuario));
           localStorage.setItem(this.TIPO_KEY, response.tipo);
+          this.usuarioLogado.set(response.usuario);
+          this.tipoLogado.set(response.tipo);
         }
       }), 
       catchError(error => {

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { LoginRequest } from '../../shared/models';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-login',
@@ -54,9 +55,10 @@ export class Login implements OnInit {
           this.router.navigate(['/gerente/dashboard']);
         }
       },
-      error: (error) => {
+      error: (error: { mensagem?: string }) => {
         this.carregando = false;
-        this.erroLogin = error.mensagem || 'Erro ao fazer login.';
+        this.erroLogin =
+          error.mensagem ?? mensagemDeErro(error, 'E-mail ou senha inválidos.');
       }
     });
   }

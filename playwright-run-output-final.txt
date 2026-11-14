@@ -1,0 +1,191 @@
+
+Running 7 tests using 1 worker
+
+(node:16024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 tests\gerente.spec.ts:5:3 › Gerente › login e dashboard com solicitações (3.8s)
+(node:17904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 tests\gerente.spec.ts:12:3 › Gerente › consultar clientes com busca (30.1s)
+(node:15072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 tests\gerente.spec.ts:21:3 › Gerente › relatório de clientes (202 + resultado) (30.5s)
+(node:11648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 tests\public-cliente.spec.ts:5:3 › Público e cliente › autocadastro exibe formulário e validação de CPF inválido (30.1s)
+(node:19520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  5 tests\public-cliente.spec.ts:12:3 › Público e cliente › cliente: login, dashboard com conta e saldo (2.2s)
+(node:23812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  6 tests\public-cliente.spec.ts:19:3 › Público e cliente › cliente: depósito e navegação pelo dashboard (30.1s)
+(node:5900) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 7 tests\public-cliente.spec.ts:28:3 › Público e cliente › cliente: logout (603ms)
+
+
+  1) tests\gerente.spec.ts:5:3 › Gerente › login e dashboard com solicitações ──────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/Área do Gerente|Solicitações/i)
+    Expected: visible
+    Error: strict mode violation: getByText(/Área do Gerente|Solicitações/i) resolved to 3 elements:
+        1) <h1 _ngcontent-ng-c3342232516="">BANTADS - Área do Gerente</h1> aka getByRole('heading', { name: 'BANTADS - Área do Gerente' })
+        2) <h2 _ngcontent-ng-c3342232516="">Solicitações de Autocadastro</h2> aka getByRole('heading', { name: 'Solicitações de Autocadastro' })
+        3) <div class="carregando" _ngcontent-ng-c3342232516="">Carregando solicitações...</div> aka getByText('Carregando solicitações...')
+
+    Call log:
+      - Expect "toBeVisible" getByText(/Área do Gerente|Solicitações/i) with timeout 5000ms
+      - waiting for getByText(/Área do Gerente|Solicitações/i)
+
+
+       6 |     await login(page, 'ger1@bantads.com.br', 'tads');
+       7 |     await expect(page).toHaveURL(/gerente\/dashboard/);
+    >  8 |     await expect(page.getByText(/Área do Gerente|Solicitações/i)).toBeVisible();
+         |                                                                   ^
+       9 |     await expect(page.locator('table tbody tr').first()).toBeVisible({ timeout: 20_000 });
+      10 |   });
+      11 |
+        at C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\tests\gerente.spec.ts:8:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\gerente-Gerente-login-e-dashboard-com-solicitações\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\gerente-Gerente-login-e-dashboard-com-solicitações\error-context.md
+
+  2) tests\gerente.spec.ts:12:3 › Gerente › consultar clientes com busca ───────────────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('link', { name: /consultar clientes/i })
+
+
+      12 |   test('consultar clientes com busca', async ({ page }) => {
+      13 |     await login(page, 'ger1@bantads.com.br', 'tads');
+    > 14 |     await page.getByRole('link', { name: /consultar clientes/i }).click();
+         |                                                                   ^
+      15 |     await expect(page).toHaveURL(/gerente\/clientes/);
+      16 |     await page.fill('input[type="search"], input[placeholder*="busca" i]', 'cat');
+      17 |     await page.keyboard.press('Enter');
+        at C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\tests\gerente.spec.ts:14:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\gerente-Gerente-consultar-clientes-com-busca\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\gerente-Gerente-consultar-clientes-com-busca\error-context.md
+
+  3) tests\gerente.spec.ts:21:3 › Gerente › relatório de clientes (202 + resultado) ────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('link', { name: /relatório/i })
+
+
+      21 |   test('relatório de clientes (202 + resultado)', async ({ page }) => {
+      22 |     await login(page, 'ger1@bantads.com.br', 'tads');
+    > 23 |     await page.getByRole('link', { name: /relatório/i }).click();
+         |                                                          ^
+      24 |     await expect(page).toHaveURL(/gerente\/relatorio/);
+      25 |     await page.getByRole('button', { name: /gerar|relatório|consultar/i }).click();
+      26 |     await expect(page.locator('table tbody tr, .relatorio table tr').first()).toBeVisible({
+        at C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\tests\gerente.spec.ts:23:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\gerente-Gerente-relatório-de-clientes-202-resultado-\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\gerente-Gerente-relatório-de-clientes-202-resultado-\error-context.md
+
+  4) tests\public-cliente.spec.ts:5:3 › Público e cliente › autocadastro exibe formulário e validação de CPF inválido 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /enviar|cadastrar/i })
+
+
+       6 |     await page.goto('/autocadastro');
+       7 |     await expect(page.getByRole('heading', { name: /autocadastro|bantads/i })).toBeVisible();
+    >  8 |     await page.getByRole('button', { name: /enviar|cadastrar/i }).click();
+         |                                                                   ^
+       9 |     await expect(page.locator('.text-danger, .invalid-feedback, [role="alert"]').first()).toBeVisible();
+      10 |   });
+      11 |
+        at C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\tests\public-cliente.spec.ts:8:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\public-cliente-Público-e-c-314c7-e-validação-de-CPF-inválido\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\public-cliente-Público-e-c-314c7-e-validação-de-CPF-inválido\error-context.md
+
+  5) tests\public-cliente.spec.ts:12:3 › Público e cliente › cliente: login, dashboard com conta e saldo 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/Área do Cliente|Bem-vindo/i)
+    Expected: visible
+    Error: strict mode violation: getByText(/Área do Cliente|Bem-vindo/i) resolved to 2 elements:
+        1) <h1>BANTADS - Área do Cliente</h1> aka getByRole('heading', { name: 'BANTADS - Área do Cliente' })
+        2) <h5 class="card-title">Bem-vindo, Catharyna!</h5> aka getByRole('heading', { name: 'Bem-vindo, Catharyna!' })
+
+    Call log:
+      - Expect "toBeVisible" getByText(/Área do Cliente|Bem-vindo/i) with timeout 5000ms
+      - waiting for getByText(/Área do Cliente|Bem-vindo/i)
+
+
+      13 |     await login(page, 'cli1@bantads.com.br', 'tads');
+      14 |     await expect(page).toHaveURL(/cliente\/dashboard/);
+    > 15 |     await expect(page.getByText(/Área do Cliente|Bem-vindo/i)).toBeVisible();
+         |                                                                ^
+      16 |     await expect(page.getByText(/Saldo atual|Número da conta/i)).toBeVisible({ timeout: 15_000 });
+      17 |   });
+      18 |
+        at C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\tests\public-cliente.spec.ts:15:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\public-cliente-Público-e-c-356da-dashboard-com-conta-e-saldo\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\public-cliente-Público-e-c-356da-dashboard-com-conta-e-saldo\error-context.md
+
+  6) tests\public-cliente.spec.ts:19:3 › Público e cliente › cliente: depósito e navegação pelo dashboard 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('link', { name: /depósito|deposito/i }).first()
+
+
+      19 |   test('cliente: depósito e navegação pelo dashboard', async ({ page }) => {
+      20 |     await login(page, 'cli1@bantads.com.br', 'tads');
+    > 21 |     await page.getByRole('link', { name: /depósito|deposito/i }).first().click();
+         |                                                                          ^
+      22 |     await expect(page).toHaveURL(/deposito/);
+      23 |     await page.fill('input[name="valor"], #valor', '10.00');
+      24 |     await page.getByRole('button', { name: /confirmar|depositar/i }).click();
+        at C:\Users\zuria\CODE\UFPR\DAC\DAC\e2e\tests\public-cliente.spec.ts:21:74
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\public-cliente-Público-e-c-4377d--e-navegação-pelo-dashboard\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\public-cliente-Público-e-c-4377d--e-navegação-pelo-dashboard\error-context.md
+
+  6 failed
+    tests\gerente.spec.ts:5:3 › Gerente › login e dashboard com solicitações ───────────────────────
+    tests\gerente.spec.ts:12:3 › Gerente › consultar clientes com busca ────────────────────────────
+    tests\gerente.spec.ts:21:3 › Gerente › relatório de clientes (202 + resultado) ─────────────────
+    tests\public-cliente.spec.ts:5:3 › Público e cliente › autocadastro exibe formulário e validação de CPF inválido 
+    tests\public-cliente.spec.ts:12:3 › Público e cliente › cliente: login, dashboard com conta e saldo 
+    tests\public-cliente.spec.ts:19:3 › Público e cliente › cliente: depósito e navegação pelo dashboard 
+  1 passed (2.4m)

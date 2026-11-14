@@ -1,0 +1,86 @@
+
+> bantads-gateway@0.0.1 test
+> tsx --test test/**/*.test.ts
+
+▶ E03 ACL
+  ✔ mantém a lista de rotas públicas exigida (health, login, reboot, solicitacoes) (1.6085ms)
+  ✔ ignora a querystring ao resolver o pathname (0.2723ms)
+  ✔ classifica /logout e /jobs como somente autenticado, sem exigir perfil (2.2781ms)
+  ✔ restringe listagem e cadastro de gerentes ao perfil GERENTE (0.4319ms)
+  ✔ permite operações de conta (saque/depósito/extrato) apenas ao CLIENTE (0.3783ms)
+  ✔ gerenteOrSelf: gerente sempre passa; cliente só acessa o próprio CPF (0.4789ms)
+  ✔ rotas não mapeadas retornam unknown (o hook deve responder 404) (0.2323ms)
+✔ E03 ACL (7.465ms)
+▶ F10 gateway auth
+  ✔ T02a GET /clientes/{cpf} without token (363.1804ms)
+  ✔ T02b invalid token (28.3011ms)
+  ✔ T02c login with wrong password (65.1835ms)
+  ✔ T02d login seed cliente (97.8794ms)
+  ✔ T02e login seed gerente (28.2409ms)
+  ✔ T02f logout then reuse token (40.6357ms)
+  ✔ health is UP without links (13.4652ms)
+  ✔ CORS allows x-access-token from Angular origin (16.808ms)
+  ✔ rewrites internal HATEOAS href to the gateway public URL (2.6733ms)
+  ✔ expired JWT is rejected (25.1626ms)
+  ✔ missing Redis session is treated as inactivity (23.1904ms)
+  ✔ revoked jti is rejected even if the session key remains (15.2601ms)
+  ✔ CLIENTE cannot read another cliente (16.6087ms)
+✔ F10 gateway auth (741.0403ms)
+▶ F13 composition
+  ✔ sorts seed names with pt-BR base sensitivity (4.0533ms)
+  ✔ T11 joins saldo and maps cidade/estado (1.286ms)
+  ✔ T12 fills quantidadeClientes including zero (0.8257ms)
+  ✔ GET /clientes?busca=Cat is GERENTE composition (508.4831ms)
+  ✔ R11 inclui o cliente quando o saldo aparece na segunda consulta (82.9245ms)
+  ✔ R11 retenta saldo ausente e responde 503 se a projeção não fechar (36.7962ms)
+  ✔ T16 joins conta and gerente and sorts by nome (3.8072ms)
+✔ F13 composition (641.5088ms)
+▶ F18 HATEOAS and cache
+  ✔ walks nested hrefs to the gateway public URL (2.3787ms)
+  ✔ omits remocao for the authenticated gerente and write rels for GERENTE on conta (1.6301ms)
+  ✔ keeps remocao in cache and strips it per viewer (0.7512ms)
+  ✔ does not cache GET cliente 404 (363.9941ms)
+✔ F18 HATEOAS and cache (371.3332ms)
+▶ F14 gateway jobs and R9
+  ✔ T09 GERENTE POST aprovacao returns 202 Location and publishes saga.cmd (488.9498ms)
+  ✔ T09f does not pre-validate and still returns 202 (27.0035ms)
+  ✔ CLIENTE cannot approve (28.3807ms)
+  ✔ GET job status and result follow the contract (44.8541ms)
+  ✔ T13 POST /gerentes returns 202 without pre-validating unique email (34.0297ms)
+  ✔ T15 DELETE self is 403 and other CPF is 202 (20.5837ms)
+✔ F14 gateway jobs and R9 (646.4463ms)
+▶ F11 gateway reboot
+  ✔ T00 POST /reboot returns seed counts without links (354.1331ms)
+  ✔ T00b GET /health is UP without links (70.1253ms)
+  ✔ reboot flushes Redis sessions (86.879ms)
+✔ F11 gateway reboot (517.6772ms)
+▶ F17 relatório R16
+  ✔ T16 GERENTE GET /relatorios/clientes returns 202 then inline list (475.0955ms)
+  ✔ CLIENTE cannot request the report (27.086ms)
+✔ F17 relatório R16 (504.1602ms)
+▶ F12 gateway sync flows
+  ✔ T01 POST /solicitacoes is public with Location and pending links (476.0035ms)
+  ✔ T03 GET own conta and T03p other cliente is 403 (47.9529ms)
+  ✔ T04 deposit returns 201 without saldo (23.6177ms)
+  ✔ T06 enriches transfer and rejects same account or missing dest (21.9995ms)
+  ✔ T08 GERENTE lists solicitacoes and T10 rejects (21.4498ms)
+  ✔ T14 PUT gerente invalidates cache (32.4808ms)
+✔ F12 gateway sync flows (625.9115ms)
+▶ shared contract types
+  ✔ serializes command envelope without sagaId outside SAGA (3.4013ms)
+  ✔ keeps sagaId inside SAGA (0.7737ms)
+  ✔ rejects unknown fields on envelopes (strict) (1.219ms)
+  ✔ serializes reply with null erro (0.6118ms)
+  ✔ money is a two-decimal string not a number (0.7062ms)
+  ✔ login input requires email and senha only (0.7013ms)
+  ✔ event types keep exact accents (0.2222ms)
+  ✔ GerenteInput requires senha and rejects extra fields (0.9197ms)
+✔ shared contract types (10.4523ms)
+ℹ tests 56
+ℹ suites 9
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2726.9404

@@ -56,7 +56,7 @@ class ContaQueryService(
         userTipo: String,
     ): ExtratoView {
         val conta = contas.findById(numero).orElseThrow { ApiException(ErroBody.notFound("Conta não encontrada")) }
-        Identity.requireClienteOwner(userTipo, userCpf, conta.cpfCliente)
+        Identity.requireGerenteOrOwner(userTipo, userCpf, conta.cpfCliente)
         val hoje = LocalDate.now(DateTimes.ZONE)
         val (de, ate) = ExtratoRegras.periodo(inicio, fim, hoje)
         val inicioTs = de.atStartOfDay()
