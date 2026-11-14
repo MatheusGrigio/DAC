@@ -1,0 +1,31 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Dados cadastrais</h1>
+    <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary">Voltar</a>
+  </div>
+
+  @if (carregando()) {
+    <p role="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="text-danger" role="alert">{{ erro() }}</p>
+  } @else if (cliente(); as c) {
+    <section class="card">
+      <div class="card-body">
+        <p><strong>Nome:</strong> {{ c.nome }}</p>
+        <p><strong>CPF:</strong> {{ c.cpf | cpf }}</p>
+        <p><strong>E-mail:</strong> {{ c.email }}</p>
+        <p><strong>Telefone:</strong> {{ c.telefone | telefone }}</p>
+        <p><strong>Salário:</strong> {{ c.salario | moeda }}</p>
+        <h2 class="h5 mt-4">Endereço</h2>
+        <p class="mb-0">
+          {{ c.endereco.logradouro }}, {{ c.endereco.numero }}
+          @if (c.endereco.complemento) {
+            — {{ c.endereco.complemento }}
+          }
+          <br />
+          {{ c.endereco.cidade }}/{{ c.endereco.uf }} — CEP {{ c.endereco.cep }}
+        </p>
+      </div>
+    </section>
+  }
+</div>

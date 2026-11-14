@@ -40,7 +40,8 @@ export class Autocadastro {
   enviar(formulario: NgForm): void {
     if (formulario.invalid || this.carregando() || this.mensagemSucesso()) return;
 
-    const { nome, cpf, email, telefone, salario, ...endereco } = this.cadastro;
+    const { nome, cpf, email, telefone, salario, complemento, ...enderecoResto } = this.cadastro;
+    const complementoLimpo = complemento.trim() || null;
     this.mensagemErro.set('');
     this.carregando.set(true);
 
@@ -50,7 +51,10 @@ export class Autocadastro {
       email: email.trim(),
       telefone,
       salario: new Decimal(salario).toFixed(2),
-      endereco,
+      endereco: {
+        ...enderecoResto,
+        complemento: complementoLimpo,
+      },
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.carregando.set(false)),

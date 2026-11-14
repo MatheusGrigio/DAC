@@ -1,0 +1,8 @@
+{
+  "server": "http://localhost",
+  "port": 3000,
+  "novos_clientes": ["cliente.novo1@bantads.com.br", "cliente.novo2@bantads.com.br"],
+  "novos_gerentes": ["gerente.novo1@bantads.com.br", "gerente.novo2@bantads.com.br"],
+  "job_timeout": 60,
+  "read_timeout": 15
+}

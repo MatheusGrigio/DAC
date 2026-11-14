@@ -17,7 +17,7 @@ const OPERACOES: Operacao[] = [
   { rel: 'deposito', rota: '/cliente/deposito', titulo: 'Depósito', descricao: 'Adicionar dinheiro à conta', disponivel: true },
   { rel: 'saque', rota: '/cliente/saque', titulo: 'Saque', descricao: 'Retirar dinheiro da conta', disponivel: true },
   { rel: 'transferencia', rota: '/cliente/transferencia', titulo: 'Transferência', descricao: 'Enviar para outra conta', disponivel: true },
-  { rel: 'extrato', rota: '/cliente/extrato', titulo: 'Extrato', descricao: 'Consultar movimentações', disponivel: false },
+  { rel: 'extrato', rota: '/cliente/extrato', titulo: 'Extrato', descricao: 'Consultar movimentações', disponivel: true },
 ];
 
 @Component({

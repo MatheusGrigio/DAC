@@ -41,7 +41,7 @@
               <span class="badge" [ngClass]="{
                 'bg-warning': s.status === 'PENDENTE',
                 'bg-success': s.status === 'APROVADA',
-                'bg-danger': s.status === 'NAO_APROVADA' || s.status === 'REJEITADA'
+                'bg-danger': s.status === 'NAO_APROVADA'
               }">
                 {{ s.status === 'NAO_APROVADA' ? 'Não aprovado' : (s.status === 'APROVADA' ? 'Aprovado' : 'Pendente') }}
               </span>
@@ -52,19 +52,36 @@
               <span *ngIf="!s.motivo && !s.dataHoraProcessamento">-</span>
             </td>
             <td>
-              <div class="botoes-acao" *ngIf="s.status === 'PENDENTE'">
+              <div class="botoes-acao">
                 <app-button
+                  *ngIf="s._links?.['aprovacao']"
                   variant="primary"
                   [disabled]="processandoCpf === s.cpf"
                   (click)="aprovar(s.cpf)">
                   {{ processandoCpf === s.cpf ? 'Processando...' : 'Aprovar' }}
                 </app-button>
                 <app-button
+                  *ngIf="s._links?.['rejeicao']"
                   variant="danger"
                   [disabled]="processandoCpf === s.cpf"
                   (click)="rejeitar(s.cpf)">
                   Recusar
                 </app-button>
+                <app-button
+                  variant="secondary"
+                  [disabled]="processandoCpf === s.cpf"
+                  (click)="verDetalhes(s.cpf)">
+                  Detalhes
+                </app-button>
+              </div>
+              <div *ngIf="detalheCpf === s.cpf" class="detalhe-solicitacao">
+                <small *ngIf="carregandoDetalhe">Carregando endereço...</small>
+                <small *ngIf="!carregandoDetalhe && detalhe?.endereco">
+                  <strong>Endereço:</strong>
+                  {{ detalhe!.endereco!.logradouro }}, {{ detalhe!.endereco!.numero }}
+                  <span *ngIf="detalhe!.endereco!.complemento"> — {{ detalhe!.endereco!.complemento }}</span>
+                  — {{ detalhe!.endereco!.cidade }}/{{ detalhe!.endereco!.uf }} — CEP {{ detalhe!.endereco!.cep }}
+                </small>
               </div>
             </td>
           </tr>

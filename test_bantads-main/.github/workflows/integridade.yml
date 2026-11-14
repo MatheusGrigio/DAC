@@ -1,0 +1,21 @@
+name: integridade
+
+# Falha se HASHES.txt estiver desatualizado em relação ao código.
+# Sem isto, o manifesto diverge no primeiro fix e a verificação vira ruído
+# (foi exatamente o que aconteceu com o hash.md5.txt em 2025-2/2026-1).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Conferir HASHES.txt
+        run: python integridade.py

@@ -47,6 +47,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./extrato/extrato').then(m => m.Extrato)
   },
+  {
+    path: 'cliente/dados',
+    canActivate: [authGuard],
+    data: { role: 'CLIENTE' },
+    loadComponent: () =>
+      import('./cliente/dados-cadastrais/dados-cadastrais').then((m) => m.DadosCadastrais),
+  },
   
   // GERENTE ROUTES
   {

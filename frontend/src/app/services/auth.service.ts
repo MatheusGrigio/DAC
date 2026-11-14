@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, tap, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
   email: string;
@@ -27,7 +28,7 @@ export interface LoginResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_GATEWAY = 'http://localhost:3000';
+  private readonly API_GATEWAY = environment.apiUrl;
   private readonly TOKEN_KEY = 'token';
   private readonly USUARIO_KEY = 'usuario';
   private readonly TIPO_KEY = 'tipo';

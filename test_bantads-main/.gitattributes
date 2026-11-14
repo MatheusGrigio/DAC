@@ -1,0 +1,7 @@
+# Mantém LF no checkout em qualquer SO, para o código de verificação não
+# depender da plataforma do clone. (integridade.py também normaliza CRLF.)
+*.py    text eol=lf
+*.ini   text eol=lf
+*.json  text eol=lf
+*.txt   text eol=lf
+*.md    text eol=lf

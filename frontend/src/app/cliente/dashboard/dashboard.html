@@ -33,42 +33,23 @@
       </section>
 
       <div class="row">
-        <div class="col-md-3 mb-3">
-          <div class="card text-center h-100">
-            <div class="card-body">
-              <h5>Depósito</h5>
-              <p class="text-muted small">Depositar dinheiro na conta</p>
-              <a routerLink="/cliente/deposito" class="btn btn-primary">Acessar</a>
+        @for (op of operacoes(); track op.rel) {
+          <div class="col-md-3 mb-3">
+            <div class="card text-center h-100">
+              <div class="card-body">
+                <h5>{{ op.titulo }}</h5>
+                <p class="text-muted small">{{ op.descricao }}</p>
+                <a [routerLink]="op.rota" class="btn btn-primary">Acessar</a>
+              </div>
             </div>
           </div>
-        </div>
-        
+        }
         <div class="col-md-3 mb-3">
           <div class="card text-center h-100">
             <div class="card-body">
-              <h5>Saque</h5>
-              <p class="text-muted small">Sacar dinheiro da conta</p>
-              <a routerLink="/cliente/saque" class="btn btn-primary">Acessar</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-3 mb-3">
-          <div class="card text-center h-100">
-            <div class="card-body">
-              <h5>Transferência</h5>
-              <p class="text-muted small">Transferir para outra conta</p>
-              <a routerLink="/cliente/transferencia" class="btn btn-primary">Acessar</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-3 mb-3">
-          <div class="card text-center h-100">
-            <div class="card-body">
-              <h5>Extrato</h5>
-              <p class="text-muted small">Ver movimentações</p>
-              <a routerLink="/cliente/extrato" class="btn btn-primary">Acessar</a>
+              <h5>Dados cadastrais</h5>
+              <p class="text-muted small">Consultar seu cadastro</p>
+              <a routerLink="/cliente/dados" class="btn btn-outline-primary">Acessar</a>
             </div>
           </div>
         </div>

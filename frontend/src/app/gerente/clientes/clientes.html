@@ -1,7 +1,7 @@
 <main class="clientes-page">
   <h1>Consultar clientes</h1>
   <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
-  <form (ngSubmit)="filtro = busca" class="busca">
+  <form (ngSubmit)="buscar()" class="busca">
     <div class="campo">
       <label for="busca">Nome ou CPF</label>
       <input id="busca" name="busca" type="search" [(ngModel)]="busca"/>
@@ -27,7 +27,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (cliente of clientesFiltrados; track cliente.cpf) {
+          @for (cliente of clientes(); track cliente.cpf) {
             <tr>
               <td>{{ cliente.cpf | cpf }}</td>
               <td>{{ cliente.nome }}</td>

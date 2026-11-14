@@ -3,7 +3,12 @@ import { Injectable, inject } from '@angular/core';
 import { Decimal } from 'decimal.js';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ClienteLista, ClienteListaResponse } from '../shared/models';
+import {
+  ClienteDetalhe,
+  ClienteDetalheResponse,
+  ClienteLista,
+  ClienteListaResponse,
+} from '../shared/models';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +29,20 @@ export class ClienteService {
           saldo: new Decimal(c.saldo),
         })),
       ),
+    );
+  }
+
+  obter(cpf: string): Observable<ClienteDetalhe> {
+    return this.http.get<ClienteDetalheResponse>(`${this.API_GATEWAY}/clientes/${cpf}`).pipe(
+      map((r) => ({
+        cpf: r.cpf,
+        nome: r.nome,
+        email: r.email,
+        telefone: r.telefone,
+        salario: new Decimal(r.salario),
+        endereco: r.endereco,
+        links: r._links ?? {},
+      })),
     );
   }
 }

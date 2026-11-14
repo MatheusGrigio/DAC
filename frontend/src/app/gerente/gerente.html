@@ -2,7 +2,7 @@
   <h1>Gerentes</h1>
   <div class="d-flex flex-wrap gap-2 mb-3">
     <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
-    @if (!mostrarFormulario() && !gerenteEditando()) {
+    @if (podeCriar() && !mostrarFormulario() && !gerenteEditando()) {
       <app-button (click)="mostrarFormulario.set(true); erro.set(''); sucesso.set('')">Novo gerente</app-button>
     }
   </div>
@@ -121,10 +121,10 @@
               <td>{{ gerente.telefone | telefone }}</td>
               <td>{{ gerente.quantidadeClientes ?? 0 }}</td>
               <td class="d-flex flex-wrap gap-2">
-                @if (!gerente._links || gerente._links['atualizacao']) {
+                @if (gerente._links?.['atualizacao']) {
                   <app-button variant="secondary" (click)="iniciarEdicao(gerente)">Editar</app-button>
                 }
-                @if (!gerente._links || gerente._links['remocao']) {
+                @if (gerente._links?.['remocao']) {
                   <app-button
                     variant="danger"
                     [disabled]="processandoCpf() === gerente.cpf"

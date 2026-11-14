@@ -25,6 +25,7 @@ function paraSolicitacao(r: SolicitacaoResponse): Solicitacao {
     dataHoraProcessamento: r.dataHoraProcessamento
       ? DateTime.fromISO(r.dataHoraProcessamento)
       : null,
+    endereco: r.endereco,
     _links: r._links,
   };
 }
@@ -38,6 +39,12 @@ export class SolicitacaoService {
 
   cadastrar(cadastro: AutocadastroRequest): Observable<SolicitacaoResponse> {
     return this.http.post<SolicitacaoResponse>(this.apiUrl, cadastro);
+  }
+
+  obter(cpf: string): Observable<Solicitacao> {
+    return this.http
+      .get<SolicitacaoResponse>(`${this.apiUrl}/${cpf}`)
+      .pipe(map(paraSolicitacao));
   }
 
   listar(status?: string): Observable<SolicitacoesListModel> {

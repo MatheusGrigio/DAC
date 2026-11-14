@@ -1,13 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Decimal } from 'decimal.js';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
-import { ClienteLista, ClienteListaResponse } from '../../shared/models';
+import { ClienteLista } from '../../shared/models';
 import { CpfPipe, MoedaPipe } from '../../shared/pipes';
-import { environment } from '../../../environments/environment';
+import { ClienteService } from '../../services/cliente.service';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-clientes',
@@ -16,10 +15,9 @@ import { environment } from '../../../environments/environment';
   styleUrl: './clientes.css',
 })
 export class Clientes implements OnInit {
-  private http = inject(HttpClient);
+  private clienteService = inject(ClienteService);
 
   busca = '';
-  filtro = '';
   clientes = signal<ClienteLista[]>([]);
   carregando = signal(false);
   erro = signal('');
@@ -32,34 +30,19 @@ export class Clientes implements OnInit {
     if (this.carregando()) return;
     this.carregando.set(true);
     this.erro.set('');
-    this.http.get<ClienteListaResponse>(`${environment.apiUrl}/clientes`).subscribe({
-      next: (response) => {
-        this.clientes.set(
-          response.clientes.map((cliente) => ({
-            cpf: cliente.cpf,
-            nome: cliente.nome,
-            cidade: cliente.cidade,
-            estado: cliente.estado,
-            saldo: new Decimal(cliente.saldo),
-          })),
-        );
+    this.clienteService.listar(this.busca.trim()).subscribe({
+      next: (lista) => {
+        this.clientes.set(lista);
         this.carregando.set(false);
       },
-      error: () => {
-        this.erro.set('Não foi possível carregar os clientes. Tente novamente mais tarde.');
+      error: (err) => {
+        this.erro.set(mensagemDeErro(err, 'Não foi possível carregar os clientes. Tente novamente mais tarde.'));
         this.carregando.set(false);
       },
     });
   }
 
-  get clientesFiltrados(): ClienteLista[] {
-    const termo = this.filtro.trim().toLocaleLowerCase('pt-BR');
-    return this.clientes()
-      .filter(
-        (cliente) =>
-          cliente.nome.toLocaleLowerCase('pt-BR').includes(termo) ||
-          cliente.cpf.includes(termo),
-      )
-      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  buscar(): void {
+    this.carregar();
   }
 }

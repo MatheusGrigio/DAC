@@ -12,7 +12,12 @@ import { mensagemDeErro } from '../shared/utils/erro-http';
 
 const PADRAO_DIAS = 30;
 const MAXIMO_DIAS = 365;
-const FORMATO_INPUT = 'yyyy-MM-dd'; 
+const FORMATO_INPUT = 'yyyy-MM-dd';
+const FUSO_NEGOCIO = 'America/Sao_Paulo';
+
+function hojeNegocio(): DateTime {
+  return DateTime.now().setZone(FUSO_NEGOCIO);
+}
 
 @Component({
   selector: 'app-extrato',
@@ -24,10 +29,10 @@ export class Extrato implements OnInit {
   private authService = inject(AuthService);
   private contaService = inject(ContaService);
 
-  readonly hoje = DateTime.now().toFormat(FORMATO_INPUT);
+  readonly hoje = hojeNegocio().toFormat(FORMATO_INPUT);
 
   protected readonly filtro = new FormGroup({
-    dataInicio: new FormControl(DateTime.now().minus({ days: PADRAO_DIAS }).toFormat(FORMATO_INPUT), {
+    dataInicio: new FormControl(hojeNegocio().minus({ days: PADRAO_DIAS }).toFormat(FORMATO_INPUT), {
       nonNullable: true,
       validators: Validators.required,
     }),
@@ -71,8 +76,8 @@ export class Extrato implements OnInit {
   }
   protected consultar(): void {
     const { dataInicio, dataFim } = this.filtro.getRawValue();
-    const Inicio = DateTime.fromFormat(dataInicio, FORMATO_INPUT);
-    const Fim = DateTime.fromFormat(dataFim, FORMATO_INPUT);
+    const Inicio = DateTime.fromFormat(dataInicio, FORMATO_INPUT, { zone: FUSO_NEGOCIO });
+    const Fim = DateTime.fromFormat(dataFim, FORMATO_INPUT, { zone: FUSO_NEGOCIO });
 
     const problema = this.validarPeriodo(Inicio, Fim);
     if (problema) {

@@ -1,49 +1,75 @@
-<div class="container mt-4">
-  <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
-      <h3 class="mb-0">Realizar Transferência</h3>
-    </div>
-    <div class="card-body">
-      <div *ngIf="mensagemFeedback" class="alert" [ngClass]="isError ? 'alert-danger' : 'alert-success'">
-        {{ mensagemFeedback }}
-      </div>
-      <form [formGroup]="transferenciaForm" (ngSubmit)="realizarTransferencia()">
-        <div class="mb-3">
-          <label for="contaDestino" class="form-label">Número da Conta Destino</label>
-          <input 
-            type="text" 
-            id="contaDestino" 
-            class="form-control" 
-            formControlName="contaDestino" 
-            placeholder="Ex: 1291"
-            [ngClass]="{'is-invalid': transferenciaForm.get('contaDestino')?.invalid && transferenciaForm.get('contaDestino')?.touched}"
-          >
-          <div class="invalid-feedback">
-            Informe um número de conta válido.
-          </div>
-        </div>
+<section class="container py-4" style="max-width: 640px">
+  <h1 class="h3 mb-4">Transferência</h1>
 
-        <div class="mb-3">
-          <label for="valor" class="form-label">Valor (R$)</label>
-          <input 
-            type="number" 
-            id="valor" 
-            class="form-control" 
-            formControlName="valor" 
-            placeholder="0.00" 
-            step="0.01"
-            [ngClass]="{'is-invalid': transferenciaForm.get('valor')?.invalid && transferenciaForm.get('valor')?.touched}"
-          >
-          <div class="invalid-feedback">
-            O valor deve ser maior que zero.
-          </div>
-        </div>
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary" [disabled]="transferenciaForm.invalid">
-            Confirmar Transferência
-          </button>
-        </div>
-      </form>
+  @if (carregando()) {
+    <p role="status">Carregando sua conta...</p>
+  } @else if (conta(); as c) {
+    <dl class="row mb-4">
+      <dt class="col-6">Conta de origem</dt>
+      <dd class="col-6 text-end">{{ c.numero }}</dd>
+
+      <dt class="col-6">Saldo atual</dt>
+      <dd class="col-6 text-end">{{ c.saldo | moeda }}</dd>
+    </dl>
+  }
+
+  <form (submit)="enviar($event)" novalidate>
+    <label for="contaDestino" class="form-label">Conta de destino (4 dígitos)</label>
+    <input
+      id="contaDestino"
+      name="contaDestino"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off"
+      class="form-control form-control-lg mb-3"
+      placeholder="Ex: 0950"
+      [value]="contaDestino()"
+      (input)="aoDigitarConta($event)"
+      [disabled]="ocupado() || !conta()"
+    />
+
+    <label for="valorTransferencia" class="form-label">Valor da transferência</label>
+    <input
+      id="valorTransferencia"
+      name="valorTransferencia"
+      type="text"
+      inputmode="numeric"
+      autocomplete="off"
+      class="form-control form-control-lg"
+      placeholder="R$ 0,00"
+      [value]="valorTexto()"
+      (input)="aoDigitarValor($event)"
+      [disabled]="ocupado() || !conta()"
+    />
+
+    @if (destinoIgualOrigem()) {
+      <div class="form-text text-danger">A conta de destino não pode ser a mesma da origem.</div>
+    }
+    @if (saldoInsuficiente() && valor().gt(0)) {
+      <div class="form-text text-danger">Saldo insuficiente para este valor.</div>
+    }
+
+    @if (erro()) {
+      <div class="alert alert-danger mt-3" role="alert">{{ erro() }}</div>
+    }
+
+    @if (atualizandoSaldo()) {
+      <div class="alert alert-info mt-3" role="status">
+        Transferência registrada. Atualizando o saldo...
+      </div>
+    } @else if (sucesso()) {
+      <div class="alert alert-success mt-3" role="status">{{ sucesso() }}</div>
+    }
+
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary">Voltar</a>
+      <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar()">
+        @if (enviando()) {
+          Transferindo...
+        } @else {
+          Transferir
+        }
+      </button>
     </div>
-  </div>
-</div>
+  </form>
+</section>
