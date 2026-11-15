@@ -21,7 +21,7 @@
 | **frontend `npm test`** | 17 | 17 | 0 | 0 | 0 | ~7s |
 | **frontend `npm run build`** | — | OK | 0 | warn budget | 0 | ~8s |
 | **Playwright `e2e/`** | 27 | 27 | 0 | 0 | 0 | ~40s |
-| **httpie E2E** | — | — | — | SKIPPED | — | não executado |
+| **httpie E2E** | 1 fluxo | OK | 0 | — | 0 | ~1m48s |
 
 ### Skips esperados (`test_bantads`)
 
@@ -80,6 +80,19 @@ Build Angular: sucesso (warning de budget ~599 kB).
 
 ## Comandos para reproduzir
 
+**Campanha única (recomendado):**
+
+```powershell
+cd C:\Users\zuria\CODE\UFPR\DAC\DAC
+.\run-test-campanha.ps1              # frota já no ar
+.\run-test-campanha.ps1 -FromZero    # down -v + build + todas as camadas
+.\run-test-campanha.ps1 -FailFast    # para na 1ª falha
+```
+
+Ordem: reboot → `test_bantads` → reboot → `contract-tests` → gateway → Gradle → front (test + build) → reboot → Playwright (`CI=true`) → reboot → **HTTPie E2E**. Logs em `test-logs/` (ver `test-logs/README.md`).
+
+**Passo a passo manual:**
+
 ```powershell
 cd C:\Users\zuria\CODE\UFPR\DAC\DAC
 docker compose up -d --build
@@ -104,14 +117,30 @@ npm run build
 
 cd ..\e2e
 npx playwright test
+
+python httpie\run-transacoes-e2e.py
+# ou: .\httpie\run-transacoes-e2e.ps1
+# opcional: --with-pytest (repete os 73 contract-tests após o fluxo)
 ```
+
+---
+
+## HTTPie E2E (`httpie/run-transacoes-e2e.py`)
+
+**Por que foi SKIPPED antes:** a campanha priorizou `test_bantads`, `contract-tests`, Gradle, front e Playwright; o script HTTPie é uma **terceira** passagem live no gateway que **revalida o mesmo `json-catalog/`** que o pytest (com SAGA, RabbitMQ e senha em `outbox/`). Não falta no projeto — só não estava no roteiro automático do relatório.
+
+**Pré-requisitos:** frota em `:3000`, `pip install httpie` (ou `http` no PATH), deps de `backend/contract-tests`, volume `./outbox` no MS Email.
+
+**Windows:** `httpie_cli.py` usa `python -m httpie` se `http` não estiver no PATH e força `encoding=utf-8` na saída do subprocess (evita `Token nÃ£o…` no catálogo).
+
+**Última execução:** **PASSOU** — detalhes em [RELATORIO-HTTPIE-E2E.md](./RELATORIO-HTTPIE-E2E.md), log `test-logs/httpie-e2e-output-rodada-zero.txt`.
 
 ---
 
 ## Lacunas documentadas
 
 - **R11 502/503 live:** mock em `backend/gateway/test/composition.test.ts`.
-- **httpie** `run-transacoes-e2e.py`: não rodado nesta retomada.
+- **httpie** `run-transacoes-e2e.py`: ignorado nas rodadas iniciais (tempo + duplica `contract-tests` no catálogo JSON); ver seção HTTPie abaixo.
 - **Cliente novo E2E DS152:** skips por senha interativa — `config.json` → `automatic_password` se houver `senha_recente.txt`.
 - **R8 extrato gerente:** sem tela dedicada no front (só cliente); API em contract/pytest.
 
@@ -120,4 +149,4 @@ npx playwright test
 ## Referências
 
 - [RELATORIO-BACKEND-TESTES-FLUXOS.md](./RELATORIO-BACKEND-TESTES-FLUXOS.md)
-- Saídas (rodada zero): `test-bantads-output-rodada-zero.txt`, `contract-tests-output-rodada-zero.txt`, `gateway-test-output-rodada-zero.txt`, `gradle-test-output-rodada-zero.txt`, `frontend-test-output-rodada-zero.txt`, `frontend-build-output-rodada-zero.txt`, `playwright-run-output-rodada-zero.txt`
+- Saídas (rodada zero): pasta [`test-logs/`](./test-logs/) — arquivos `*-rodada-zero.txt` e histórico `*-final.txt` / `playwright-matriz-*.txt`

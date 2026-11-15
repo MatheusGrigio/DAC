@@ -1,6 +1,6 @@
 # Relatório — HTTPie E2E (BANTADS)
 
-Gerado em: **2026-10-27 23:34:10 -0300**
+Gerado em: **2026-11-14 20:45:27 -0300**
 Gateway: `http://localhost:3000`
 Resultado: **PASSOU**
 
@@ -72,9 +72,6 @@ Resultado: **PASSOU**
 -   OK catalog TX-JOB-01.md / UUID inexistente…
 - == TX-R2B logout ==
 - == Fluxo HTTPie E2E concluído ==
-- == Encadeando pytest contract-tests ==
-
-Pytest exit code: 0
 
 ## Como repetir
 

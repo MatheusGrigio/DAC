@@ -6,6 +6,7 @@ import json
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -17,13 +18,27 @@ class HttpieCliError(RuntimeError):
     pass
 
 
-def require_httpie() -> str:
+def _httpie_argv() -> list[str]:
+    """`http` no PATH ou `python -m httpie` (pip --user no Windows)."""
     path = shutil.which("http")
-    if not path:
-        raise SystemExit(
-            "HTTPie CLI não encontrado no PATH. Instale: https://httpie.io/docs/cli/installation"
-        )
-    return path
+    if path:
+        return ["http"]
+    probe = subprocess.run(
+        [sys.executable, "-m", "httpie", "--version"],
+        capture_output=True,
+        text=True,
+    )
+    if probe.returncode == 0:
+        return [sys.executable, "-m", "httpie"]
+    raise SystemExit(
+        "HTTPie CLI não encontrado. Instale: pip install httpie "
+        "(https://httpie.io/docs/cli/installation)"
+    )
+
+
+def require_httpie() -> str:
+    argv = _httpie_argv()
+    return argv[0] if len(argv) == 1 else f"{argv[0]} -m httpie"
 
 
 def http_request(
@@ -36,9 +51,8 @@ def http_request(
     timeout_s: int = 120,
 ) -> tuple[int, dict[str, str], Any]:
     """Executa `http` e parseia saída --print=Hhb (headers + body)."""
-    require_httpie()
     cmd: list[str] = [
-        "http",
+        *_httpie_argv(),
         method.upper(),
         url,
         "--ignore-stdin",
@@ -75,6 +89,8 @@ def http_request(
             cmd,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout_s,
         )
     finally:

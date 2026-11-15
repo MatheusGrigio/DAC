@@ -3,8 +3,14 @@ $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
 Set-Location $PSScriptRoot
 
-if (-not (Get-Command http -ErrorAction SilentlyContinue)) {
-    Write-Error "HTTPie CLI (http) não está no PATH."
+$hasHttp = Get-Command http -ErrorAction SilentlyContinue
+$hasModule = $false
+if (-not $hasHttp) {
+    python -m httpie --version 2>$null | Out-Null
+    if ($LASTEXITCODE -eq 0) { $hasModule = $true }
+}
+if (-not $hasHttp -and -not $hasModule) {
+    Write-Error "HTTPie não encontrado. Instale: pip install httpie"
 }
 
 Push-Location "$Root\backend\contract-tests"
