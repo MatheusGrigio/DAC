@@ -5,12 +5,13 @@ import { RouterLink } from '@angular/router';
 import { Decimal } from 'decimal.js';
 import { finalize } from 'rxjs';
 import { SolicitacaoService } from '../../services/solicitacao.service';
+import { Button } from '../../shared/components/button/button';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-autocadastro',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Button],
   templateUrl: './autocadastro.html',
   styleUrl: './autocadastro.css',
 })

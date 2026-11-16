@@ -16,14 +16,6 @@
   color: var(--tinta-suave);
 }
 
-.filtro {
-  display: flex;
-  align-items: flex-end;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
-}
-
 .extrato tr.saida td {
   color: var(--saida);
   background: rgba(179, 55, 47, 0.06);
