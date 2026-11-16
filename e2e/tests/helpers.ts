@@ -68,16 +68,8 @@ export async function irOperacaoCliente(page: Page, titulo: string): Promise<voi
   await card.getByRole('link', { name: 'Acessar' }).click();
 }
 
-export async function aceitarConfirmacao(page: Page): Promise<void> {
-  page.once('dialog', (d) => d.accept());
-}
-
-export async function rejeitarConfirmacao(page: Page): Promise<void> {
-  page.once('dialog', (d) => d.dismiss());
-}
-
-export async function promptComMotivo(page: Page, motivo: string): Promise<void> {
-  page.once('dialog', (d) => d.accept(motivo));
+export async function aceitarConfirmacao(page: Page, rotulo: string): Promise<void> {
+  await page.getByRole('dialog').getByRole('button', { name: rotulo, exact: true }).click();
 }
 
 export async function formatarCpfTela(cpf: string): string {

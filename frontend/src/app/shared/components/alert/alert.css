@@ -9,3 +9,8 @@
   color: #a23d43;
   background: #fff0f1;
 }
+
+.alert.info {
+  color: #164578;
+  background: #e7f1ff;
+}

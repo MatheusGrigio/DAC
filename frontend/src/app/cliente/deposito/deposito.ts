@@ -1,18 +1,20 @@
 import { Component, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Alert } from '../../shared/components/alert/alert';
+import { Button } from '../../shared/components/button/button';
 import { Decimal } from 'decimal.js';
 import { last } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { ContaService } from '../services/conta.service';
-import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
-import { Conta } from '../shared/models';
-import { MoedaPipe } from '../shared/pipes/moeda.pipe';
-import { centavosParaDecimal, formatarMoeda } from '../shared/utils/dinheiro';
-import { mensagemDeErro } from '../shared/utils/erro-http';
+import { AuthService } from '../../services/auth.service';
+import { ContaService } from '../../services/conta.service';
+import { Confirmacao } from '../../shared/components/confirmacao/confirmacao';
+import { Conta } from '../../shared/models';
+import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
+import { centavosParaDecimal, formatarMoeda } from '../../shared/utils/dinheiro';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-deposito',
-  imports: [RouterLink, MoedaPipe, Confirmacao],
+  imports: [RouterLink, MoedaPipe, Confirmacao, Alert, Button],
   templateUrl: './deposito.html',
   styleUrl: './deposito.css',
 })

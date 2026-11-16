@@ -30,6 +30,7 @@ test.describe('R12–R15 — CRUD gerentes (UI)', () => {
     await page.fill('#telefone-gerente', dados.telefone);
     await page.fill('#senha-gerente', dados.senha);
     await page.getByRole('button', { name: 'Cadastrar gerente' }).click();
+    await aceitarConfirmacao(page, 'Cadastrar');
     await expect(page.getByText(/cadastrado com sucesso/i)).toBeVisible({ timeout: 90_000 });
     await expect(page.locator('table tbody').getByText(dados.nome)).toBeVisible({ timeout: 15_000 });
   });
@@ -61,8 +62,8 @@ test.describe('R12–R15 — CRUD gerentes (UI)', () => {
     await login(page, SEED.gerente.email, SEED.gerente.senha);
     await page.goto('/gerente/gerentes');
     const linha = page.locator('tr').filter({ hasText: nomeNovo });
-    await aceitarConfirmacao(page);
     await linha.getByRole('button', { name: 'Remover' }).click();
+    await aceitarConfirmacao(page, 'Remover');
     await expect(page.getByText(/removido com sucesso/i)).toBeVisible({ timeout: 90_000 });
   });
 });

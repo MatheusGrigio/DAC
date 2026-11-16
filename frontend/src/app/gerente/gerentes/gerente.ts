@@ -2,20 +2,20 @@ import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { finalize, of, switchMap } from 'rxjs';
-import { Button } from '../shared/components/button/button';
-import { Alert } from '../shared/components/alert/alert';
-import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
+import { Button } from '../../shared/components/button/button';
+import { Alert } from '../../shared/components/alert/alert';
+import { Confirmacao } from '../../shared/components/confirmacao/confirmacao';
 import {
   GerenteAtualizacao,
   GerenteInput,
   GerenteListaResponse,
   GerenteResponse,
   JobResponse,
-} from '../shared/models';
-import { CpfPipe, TelefonePipe } from '../shared/pipes';
-import { mensagemDeErro } from '../shared/utils/erro-http';
-import { JobService } from '../services/job.service';
-import { environment } from '../../environments/environment';
+} from '../../shared/models';
+import { CpfPipe, TelefonePipe } from '../../shared/pipes';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
+import { JobService } from '../../services/job.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-gerente',

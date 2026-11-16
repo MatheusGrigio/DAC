@@ -198,7 +198,7 @@ Gerente **não** tem tela de depósito. Teste **403** via `httpie/TX-R4-deposito
 
 ---
 
-### R7 — Extrato e dados cadastrais
+### R7 — Extrato
 
 #### H — Extrato
 
@@ -210,11 +210,6 @@ Gerente **não** tem tela de depósito. Teste **403** via `httpie/TX-R4-deposito
 #### S — Intervalo inválido (API)
 
 Na UI as datas limitam o calendário; intervalo > 365 dias — teste via `httpie/TX-R7-extrato.md`.
-
-#### H — Dados cadastrais
-
-1. No dashboard cliente, card **Dados cadastrais** → **Acessar** (`/cliente/dados`).
-2. **Espere:** nome **Catharyna**, CPF, e-mail, telefone, salário e endereço completos. **Voltar** ao dashboard.
 
 ---
 
@@ -248,7 +243,7 @@ Cliente não tem essa tela; `GET /solicitacoes` como cliente → **403** em HTTP
 
 1. Garanta solicitação **Pendente** (R1 + R8).
 2. Na linha do candidato, clique **Aprovar**.
-3. No diálogo do navegador **“Deseja realmente aprovar este cliente?”**, clique **OK**.
+3. No modal **Aprovar autocadastro**, clique **Aprovar**.
 4. **Espere:** botão vira **Processando...**, depois alerta verde **“Cliente aprovado com sucesso!”** e a linha some ou muda para **Aprovado**.
 5. No explorador de arquivos do projeto, abra `outbox/` e o arquivo do e-mail usado no R1 (ex.: `novo.manual@teste.local.txt`). Leia a linha `senha: ...`.
 6. Clique **Sair**, vá ao login, use o **e-mail do cadastro** e a **senha do arquivo**.
@@ -270,13 +265,13 @@ Cliente não tem essa tela; `GET /solicitacoes` como cliente → **403** em HTTP
 1. Faça **outro** autocadastro (R1) com **outro CPF** (para não misturar com o aprovado no R9).
 2. Login gerente → **Atualizar lista**.
 3. Na linha **Pendente**, clique **Recusar**.
-4. No prompt **“Informe o motivo da rejeição:”**, digite ex.: `Documentação incompleta` e confirme (**OK**).
+4. No modal **Recusar autocadastro**, preencha **Motivo da rejeição** com `Documentação incompleta` e clique **Recusar**.
 5. **Espere:** mensagem **“Cliente rejeitado com sucesso.”** e status **Não aprovado** / motivo na coluna.
 
 #### S1 — Cancelar motivo
 
 1. Em outra linha pendente, clique **Recusar**.
-2. No prompt, clique **Cancelar** ou feche sem texto.
+2. No modal, clique **Cancelar** ou pressione **Esc**.
 3. **Espere:** nada muda; linha continua **Pendente**.
 
 #### S2 — Motivo vazio (API)
@@ -360,7 +355,7 @@ A UI **não** edita e-mail; tentativa via API → **422** (`TX-R14`).
 #### H — Remover outro gerente
 
 1. Remova preferencialmente o gerente criado no **R13** (ou `ger4@bantads.com.br` se ainda tiver link **Remover**).
-2. Clique **Remover** → confirme **OK** no diálogo.
+2. Clique **Remover** e confirme com **Remover** no modal.
 3. **Espere:** **Removendo...**, depois some da lista ou fica inativo.
 4. (Opcional) tente login com aquele e-mail → falha.
 
@@ -398,7 +393,7 @@ Faça do início ao fim como se fosse a demonstração do DS:
 1. **Reboot** no PowerShell (seção 1).
 2. **R1** — autocadastro com CPF/e-mail novos (anote os dados).
 3. **R2 H2** — login gerente → **R8** conferir pendente → **R10** rejeite um segundo cadastro *ou* **R9** aprove o primeiro (e teste login com `outbox/`).
-4. **R2** logout → **R2 H1** cliente **cli1** → **R3–R7** (depósito, saque, transferência `0950`, extrato, dados cadastrais).
+4. **R2** logout → **R2 H1** cliente **cli1** → **R3–R7** (depósito, saque, transferência `0950`, extrato).
 5. **R2** logout → gerente → **R11** busca → **R13** novo gerente → **R14** editar → **R15** remover o criado → **R16** relatório.
 6. **Sair** e encerrar.
 

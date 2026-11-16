@@ -1,7 +1,8 @@
 <div
   class="alert"
   [class.error]="type === 'error'"
-  role="alert"
+  [class.info]="type === 'info'"
+  [attr.role]="type === 'error' ? 'alert' : 'status'"
 >
   <ng-content />
 </div>

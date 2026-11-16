@@ -29,25 +29,25 @@
     />
 
     @if (erro()) {
-      <div class="alert alert-danger mt-3" role="alert">{{ erro() }}</div>
+      <app-alert type="error" class="d-block mt-3">{{ erro() }}</app-alert>
     }
     @if (atualizandoSaldo()) {
-      <div class="alert alert-info mt-3" role="status">
+      <app-alert type="info" class="d-block mt-3">
         Depósito registrado. Atualizando o saldo...
-      </div>
+      </app-alert>
     } @else if (sucesso()) {
-      <div class="alert alert-success mt-3" role="status">{{ sucesso() }}</div>
+      <app-alert type="success" class="d-block mt-3">{{ sucesso() }}</app-alert>
     }
 
     <div class="d-flex flex-wrap gap-2 mt-4">
       <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary">Voltar</a>
-      <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar()">
+      <app-button type="submit" [disabled]="!podeEnviar()">
         @if (enviando()) {
           Depositando...
         } @else {
           Depositar
         }
-      </button>
+      </app-button>
     </div>
   </form>
 </section>

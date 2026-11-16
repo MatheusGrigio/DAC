@@ -9,34 +9,35 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { Alert } from '../../shared/components/alert/alert';
+import { Button } from '../../shared/components/button/button';
 import { Decimal } from 'decimal.js';
 import { last } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { ContaService } from '../services/conta.service';
-import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
-import { Conta } from '../shared/models';
-import { MoedaPipe } from '../shared/pipes/moeda.pipe';
+import { AuthService } from '../../services/auth.service';
+import { ContaService } from '../../services/conta.service';
+import { Confirmacao } from '../../shared/components/confirmacao/confirmacao';
+import { Conta } from '../../shared/models';
+import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
 import {
   centavosParaDecimal,
   formatarMoeda,
-} from '../shared/utils/dinheiro';
-import { mensagemDeErro } from '../shared/utils/erro-http';
+} from '../../shared/utils/dinheiro';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
-  selector: 'app-transferencia',
+  selector: 'app-saque',
   standalone: true,
-  imports: [RouterLink, MoedaPipe, Confirmacao],
-  templateUrl: './transferencia.html',
-  styleUrls: ['./transferencia.css'],
+  imports: [RouterLink, MoedaPipe, Confirmacao, Alert, Button],
+  templateUrl: './saque.html',
+  styleUrl: './saque.css',
 })
-export class Transferencia implements OnInit {
+export class Saque implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly contaService = inject(ContaService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly confirmacao = viewChild.required(Confirmacao);
 
   protected readonly conta = this.contaService.conta;
-  protected readonly contaDestino = signal('');
   protected readonly valor = signal(new Decimal(0));
   protected readonly valorTexto = signal('');
   protected readonly carregando = signal(true);
@@ -49,25 +50,8 @@ export class Transferencia implements OnInit {
     () => this.carregando() || this.enviando() || this.atualizandoSaldo(),
   );
 
-  protected readonly destinoIgualOrigem = computed(() => {
-    const origem = this.conta()?.numero ?? '';
-    const destino = this.contaDestino();
-    return destino.length === 4 && origem === destino;
-  });
-
-  protected readonly saldoInsuficiente = computed(() => {
-    const conta = this.conta();
-    return !!conta && this.valor().gt(conta.saldo);
-  });
-
   protected readonly podeEnviar = computed(
-  () =>
-    !!this.conta() &&
-    /^\d{4}$/.test(this.contaDestino()) &&
-    this.valor().gt(0) &&
-    !this.destinoIgualOrigem() &&
-    !this.saldoInsuficiente() &&
-    !this.ocupado(),
+    () => !!this.conta() && this.valor().gt(0) && !this.ocupado(),
   );
 
   ngOnInit(): void {
@@ -93,15 +77,7 @@ export class Transferencia implements OnInit {
       });
   }
 
-  protected aoDigitarConta(evento: Event): void {
-    const campo = evento.target as HTMLInputElement;
-    const valor = campo.value.replace(/\D/g, '').slice(0, 4);
-
-    this.contaDestino.set(valor);
-    campo.value = valor;
-  }
-
-  protected aoDigitarValor(evento: Event): void {
+  protected aoDigitar(evento: Event): void {
     const campo = evento.target as HTMLInputElement;
     const valor = centavosParaDecimal(campo.value);
 
@@ -117,30 +93,27 @@ export class Transferencia implements OnInit {
     if (!conta || !this.podeEnviar()) return;
 
     const valor = this.valor();
-    const destino = this.contaDestino();
-
     this.confirmacao().abrir({
-      titulo: 'Confirmar transferência',
-      mensagem: `Transferir ${formatarMoeda(valor)} para a conta ${destino}?`,
-      rotulo: 'Transferir',
-    }, () => this.transferir(conta, destino, valor));
+      titulo: 'Confirmar saque',
+      mensagem: `Sacar ${formatarMoeda(valor)} da conta ${conta.numero}?`,
+      rotulo: 'Sacar',
+    }, () => this.sacar(conta, valor));
   }
 
-  private transferir(conta: Conta, contaDestino: string, valor: Decimal): void {
+  private sacar(conta: Conta, valor: Decimal): void {
     const saldoEsperado = conta.saldo.minus(valor);
 
     this.erro.set('');
     this.sucesso.set('');
     this.enviando.set(true);
 
-    this.contaService.transferir(conta.numero, contaDestino, valor)
+    this.contaService.sacar(conta.numero, valor)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.enviando.set(false);
           this.valor.set(new Decimal(0));
           this.valorTexto.set('');
-          this.contaDestino.set('');
           this.atualizarSaldo(conta.cpfCliente, valor, saldoEsperado);
         },
         error: (e) => {
@@ -165,14 +138,14 @@ export class Transferencia implements OnInit {
 
           this.sucesso.set(
             contaAtualizada.saldo.equals(saldoEsperado)
-              ? `Transferência de ${formatarMoeda(valor)} realizada com sucesso.`
-              : `Transferência de ${formatarMoeda(valor)} registrada. O saldo ainda está sendo atualizado.`,
+              ? `Saque de ${formatarMoeda(valor)} realizado com sucesso.`
+              : `Saque de ${formatarMoeda(valor)} registrado. O saldo ainda está sendo atualizado.`,
           );
         },
         error: () => {
           this.atualizandoSaldo.set(false);
           this.sucesso.set(
-            `Transferência de ${formatarMoeda(valor)} registrada, mas não foi possível atualizar o saldo agora.`,
+            `Saque de ${formatarMoeda(valor)} registrado, mas não foi possível atualizar o saldo agora.`,
           );
         },
       });
@@ -182,16 +155,13 @@ export class Transferencia implements OnInit {
     const status = (e as { status?: number })?.status;
 
     if (status === 400) {
-      return 'Informe conta de destino e valor válidos.';
+      return 'Informe um valor válido para o saque.';
     }
     if (status === 403) {
-      return 'Você só pode transferir da sua própria conta.';
-    }
-    if (status === 404) {
-      return 'Conta de destino não encontrada.';
+      return 'Você só pode sacar da sua própria conta.';
     }
     if (status === 422) {
-      return mensagemDeErro(e, 'Não foi possível realizar a transferência.');
+      return mensagemDeErro(e, 'Não foi possível realizar o saque.');
     }
     if (status === 401) {
       return 'Sua sessão expirou. Faça login novamente.';
@@ -199,7 +169,7 @@ export class Transferencia implements OnInit {
 
     return mensagemDeErro(
       e,
-      'Não foi possível confirmar a transferência. Consulte o extrato antes de tentar novamente.',
+      'Não foi possível confirmar o saque. Consulte o saldo e o extrato antes de tentar novamente.',
     );
   }
 }

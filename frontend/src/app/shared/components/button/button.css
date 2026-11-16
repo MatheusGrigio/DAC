@@ -2,6 +2,10 @@
   display: inline-block;
 }
 
+:host(.w-100) .app-btn {
+  width: 100%;
+}
+
 .app-btn {
   display: inline-flex;
   align-items: center;

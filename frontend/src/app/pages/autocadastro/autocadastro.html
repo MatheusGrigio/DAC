@@ -25,6 +25,8 @@
             [(ngModel)]="cadastro.cpf" #cpf="ngModel" (input)="somenteNumeros($event, 'cpf')" pattern="[0-9]{11}" required>
           @if (cpf.invalid && cpf.touched) {
             <small class="text-danger" role="status">Informe o CPF com 11 dígitos.</small>
+          } @else if (cpf.touched && cpfInvalido) {
+            <small class="text-danger" role="status">Informe um CPF válido.</small>
           }
         </div>
         <div class="col-sm-6">
@@ -109,15 +111,15 @@
       <p class="text-danger" role="status">Confira os campos obrigatórios e os formatos informados.</p>
     }
     @if (mensagemSucesso()) {
-      <div class="alert alert-success mt-3" role="status">{{ mensagemSucesso() }}</div>
+      <app-alert class="d-block mt-3">{{ mensagemSucesso() }}</app-alert>
     }
     @if (mensagemErro()) {
-      <div class="alert alert-danger mt-3" role="alert">{{ mensagemErro() }}</div>
+      <app-alert type="error" class="d-block mt-3">{{ mensagemErro() }}</app-alert>
     }
     <div class="form-acoes">
       <app-button
         type="submit"
-        [disabled]="!!formulario.invalid || carregando() || !!mensagemSucesso()"
+        [disabled]="!!formulario.invalid || cpfInvalido || carregando() || !!mensagemSucesso()"
       >
         {{ carregando() ? 'Enviando...' : 'Solicitar cadastro' }}
       </app-button>

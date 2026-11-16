@@ -30,19 +30,19 @@
     />
 
     @if (erro()) {
-      <div class="alert alert-danger mt-3" role="alert">
+      <app-alert type="error" class="d-block mt-3">
         {{ erro() }}
-      </div>
+      </app-alert>
     }
 
     @if (atualizandoSaldo()) {
-      <div class="alert alert-info mt-3" role="status">
+      <app-alert type="info" class="d-block mt-3">
         Saque registrado. Atualizando o saldo...
-      </div>
+      </app-alert>
     } @else if (sucesso()) {
-      <div class="alert alert-success mt-3" role="status">
+      <app-alert type="success" class="d-block mt-3">
         {{ sucesso() }}
-      </div>
+      </app-alert>
     }
 
     <div class="d-flex flex-wrap gap-2 mt-4">
@@ -53,9 +53,7 @@
         Voltar
       </a>
 
-      <button
-        type="submit"
-        class="btn btn-primary"
+      <app-button type="submit"
         [disabled]="!podeEnviar()"
       >
         @if (enviando()) {
@@ -63,7 +61,7 @@
         } @else {
           Sacar
         }
-      </button>
+      </app-button>
     </div>
   </form>
 </section>

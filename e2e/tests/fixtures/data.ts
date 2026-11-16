@@ -19,10 +19,18 @@ function suffix(): string {
   return `${Date.now()}${seq}`;
 }
 
-/** CPF de teste (11 dígitos); o back não valida DV. */
+/** CPF de teste com os dígitos verificadores exigidos pelo formulário. */
 export function novoCpf(): string {
-  const n = BigInt(suffix()) % BigInt(99_999_999_999n);
-  return n.toString().padStart(11, '0');
+  const n = BigInt(suffix()) % 900_000_000n + 100_000_000n;
+  let cpf = n.toString();
+  for (let i = 0; i < 2; i += 1) {
+    const soma = [...cpf].reduce(
+      (total, digito, indice) => total + Number(digito) * (cpf.length + 1 - indice),
+      0,
+    );
+    cpf += ((soma * 10) % 11) % 10;
+  }
+  return cpf;
 }
 
 export function novoEmail(prefixo = 'e2e'): string {

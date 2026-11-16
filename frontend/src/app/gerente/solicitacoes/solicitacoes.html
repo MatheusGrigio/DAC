@@ -69,7 +69,7 @@
                   <app-button
                     variant="primary"
                     [disabled]="processandoCpf() === s.cpf"
-                    (click)="aprovar(s.cpf)"
+                    (click)="pedirAprovacao(s)"
                   >
                     {{ processandoCpf() === s.cpf ? 'Processando...' : 'Aprovar' }}
                   </app-button>
@@ -78,7 +78,7 @@
                   <app-button
                     variant="danger"
                     [disabled]="processandoCpf() === s.cpf"
-                    (click)="rejeitar(s.cpf)"
+                    (click)="pedirRejeicao(s)"
                   >
                     Recusar
                   </app-button>
@@ -120,3 +120,5 @@
     </table>
   </div>
 </section>
+
+<app-confirmacao />

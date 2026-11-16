@@ -5,7 +5,6 @@ import {
   formatarCpfTela,
   login,
   loginGerenteDashboard,
-  promptComMotivo,
 } from './helpers';
 import { dadosAutocadastro, SEED } from './fixtures/data';
 import { criarSolicitacaoApi } from './fixtures/gateway-api';
@@ -29,12 +28,13 @@ test.describe('R9–R10 — Solicitações (UI)', () => {
     const linha = page.locator('section.solicitacoes-section tr').filter({ hasText: cpfFormatado });
     await expect(linha).toBeVisible({ timeout: 30_000 });
 
-    await aceitarConfirmacao(page);
     await linha.getByRole('button', { name: 'Aprovar' }).click();
+    await aceitarConfirmacao(page, 'Aprovar');
     await expect(page.getByText(/aprovado com sucesso/i)).toBeVisible({ timeout: 90_000 });
 
     const senha = await pollSenhaDoEmail(solicitação.email);
     await page.getByRole('button', { name: /sair/i }).click();
+    await aceitarConfirmacao(page, 'Sair');
     await login(page, solicitação.email, senha);
     await expect(page).toHaveURL(/cliente\/dashboard/);
     await expect(page.getByText('Saldo atual:')).toBeVisible({ timeout: 20_000 });
@@ -50,13 +50,16 @@ test.describe('R9–R10 — Solicitações (UI)', () => {
     const linha = page.locator('section.solicitacoes-section tr').filter({ hasText: cpfFormatado });
     await expect(linha).toBeVisible({ timeout: 30_000 });
 
-    await promptComMotivo(page, 'Documentação incompleta E2E');
     await linha.getByRole('button', { name: 'Recusar' }).click();
+    const dialogo = page.getByRole('dialog');
+    await expect(dialogo.getByRole('button', { name: 'Recusar' })).toBeDisabled();
+    await dialogo.getByLabel('Motivo da rejeição').fill('Documentação incompleta E2E');
+    await aceitarConfirmacao(page, 'Recusar');
     await expect(page.getByText(/rejeitado com sucesso/i)).toBeVisible({ timeout: 20_000 });
     await expect(linha.getByText(/Não aprovado/i)).toBeVisible({ timeout: 15_000 });
   });
 
-  test('R10 sad: cancelar prompt de rejeição não altera status', async ({ page }) => {
+  test('R10 sad: cancelar a confirmação mantém a solicitação pendente', async ({ page }) => {
     const solicitação = dadosAutocadastro();
     await criarSolicitacaoApi(solicitação);
 
@@ -66,8 +69,8 @@ test.describe('R9–R10 — Solicitações (UI)', () => {
     const linha = page.locator('section.solicitacoes-section tr').filter({ hasText: cpfFormatado });
     await expect(linha).toBeVisible({ timeout: 30_000 });
 
-    page.once('dialog', (d) => d.dismiss());
     await linha.getByRole('button', { name: 'Recusar' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Cancelar' }).click();
     await expect(linha.getByText(/Pendente/i)).toBeVisible();
   });
 });

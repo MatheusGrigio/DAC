@@ -6,7 +6,6 @@ import { finalize, switchMap } from 'rxjs';
 import { AuthService, SolicitacaoService, JobService } from '../../services';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
-import { Confirmacao } from '../../shared/components/confirmacao/confirmacao';
 import { Solicitacao } from '../../shared/models';
 import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
 import { CpfPipe } from '../../shared/pipes/cpf.pipe';
@@ -16,7 +15,7 @@ import { mensagemDeErro } from '../../shared/utils/erro-http';
 @Component({
   selector: 'app-dashboard-gerente',
   standalone: true,
-  imports: [CommonModule, RouterModule, Button, Alert, Confirmacao, MoedaPipe, CpfPipe, DataHoraPipe],
+  imports: [CommonModule, RouterModule, Button, Alert, MoedaPipe, CpfPipe, DataHoraPipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })

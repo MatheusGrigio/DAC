@@ -1,9 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ContaService } from '../../services';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
 import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
+import { Alert } from '../../shared/components/alert/alert';
+import { Button } from '../../shared/components/button/button';
+import { Confirmacao } from '../../shared/components/confirmacao/confirmacao';
 
 interface Operacao {
   rel: string; 
@@ -23,13 +26,14 @@ const OPERACOES: Operacao[] = [
 @Component({
   selector: 'app-dashboard-cliente',
   standalone: true,
-  imports: [RouterModule, MoedaPipe],
+  imports: [RouterModule, MoedaPipe, Alert, Button, Confirmacao],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
 export class DashboardClienteComponent {
   private authService = inject(AuthService);
   private contaService = inject(ContaService);
+  private readonly confirmacao = viewChild.required(Confirmacao);
 
   protected readonly usuario = this.authService.usuarioLogado;
   protected readonly conta = this.contaService.conta;
@@ -68,7 +72,10 @@ export class DashboardClienteComponent {
   }
 
   logout(): void {
-    if (!confirm('Tem certeza que deseja sair do aplicativo?')) return;
-    this.authService.logout();
+    this.confirmacao().abrir({
+      titulo: 'Sair do BANTADS',
+      mensagem: 'Deseja encerrar sua sessão?',
+      rotulo: 'Sair',
+    }, () => this.authService.logout());
   }
 }
