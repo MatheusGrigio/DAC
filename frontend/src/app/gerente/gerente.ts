@@ -19,7 +19,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-gerente',
-  imports: [FormsModule, Button, Alert, CpfPipe, TelefonePipe],
+  imports: [FormsModule, Button, Alert, Confirmacao, CpfPipe, TelefonePipe],
   templateUrl: './gerente.html',
   styleUrl: './gerente.css',
 })
