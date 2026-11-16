@@ -122,11 +122,16 @@
     @if (mensagemErro()) {
       <p class="text-danger" role="alert">{{ mensagemErro() }}</p>
     }
-    <app-button
-      type="submit"
-      [disabled]="!!formulario.invalid || carregando() || !!mensagemSucesso()"
-    >
-      {{ carregando() ? 'Enviando...' : 'Solicitar cadastro' }}
-    </app-button>
+    <div class="form-acoes">
+      <app-button
+        type="submit"
+        [disabled]="!!formulario.invalid || carregando() || !!mensagemSucesso()"
+      >
+        {{ carregando() ? 'Enviando...' : 'Solicitar cadastro' }}
+      </app-button>
+      @if (mensagemSucesso()) {
+        <app-button variant="secondary" type="button" routerLink="/login">Voltar para o login</app-button>
+      }
+    </div>
   </form>
 </main>

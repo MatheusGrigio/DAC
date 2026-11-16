@@ -1,22 +1,10 @@
-@if (routerLink) {
-  <a
-    [routerLink]="routerLink"
-    class="app-btn"
-    [class.secondary]="variant === 'secondary'"
-    [class.danger]="variant === 'danger'"
-    [attr.aria-disabled]="disabled ? true : null"
-    [class.disabled]="disabled"
-  >
-    <ng-content />
-  </a>
-} @else {
-  <button
-    [type]="type"
-    class="app-btn"
-    [class.secondary]="variant === 'secondary'"
-    [class.danger]="variant === 'danger'"
-    [disabled]="disabled"
-  >
-    <ng-content />
-  </button>
-}
+<button
+  [type]="routerLink ? 'button' : type"
+  class="app-btn"
+  [class.secondary]="variant === 'secondary'"
+  [class.danger]="variant === 'danger'"
+  [disabled]="disabled"
+  (click)="onClick($event)"
+>
+  <ng-content />
+</button>

@@ -22,6 +22,7 @@ export class GerenteArea {
   ] as const;
 
   logout(): void {
+    if (!confirm('Tem certeza que deseja sair do aplicativo?')) return;
     this.authService.logout();
   }
 }

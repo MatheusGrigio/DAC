@@ -68,6 +68,7 @@ export class DashboardClienteComponent {
   }
 
   logout(): void {
+    if (!confirm('Tem certeza que deseja sair do aplicativo?')) return;
     this.authService.logout();
   }
 }

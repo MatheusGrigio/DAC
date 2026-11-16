@@ -142,6 +142,7 @@ export class DashboardGerenteComponent implements OnInit {
   }
 
   logout(): void {
+    if (!confirm('Tem certeza que deseja sair do aplicativo?')) return;
     this.authService.logout();
   }
 }
