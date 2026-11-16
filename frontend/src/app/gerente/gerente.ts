@@ -1,7 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { finalize, of, switchMap } from 'rxjs';
 import { Button } from '../shared/components/button/button';
 import { Alert } from '../shared/components/alert/alert';
@@ -19,7 +18,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-gerente',
-  imports: [FormsModule, RouterLink, Button, Alert, CpfPipe, TelefonePipe],
+  imports: [FormsModule, Button, Alert, CpfPipe, TelefonePipe],
   templateUrl: './gerente.html',
   styleUrl: './gerente.css',
 })

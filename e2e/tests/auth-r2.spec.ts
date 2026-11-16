@@ -11,7 +11,7 @@ test.describe('R2 — Autenticação (UI)', () => {
 
   test('R2A happy: login gerente', async ({ page }) => {
     await login(page, SEED.gerente.email, SEED.gerente.senha);
-    await expect(page).toHaveURL(/gerente\/dashboard/);
+    await expect(page).toHaveURL(/gerente\/(solicitacoes|dashboard)/);
     await expect(page.getByRole('heading', { name: 'BANTADS - Área do Gerente' })).toBeVisible();
   });
 

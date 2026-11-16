@@ -7,7 +7,7 @@ test.describe('R11 / R16 — Gerente lista e relatório (UI)', () => {
     await login(page, SEED.gerente.email, SEED.gerente.senha);
     await page.goto('/gerente/clientes');
     await expect(page).toHaveURL(/gerente\/clientes/);
-    await expect(page.getByRole('heading', { name: 'Consultar clientes' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Consultar clientes' })).toHaveClass(/ativo/);
     await page.fill('#busca', 'cat');
     await page.getByRole('button', { name: 'Buscar' }).click();
     await expect(page.getByText(/Catharyna/i)).toBeVisible({ timeout: 15_000 });

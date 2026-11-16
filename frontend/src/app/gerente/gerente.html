@@ -1,11 +1,4 @@
-<main class="gerentes-page">
-  <h1>Gerentes</h1>
-  <div class="d-flex flex-wrap gap-2 mb-3">
-    <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
-    @if (podeCriar() && !mostrarFormulario() && !gerenteEditando()) {
-      <app-button (click)="mostrarFormulario.set(true); erro.set(''); sucesso.set('')">Novo gerente</app-button>
-    }
-  </div>
+<section class="gerente-painel" aria-label="Gerentes">
 
   @if (sucesso()) {
     <app-alert type="success">{{ sucesso() }}</app-alert>
@@ -96,6 +89,12 @@
     </section>
   }
 
+  @if (!carregando() && podeCriar() && !mostrarFormulario() && !gerenteEditando()) {
+    <div class="painel-toolbar">
+      <app-button (click)="mostrarFormulario.set(true); erro.set(''); sucesso.set('')">Novo gerente</app-button>
+    </div>
+  }
+
   @if (carregando()) {
     <p role="status">Carregando gerentes...</p>
   } @else {
@@ -141,4 +140,4 @@
       </table>
     </div>
   }
-</main>
+</section>

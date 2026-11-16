@@ -22,7 +22,7 @@ export async function loginGerenteDashboard(page: Page, email: string, senha: st
     { timeout: 90_000 },
   );
   await page.getByRole('button', { name: /entrar/i }).click();
-  await page.waitForURL(/gerente\/dashboard/, { timeout: 20_000 });
+  await page.waitForURL(/gerente\/(solicitacoes|dashboard)/, { timeout: 20_000 });
   const resposta = await lista;
   expect(resposta.status()).toBe(200);
 }

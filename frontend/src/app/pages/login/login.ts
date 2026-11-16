@@ -30,7 +30,7 @@ export class Login implements OnInit {
     if (this.authService.usuarioLogado()) {
       const tipo = this.authService.getTipo();
       if (tipo) {
-        this.router.navigate([tipo === 'CLIENTE' ? '/cliente/dashboard' : '/gerente/dashboard']);
+        this.router.navigate([tipo === 'CLIENTE' ? '/cliente/dashboard' : '/gerente/solicitacoes']);
       }
     }
   }
@@ -52,7 +52,7 @@ export class Login implements OnInit {
         if (response.tipo === 'CLIENTE') {
           this.router.navigate(['/cliente/dashboard']);
         } else {
-          this.router.navigate(['/gerente/dashboard']);
+          this.router.navigate(['/gerente/solicitacoes']);
         }
       },
       error: (error: { mensagem?: string }) => {

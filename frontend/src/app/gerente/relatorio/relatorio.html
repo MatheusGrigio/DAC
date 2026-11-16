@@ -1,16 +1,15 @@
-<main class="relatorio-page">
-  <h1>Relatório de clientes</h1>
-  <div class="acoes">
-    <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
-    <app-button [disabled]="carregando()" (click)="carregar()">Atualizar relatório</app-button>
-  </div>
+<section class="gerente-painel" aria-label="Relatório de clientes">
   @if (carregando()) {
     <p role="status">Carregando relatório...</p>
   } @else if (erro()) {
     <app-alert type="error">{{ erro() }}</app-alert>
-  } @else if (clientes().length === 0) {
+  }
+  <div class="painel-toolbar">
+    <app-button [disabled]="carregando()" (click)="carregar()">Atualizar relatório</app-button>
+  </div>
+  @if (!carregando() && !erro() && clientes().length === 0) {
     <app-alert>Nenhum cliente para exibir no relatório.</app-alert>
-  } @else {
+  } @else if (!carregando() && !erro()) {
   <div class="tabela">
     <table>
       <caption class="visually-hidden">Clientes em ordem crescente por nome</caption>
@@ -43,4 +42,4 @@
     </table>
   </div>
   }
-</main>
+</section>

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Decimal } from 'decimal.js';
 import { Observable, map } from 'rxjs';
@@ -18,7 +18,11 @@ export class ClienteService {
   private readonly API_GATEWAY = environment.apiUrl;
 
   listar(busca = ''): Observable<ClienteLista[]> {
-    const params = busca ? { busca } : undefined;
+    let params = new HttpParams();
+    const termo = busca.trim();
+    if (termo) {
+      params = params.set('busca', termo);
+    }
     return this.http.get<ClienteListaResponse>(`${this.API_GATEWAY}/clientes`, { params }).pipe(
       map((r) =>
         r.clientes.map((c) => ({

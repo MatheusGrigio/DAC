@@ -1,6 +1,4 @@
-.relatorio-page { max-width: 900px; margin: 0 auto; }
-h1 { font-size: 24px; margin-bottom: 24px; }
-.acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+.gerente-painel h2 { color: var(--tinta); }
 .tabela { overflow-x: auto; margin-bottom: 16px; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
