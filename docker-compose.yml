@@ -304,4 +304,23 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  # frontend: nginx estático (mem_limit 64m) quando frontend/ existir
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        API_URL: ${GATEWAY_PUBLIC_URL:-http://localhost:3000}
+    ports:
+      - "4200:80"
+    mem_limit: 64m
+    networks:
+      - bantads
+    depends_on:
+      gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/ | grep -qi html"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
