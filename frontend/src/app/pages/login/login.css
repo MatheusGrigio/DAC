@@ -1,5 +1,7 @@
 .login-page {
   background: var(--papel);
+  box-sizing: border-box;
+  padding: 1.5rem;
 }
 
 .login-card {
@@ -8,6 +10,12 @@
   border-top: 3px solid var(--marca);
   border-radius: var(--raio);
   box-shadow: none !important;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.login-card .input-group > .form-control {
+  min-width: 0;
 }
 
 .login-card h2 {

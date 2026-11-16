@@ -9,11 +9,11 @@
 <form class="filtro" [formGroup]="filtro" (ngSubmit)="consultar()">
   <div>
     <label class="form-label" for="inicio">De</label>
-    <input id="inicio" type="date" class="form-control" formControlName="inicio" [max]="hoje" />
+    <input id="inicio" type="date" class="form-control" formControlName="dataInicio" [max]="hoje" />
   </div>
   <div>
     <label class="form-label" for="fim">Até</label>
-    <input id="fim" type="date" class="form-control" formControlName="fim" [max]="hoje" />
+    <input id="fim" type="date" class="form-control" formControlName="dataFim" [max]="hoje" />
   </div>
   <button type="submit" class="btn btn-primary" [disabled]="carregando() || !numeroConta()">
     Consultar

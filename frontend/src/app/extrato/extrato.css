@@ -1,3 +1,21 @@
+.pagina-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.pagina-cabecalho h1 {
+  margin-bottom: 0.25rem;
+}
+
+.pagina-cabecalho p {
+  margin: 0;
+  color: var(--tinta-suave);
+}
+
 .filtro {
   display: flex;
   align-items: flex-end;
@@ -25,4 +43,26 @@
 .sem-mov {
   font-weight: 400;
   color: var(--tinta-suave);
+}
+
+.tabela-wrap {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela th,
+.tabela td {
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--linha);
+  vertical-align: top;
+}
+
+.tabela .num {
+  text-align: right;
+  white-space: nowrap;
 }
