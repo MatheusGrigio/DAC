@@ -22,9 +22,11 @@ function paraSolicitacao(r: SolicitacaoResponse): Solicitacao {
     salario: new Decimal(r.salario),
     status: r.status,
     motivo: r.motivo ?? undefined,
-    dataHoraProcessamento: r.dataHoraProcessamento
-      ? DateTime.fromISO(r.dataHoraProcessamento)
-      : null,
+    dataHoraProcessamento:
+      r.dataHoraProcessamento && DateTime.fromISO(r.dataHoraProcessamento).isValid
+        ? DateTime.fromISO(r.dataHoraProcessamento)
+        : null,
+    endereco: r.endereco,
     _links: r._links,
   };
 }
@@ -40,13 +42,27 @@ export class SolicitacaoService {
     return this.http.post<SolicitacaoResponse>(this.apiUrl, cadastro);
   }
 
+  obter(cpf: string): Observable<Solicitacao> {
+    return this.http
+      .get<SolicitacaoResponse>(`${this.apiUrl}/${cpf}`)
+      .pipe(map(paraSolicitacao));
+  }
+
   listar(status?: string): Observable<SolicitacoesListModel> {
     const params = status ? new HttpParams().set('status', status) : undefined;
     return this.http
       .get<SolicitacaoListaResponse>(this.apiUrl, { params })
       .pipe(
         map((res) => ({
-          solicitacoes: (res.solicitacoes || []).map(paraSolicitacao),
+          solicitacoes: (res.solicitacoes || [])
+            .map((item) => {
+              try {
+                return paraSolicitacao(item);
+              } catch {
+                return null;
+              }
+            })
+            .filter((item): item is Solicitacao => item !== null),
         })),
       );
   }

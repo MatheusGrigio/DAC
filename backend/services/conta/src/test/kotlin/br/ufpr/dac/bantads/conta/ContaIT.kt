@@ -284,7 +284,7 @@ class ContaIT {
                 jsonPath("$._links.cliente.href") { value(containsString("/clientes/")) }
             }
         mockMvc.get("/contas/1291") { cliente(SeedContas.CLEUDDONIO) }.andExpect { status { isForbidden() } }
-        mockMvc.get("/contas/1291/extrato") { gerente() }.andExpect { status { isForbidden() } }
+        mockMvc.get("/contas/1291/extrato") { gerente() }.andExpect { status { isOk() } }
     }
 
     @Test

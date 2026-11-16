@@ -12,7 +12,7 @@ describe('Saque', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Saque],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     })
     .compileComponents();
 

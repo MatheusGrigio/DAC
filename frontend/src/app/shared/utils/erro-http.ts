@@ -5,6 +5,7 @@ export function mensagemDeErro(erro: unknown, padrao: string): string {
   if (e?.status === 0) {
     return 'Não foi possível falar com o servidor. Verifique se o sistema está no ar.';
   }
-  const mensagem = e?.error?.mensagem;
+  const corpo = e?.error;
+  const mensagem = corpo?.mensagem ?? corpo?.message;
   return typeof mensagem === 'string' && mensagem ? mensagem : padrao;
 }

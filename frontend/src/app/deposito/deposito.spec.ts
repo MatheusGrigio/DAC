@@ -12,7 +12,7 @@ describe('Deposito', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Deposito],
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     })
     .compileComponents();
 

@@ -109,15 +109,16 @@
     @if (mensagemErro()) {
       <div class="alert alert-danger mt-3" role="alert">{{ mensagemErro() }}</div>
     }
-    <div class="d-flex flex-wrap gap-2 mt-4">
-      <a routerLink="/login" class="btn btn-outline-secondary">Voltar ao login</a>
-      <button
+    <div class="form-acoes">
+      <app-button
         type="submit"
-        class="btn btn-primary"
         [disabled]="!!formulario.invalid || carregando() || !!mensagemSucesso()"
       >
         {{ carregando() ? 'Enviando...' : 'Solicitar cadastro' }}
-      </button>
+      </app-button>
+      @if (mensagemSucesso()) {
+        <app-button variant="secondary" type="button" routerLink="/login">Voltar para o login</app-button>
+      }
     </div>
   </form>
 </main>

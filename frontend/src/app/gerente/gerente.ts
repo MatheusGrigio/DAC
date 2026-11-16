@@ -1,8 +1,7 @@
 import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { finalize, switchMap } from 'rxjs';
+import { finalize, of, switchMap } from 'rxjs';
 import { Button } from '../shared/components/button/button';
 import { Alert } from '../shared/components/alert/alert';
 import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
@@ -20,7 +19,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-gerente',
-  imports: [FormsModule, RouterLink, Button, Alert, Confirmacao, CpfPipe, TelefonePipe],
+  imports: [FormsModule, Button, Alert, CpfPipe, TelefonePipe],
   templateUrl: './gerente.html',
   styleUrl: './gerente.css',
 })
@@ -31,6 +30,7 @@ export class Gerente implements OnInit {
   private readonly apiUrl = `${environment.apiUrl}/gerentes`;
 
   gerentes = signal<GerenteResponse[]>([]);
+  podeCriar = signal(false);
   carregando = signal(true);
   salvando = signal(false);
   processandoCpf = signal<string | null>(null);
@@ -52,6 +52,7 @@ export class Gerente implements OnInit {
           a.nome.localeCompare(b.nome, 'pt-BR'),
         );
         this.gerentes.set(lista);
+        this.podeCriar.set(!!res._links?.['criacao']);
         this.carregando.set(false);
       },
       error: (err) => {
@@ -153,9 +154,14 @@ export class Gerente implements OnInit {
     this.sucesso.set('');
 
     this.http
-      .delete<JobResponse>(`${this.apiUrl}/${gerente.cpf}`)
+      .delete(`${this.apiUrl}/${gerente.cpf}`, { observe: 'response' })
       .pipe(
-        switchMap((job) => this.jobService.aguardarConclusao(job.jobId)),
+        switchMap((res) => {
+          if (res.status === 202 && res.body) {
+            return this.jobService.aguardarConclusao((res.body as JobResponse).jobId);
+          }
+          return of(null);
+        }),
         finalize(() => this.processandoCpf.set(null)),
       )
       .subscribe({

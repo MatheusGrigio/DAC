@@ -1,12 +1,19 @@
 <section class="container operacao-cliente py-4">
   <h1 class="h3 mb-4">Extrato</h1>
 
-  @if (numeroConta(); as numero) {
-    <dl class="row mb-4">
-      <dt class="col-6">Conta</dt>
-      <dd class="col-6 text-end">{{ numero }}</dd>
-    </dl>
-  }
+<form class="filtro" [formGroup]="filtro" (ngSubmit)="consultar()">
+  <div>
+    <label class="form-label" for="inicio">De</label>
+    <input id="inicio" type="date" class="form-control" formControlName="dataInicio" [max]="hoje" />
+  </div>
+  <div>
+    <label class="form-label" for="fim">Até</label>
+    <input id="fim" type="date" class="form-control" formControlName="dataFim" [max]="hoje" />
+  </div>
+  <button type="submit" class="btn btn-primary" [disabled]="carregando() || !numeroConta()">
+    Consultar
+  </button>
+</form>
 
   <form [formGroup]="filtro" (ngSubmit)="consultar()">
     <div class="row g-3">

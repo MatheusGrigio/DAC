@@ -44,6 +44,8 @@ backend/contract-tests/.cache.json
 
 # Logs
 *.log
+test-logs/*.txt
+!test-logs/README.md
 
 # MAIL_DEV outbox (R9 password for local tests / defense)
 outbox/

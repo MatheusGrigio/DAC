@@ -47,35 +47,45 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./extrato/extrato').then(m => m.Extrato)
   },
+  {
+    path: 'cliente/dados',
+    canActivate: [authGuard],
+    data: { role: 'CLIENTE' },
+    loadComponent: () =>
+      import('./cliente/dados-cadastrais/dados-cadastrais').then((m) => m.DadosCadastrais),
+  },
   
   // GERENTE ROUTES
   {
+    path: 'gerente',
+    canActivate: [authGuard],
+    data: { role: 'GERENTE' },
+    loadComponent: () => import('./gerente/area/area').then((m) => m.GerenteArea),
+    children: [
+      { path: '', redirectTo: 'solicitacoes', pathMatch: 'full' },
+      {
+        path: 'solicitacoes',
+        loadComponent: () =>
+          import('./gerente/solicitacoes/solicitacoes').then((m) => m.GerenteSolicitacoes),
+      },
+      {
+        path: 'clientes',
+        loadComponent: () => import('./gerente/clientes/clientes').then((m) => m.Clientes),
+      },
+      {
+        path: 'gerentes',
+        loadComponent: () => import('./gerente/gerente').then((m) => m.Gerente),
+      },
+      {
+        path: 'relatorio',
+        loadComponent: () => import('./gerente/relatorio/relatorio').then((m) => m.Relatorio),
+      },
+    ],
+  },
+  {
     path: 'gerente/dashboard',
-    canActivate: [authGuard],
-    data: { role: 'GERENTE' },
-    loadComponent: () => 
-      import('./gerente/dashboard/dashboard')
-        .then(m => m.DashboardGerenteComponent)
-  },
-  
-  {
-    path: 'gerente/clientes',
-    canActivate: [authGuard],
-    data: { role: 'GERENTE' },
-    loadComponent: () => import('./gerente/clientes/clientes').then(m => m.Clientes)
-  },
-
-  {
-    path: 'gerente/relatorio',
-    canActivate: [authGuard],
-    data: { role: 'GERENTE' },
-    loadComponent: () => import('./gerente/relatorio/relatorio').then(m => m.Relatorio)
-  },
-  {
-    path: 'gerente/gerentes',
-    canActivate: [authGuard],
-    data: { role: 'GERENTE' },
-    loadComponent: () => import('./gerente/gerente').then(m => m.Gerente)
+    redirectTo: '/gerente/solicitacoes',
+    pathMatch: 'full',
   },
   { 
     path: 'transferencia', 

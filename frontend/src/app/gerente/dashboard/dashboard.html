@@ -12,15 +12,26 @@
   </div>
 
   <section class="solicitacoes-section">
-    <h2>Solicitações de Autocadastro</h2>
-    
-    <div *ngIf="loading()" class="carregando" role="status">Carregando solicitações...</div>
-    <div class="avisos">
-      <app-alert *ngIf="mensagemSucesso()" type="success">{{ mensagemSucesso() }}</app-alert>
-      <app-alert *ngIf="error()" type="error">{{ error() }}</app-alert>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+      <h2 class="mb-0">Solicitações de Autocadastro</h2>
+      <app-button variant="secondary" (click)="carregarSolicitacoes()" [disabled]="loading()">
+        Atualizar lista
+      </app-button>
     </div>
 
-    <div class="tabela" *ngIf="!loading()">
+    @if (loading()) {
+      <div class="carregando" role="status">Carregando solicitações...</div>
+    }
+    <div class="avisos">
+      @if (mensagemSucesso()) {
+        <app-alert type="success">{{ mensagemSucesso() }}</app-alert>
+      }
+      @if (error()) {
+        <app-alert type="error">{{ error() }}</app-alert>
+      }
+    </div>
+
+    <div class="tabela">
       <table>
         <thead>
           <tr>
@@ -33,48 +44,93 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let s of solicitacoes()">
-            <td>{{ s.cpf | cpf }}</td>
-            <td>{{ s.nome }}</td>
-            <td>{{ s.salario | moeda }}</td>
-            <td>
-              <span class="badge" [ngClass]="{
-                'bg-warning': s.status === 'PENDENTE',
-                'bg-success': s.status === 'APROVADA',
-                'bg-danger': s.status === 'NAO_APROVADA' || s.status === 'REJEITADA'
-              }">
-                {{ s.status === 'NAO_APROVADA' ? 'Não aprovado' : (s.status === 'APROVADA' ? 'Aprovado' : 'Pendente') }}
-              </span>
-            </td>
-            <td>
-              <div *ngIf="s.motivo"><small><strong>Motivo:</strong> {{ s.motivo }}</small></div>
-              <div *ngIf="s.dataHoraProcessamento"><small><strong>Data:</strong> {{ s.dataHoraProcessamento | dataHora }}</small></div>
-              <span *ngIf="!s.motivo && !s.dataHoraProcessamento">-</span>
-            </td>
-            <td>
-              <div class="botoes-acao" *ngIf="s.status === 'PENDENTE'">
-                <app-button
-                  variant="primary"
-                  [disabled]="processandoCpf() === s.cpf"
-                  (click)="pedirAprovacao(s)">
-                  {{ processandoCpf() === s.cpf ? 'Processando...' : 'Aprovar' }}
-                </app-button>
-                <app-button
-                  variant="danger"
-                  [disabled]="processandoCpf() === s.cpf"
-                  (click)="pedirRejeicao(s)">
-                  Recusar
-                </app-button>
-              </div>
-            </td>
-          </tr>
-          <tr *ngIf="!error() && solicitacoes().length === 0">
-            <td colspan="6" class="sem-registros">Nenhuma solicitação encontrada.</td>
-          </tr>
+          @for (s of solicitacoes(); track s.cpf) {
+            <tr>
+              <td>{{ s.cpf | cpf }}</td>
+              <td>{{ s.nome }}</td>
+              <td>{{ s.salario | moeda }}</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.bg-warning]="s.status === 'PENDENTE'"
+                  [class.bg-success]="s.status === 'APROVADA'"
+                  [class.bg-danger]="s.status === 'NAO_APROVADA'"
+                >
+                  {{
+                    s.status === 'NAO_APROVADA'
+                      ? 'Não aprovado'
+                      : s.status === 'APROVADA'
+                        ? 'Aprovado'
+                        : 'Pendente'
+                  }}
+                </span>
+              </td>
+              <td>
+                @if (s.motivo) {
+                  <div><small><strong>Motivo:</strong> {{ s.motivo }}</small></div>
+                }
+                @if (s.dataHoraProcessamento) {
+                  <div><small><strong>Data:</strong> {{ s.dataHoraProcessamento | dataHora }}</small></div>
+                }
+                @if (!s.motivo && !s.dataHoraProcessamento) {
+                  <span>-</span>
+                }
+              </td>
+              <td>
+                <div class="botoes-acao">
+                  @if (s._links?.['aprovacao']) {
+                    <app-button
+                      variant="primary"
+                      [disabled]="processandoCpf() === s.cpf"
+                      (click)="aprovar(s.cpf)"
+                    >
+                      {{ processandoCpf() === s.cpf ? 'Processando...' : 'Aprovar' }}
+                    </app-button>
+                  }
+                  @if (s._links?.['rejeicao']) {
+                    <app-button
+                      variant="danger"
+                      [disabled]="processandoCpf() === s.cpf"
+                      (click)="rejeitar(s.cpf)"
+                    >
+                      Recusar
+                    </app-button>
+                  }
+                  <app-button
+                    variant="secondary"
+                    [disabled]="processandoCpf() === s.cpf"
+                    (click)="verDetalhes(s.cpf)"
+                  >
+                    Detalhes
+                  </app-button>
+                </div>
+                @if (detalheCpf() === s.cpf) {
+                  <div class="detalhe-solicitacao">
+                    @if (carregandoDetalhe()) {
+                      <small>Carregando endereço...</small>
+                    } @else if (detalhe()?.endereco; as endereco) {
+                      <small>
+                        <strong>Endereço:</strong>
+                        {{ endereco.logradouro }}, {{ endereco.numero }}
+                        @if (endereco.complemento) {
+                          — {{ endereco.complemento }}
+                        }
+                        — {{ endereco.cidade }}/{{ endereco.uf }} — CEP {{ endereco.cep }}
+                      </small>
+                    }
+                  </div>
+                }
+              </td>
+            </tr>
+          } @empty {
+            @if (!loading()) {
+              <tr>
+                <td colspan="6" class="sem-registros">Nenhuma solicitação encontrada.</td>
+              </tr>
+            }
+          }
         </tbody>
       </table>
     </div>
   </section>
 </main>
-
-<app-confirmacao />

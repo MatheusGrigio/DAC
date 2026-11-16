@@ -41,11 +41,12 @@ describe('E03 ACL', () => {
     assert.equal(isAllowed({ kind: 'gerente' }, gerente, '/clientes'), true);
   });
 
-  it('permite operações de conta (saque/depósito/extrato) apenas ao CLIENTE', () => {
+  it('restringe operações de escrita em conta ao CLIENTE; extrato consulta gerenteOrSelf', () => {
     assert.deepEqual(accessFor('POST', '/contas/1234/saque'), { kind: 'cliente' });
-    assert.deepEqual(accessFor('GET', '/contas/1234/extrato'), { kind: 'cliente' });
+    assert.deepEqual(accessFor('GET', '/contas/1234/extrato'), { kind: 'gerenteOrSelf' });
     assert.equal(isAllowed({ kind: 'cliente' }, gerente, '/contas/1234/saque'), false);
     assert.equal(isAllowed({ kind: 'cliente' }, cliente, '/contas/1234/saque'), true);
+    assert.equal(isAllowed({ kind: 'gerenteOrSelf' }, gerente, '/contas/1234/extrato'), true);
   });
 
   it('gerenteOrSelf: gerente sempre passa; cliente só acessa o próprio CPF', () => {

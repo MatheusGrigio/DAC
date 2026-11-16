@@ -1,19 +1,64 @@
-<main class="clientes-page">
-  <h1>Consultar clientes</h1>
-  <app-button variant="secondary" routerLink="/gerente/dashboard">Voltar</app-button>
-  <form (ngSubmit)="filtro = busca" class="busca">
-    <div class="campo">
-      <label for="busca">Nome ou CPF</label>
-      <input id="busca" name="busca" type="search" [(ngModel)]="busca"/>
+<section class="gerente-painel" aria-label="Consultar clientes">
+
+  <form class="filtros" (ngSubmit)="buscar()" novalidate>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="busca">Nome ou CPF</label>
+        <input
+          id="busca"
+          name="termo"
+          type="search"
+          class="form-control"
+          [(ngModel)]="filtros.termo"
+          placeholder="Trecho do nome ou do CPF"
+          autocomplete="off"
+        />
+        <div class="form-text">Aceita parte do nome ou do CPF (com ou sem pontuação).</div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="filtro-cidade">Cidade</label>
+        <input
+          id="filtro-cidade"
+          name="cidade"
+          type="search"
+          class="form-control"
+          [(ngModel)]="filtros.cidade"
+          placeholder="Trecho da cidade"
+          autocomplete="off"
+        />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label" for="filtro-estado">Estado (UF)</label>
+        <input
+          id="filtro-estado"
+          name="estado"
+          type="search"
+          class="form-control"
+          [(ngModel)]="filtros.estado"
+          maxlength="2"
+          placeholder="UF"
+          autocomplete="off"
+          (input)="filtros.estado = filtros.estado.toUpperCase()"
+        />
+      </div>
     </div>
-    <app-button type="submit">Buscar</app-button>
+    <div class="filtros-acoes">
+      <app-button type="submit" [disabled]="carregando()">Buscar</app-button>
+      <app-button type="button" variant="secondary" [disabled]="carregando()" (click)="limparFiltros()">
+        Limpar filtros
+      </app-button>
+    </div>
   </form>
+
   @if (carregando()) {
-    <p role="status">Carregando clientes...</p>
+    <p class="estado" role="status">Carregando clientes...</p>
   } @else if (erro()) {
     <app-alert type="error">{{ erro() }}</app-alert>
     <app-button (click)="carregar()" [disabled]="carregando()">Tentar novamente</app-button>
   } @else {
+  <p class="resultado-contagem text-muted small">
+    {{ clientes().length }} cliente(s) encontrado(s)
+  </p>
     <div class="tabela">
       <table>
         <caption class="visually-hidden">Clientes</caption>
@@ -27,7 +72,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (cliente of clientesFiltrados; track cliente.cpf) {
+          @for (cliente of clientes(); track cliente.cpf) {
             <tr>
               <td>{{ cliente.cpf | cpf }}</td>
               <td>{{ cliente.nome }}</td>
@@ -36,10 +81,10 @@
               <td>{{ cliente.saldo | moeda }}</td>
             </tr>
           } @empty {
-            <tr><td colspan="5">Nenhum cliente encontrado.</td></tr>
+            <tr><td colspan="5">Nenhum cliente encontrado para os filtros informados.</td></tr>
           }
         </tbody>
       </table>
     </div>
   }
-</main>
+</section>

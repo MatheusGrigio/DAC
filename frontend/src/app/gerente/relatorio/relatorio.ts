@@ -1,7 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { finalize, of, switchMap } from 'rxjs';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
@@ -14,7 +13,7 @@ import { JobService } from '../../services/job.service';
 
 @Component({
   selector: 'app-relatorio',
-  imports: [RouterLink, Button, Alert, CpfPipe, MoedaPipe],
+  imports: [Button, Alert, CpfPipe, MoedaPipe],
   templateUrl: './relatorio.html',
   styleUrl: './relatorio.css',
 })

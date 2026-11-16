@@ -1,0 +1,26 @@
+<div class="gerente-area">
+  <header class="gerente-topo">
+    <div class="gerente-titulo">
+      <h1>BANTADS - Área do Gerente</h1>
+      <p class="mb-0">Bem-vindo, <strong>{{ usuario()?.nome }}</strong>!</p>
+    </div>
+    <app-button variant="secondary" (click)="logout()">Sair</app-button>
+  </header>
+
+  <nav class="gerente-nav" aria-label="Navegação do gerente">
+    @for (item of navItens; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="ativo"
+        class="gerente-nav-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  <div class="gerente-conteudo">
+    <router-outlet />
+  </div>
+</div>

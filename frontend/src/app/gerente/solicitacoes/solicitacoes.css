@@ -1,0 +1,73 @@
+.avisos {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.carregando {
+  padding: 12px;
+  color: #555;
+}
+
+.tabela {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+}
+
+th {
+  background: #f4f4f4;
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.badge.bg-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.badge.bg-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.badge.bg-danger {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+.botoes-acao {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sem-registros {
+  text-align: center;
+  color: #777;
+  padding: 20px;
+}
+
+.detalhe-solicitacao {
+  margin-top: 8px;
+}

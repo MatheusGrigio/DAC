@@ -34,6 +34,47 @@ body {
   color: var(--tinta);
 }
 
+app-dashboard-cliente,
+app-dados-cadastrais,
+app-deposito,
+app-saque,
+app-transferencia,
+app-extrato,
+app-autocadastro,
+app-gerente-area {
+  display: block;
+  box-sizing: border-box;
+  width: min(100%, 72rem);
+  margin-inline: auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+app-gerente-area app-gerente-solicitacoes,
+app-gerente-area app-clientes,
+app-gerente-area app-relatorio,
+app-gerente-area app-gerente {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.painel-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+app-deposito,
+app-saque,
+app-transferencia {
+  width: min(100%, 40rem);
+}
+
+app-autocadastro,
+app-dados-cadastrais {
+  width: min(100%, 48rem);
+}
+
 h1, h2, h3, h4,
 .titulo {
   font-family: var(--fonte-titulo);

@@ -1,53 +1,75 @@
-<section class="container operacao-cliente py-4">
+<section class="container py-4" style="max-width: 640px">
   <h1 class="h3 mb-4">Transferência</h1>
 
-  <form [formGroup]="transferenciaForm" (ngSubmit)="realizarTransferencia()" novalidate>
-    <div class="mb-3">
-      <label for="contaDestino" class="form-label">Número da conta de destino</label>
-      <input
-        id="contaDestino"
-        type="text"
-        inputmode="numeric"
-        autocomplete="off"
-        maxlength="4"
-        class="form-control form-control-lg"
-        formControlName="contaDestino"
-        placeholder="Ex.: 1291"
-        [readOnly]="enviando"
-        [class.is-invalid]="transferenciaForm.controls.contaDestino.invalid && transferenciaForm.controls.contaDestino.touched"
-      />
-      <div class="invalid-feedback">Informe um número de conta com 4 dígitos.</div>
-    </div>
+  @if (carregando()) {
+    <p role="status">Carregando sua conta...</p>
+  } @else if (conta(); as c) {
+    <dl class="row mb-4">
+      <dt class="col-6">Conta de origem</dt>
+      <dd class="col-6 text-end">{{ c.numero }}</dd>
 
-    <label for="valor" class="form-label">Valor da transferência</label>
+      <dt class="col-6">Saldo atual</dt>
+      <dd class="col-6 text-end">{{ c.saldo | moeda }}</dd>
+    </dl>
+  }
+
+  <form (submit)="enviar($event)" novalidate>
+    <label for="contaDestino" class="form-label">Conta de destino (4 dígitos)</label>
     <input
-      id="valor"
+      id="contaDestino"
+      name="contaDestino"
       type="text"
-      inputmode="decimal"
+      inputmode="numeric"
+      autocomplete="off"
+      class="form-control form-control-lg mb-3"
+      placeholder="Ex: 0950"
+      [value]="contaDestino()"
+      (input)="aoDigitarConta($event)"
+      [disabled]="ocupado() || !conta()"
+    />
+
+    <label for="valorTransferencia" class="form-label">Valor da transferência</label>
+    <input
+      id="valorTransferencia"
+      name="valorTransferencia"
+      type="text"
+      inputmode="numeric"
       autocomplete="off"
       class="form-control form-control-lg"
-      formControlName="valor"
       placeholder="R$ 0,00"
-      [readOnly]="enviando"
-      [class.is-invalid]="transferenciaForm.controls.valor.invalid && transferenciaForm.controls.valor.touched"
+      [value]="valorTexto()"
+      (input)="aoDigitarValor($event)"
+      [disabled]="ocupado() || !conta()"
     />
-    <div class="invalid-feedback">Informe um valor com até duas casas decimais.</div>
 
-    @if (mensagemFeedback) {
-      @if (isError) {
-        <div class="alert alert-danger mt-3" role="alert">{{ mensagemFeedback }}</div>
-      } @else {
-        <div class="alert alert-success mt-3" role="status">{{ mensagemFeedback }}</div>
-      }
+    @if (destinoIgualOrigem()) {
+      <div class="form-text text-danger">A conta de destino não pode ser a mesma da origem.</div>
+    }
+    @if (saldoInsuficiente() && valor().gt(0)) {
+      <div class="form-text text-danger">Saldo insuficiente para este valor.</div>
+    }
+
+    @if (erro()) {
+      <div class="alert alert-danger mt-3" role="alert">{{ erro() }}</div>
+    }
+
+    @if (atualizandoSaldo()) {
+      <div class="alert alert-info mt-3" role="status">
+        Transferência registrada. Atualizando o saldo...
+      </div>
+    } @else if (sucesso()) {
+      <div class="alert alert-success mt-3" role="status">{{ sucesso() }}</div>
     }
 
     <div class="d-flex flex-wrap gap-2 mt-4">
       <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary">Voltar</a>
-      <button type="submit" class="btn btn-primary" [disabled]="transferenciaForm.invalid || enviando">
-        {{ enviando ? 'Transferindo...' : 'Transferir' }}
+      <button type="submit" class="btn btn-primary" [disabled]="!podeEnviar()">
+        @if (enviando()) {
+          Transferindo...
+        } @else {
+          Transferir
+        }
       </button>
     </div>
   </form>
 </section>
-
-<app-confirmacao />

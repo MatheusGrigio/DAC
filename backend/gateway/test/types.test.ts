@@ -77,6 +77,11 @@ describe('shared contract types', () => {
     );
   });
 
+  it('login accepts short emails allowed by autocadastro', () => {
+    const parsed = loginInputSchema.parse({ email: 'm@m', senha: 'q91vA0P8' });
+    assert.equal(parsed.email, 'm@m');
+  });
+
   it('event types keep exact accents', () => {
     assert.equal(eventTypeSchema.parse('Depósito'), EventType.DEPOSITO);
     assert.equal(eventTypeSchema.parse('TransferênciaOrigem'), EventType.TRANSFERENCIA_ORIGEM);

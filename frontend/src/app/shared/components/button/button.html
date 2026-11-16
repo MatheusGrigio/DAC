@@ -1,8 +1,10 @@
 <button
-  [type]="type"
+  [type]="routerLink ? 'button' : type"
+  class="app-btn"
   [class.secondary]="variant === 'secondary'"
   [class.danger]="variant === 'danger'"
   [disabled]="disabled"
+  (click)="onClick($event)"
 >
   <ng-content />
 </button>

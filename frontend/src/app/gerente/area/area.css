@@ -1,0 +1,62 @@
+.gerente-area {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.gerente-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.gerente-titulo h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.35rem;
+  color: var(--marca);
+}
+
+.gerente-titulo p {
+  color: var(--tinta-suave);
+}
+
+.gerente-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.gerente-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--tinta);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  line-height: 1.25;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.gerente-nav-link:hover {
+  border-color: var(--marca);
+  color: var(--marca-escura);
+  background: var(--marca-clara);
+}
+
+.gerente-nav-link.ativo {
+  border-color: var(--marca);
+  background: var(--marca);
+  color: #fff;
+}
+
+.gerente-conteudo {
+  min-height: 12rem;
+}

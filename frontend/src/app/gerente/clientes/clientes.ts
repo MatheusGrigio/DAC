@@ -1,28 +1,41 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { Decimal } from 'decimal.js';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
-import { ClienteLista, ClienteListaResponse } from '../../shared/models';
+import { ClienteLista } from '../../shared/models';
 import { CpfPipe, MoedaPipe } from '../../shared/pipes';
-import { environment } from '../../../environments/environment';
+import { ClienteService } from '../../services/cliente.service';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
+
+interface FiltroClientes {
+  termo: string;
+  cidade: string;
+  estado: string;
+}
 
 @Component({
   selector: 'app-clientes',
-  imports: [FormsModule, RouterLink, Button, Alert, CpfPipe, MoedaPipe],
+  imports: [FormsModule, Button, Alert, CpfPipe, MoedaPipe],
   templateUrl: './clientes.html',
   styleUrl: './clientes.css',
 })
 export class Clientes implements OnInit {
-  private http = inject(HttpClient);
+  private clienteService = inject(ClienteService);
 
-  busca = '';
-  filtro = '';
-  clientes = signal<ClienteLista[]>([]);
-  carregando = signal(false);
-  erro = signal('');
+  filtros: FiltroClientes = { termo: '', cidade: '', estado: '' };
+  readonly clientesCarregados = signal<ClienteLista[]>([]);
+  readonly carregando = signal(false);
+  readonly erro = signal('');
+
+  readonly clientes = computed(() => {
+    const cidade = this.filtros.cidade.trim().toLocaleLowerCase('pt-BR');
+    const estado = this.filtros.estado.trim().toUpperCase();
+    return this.clientesCarregados().filter((cliente) => {
+      const okCidade = !cidade || cliente.cidade.toLocaleLowerCase('pt-BR').includes(cidade);
+      const okEstado = !estado || cliente.estado.toUpperCase().includes(estado);
+      return okCidade && okEstado;
+    });
+  });
 
   ngOnInit(): void {
     this.carregar();
@@ -32,34 +45,37 @@ export class Clientes implements OnInit {
     if (this.carregando()) return;
     this.carregando.set(true);
     this.erro.set('');
-    this.http.get<ClienteListaResponse>(`${environment.apiUrl}/clientes`).subscribe({
-      next: (response) => {
-        this.clientes.set(
-          response.clientes.map((cliente) => ({
-            cpf: cliente.cpf,
-            nome: cliente.nome,
-            cidade: cliente.cidade,
-            estado: cliente.estado,
-            saldo: new Decimal(cliente.saldo),
-          })),
-        );
+    const busca = this.termoParaApi(this.filtros.termo);
+    this.clienteService.listar(busca).subscribe({
+      next: (lista) => {
+        this.clientesCarregados.set(lista);
         this.carregando.set(false);
       },
-      error: () => {
-        this.erro.set('Não foi possível carregar os clientes. Tente novamente mais tarde.');
+      error: (err) => {
+        this.erro.set(
+          mensagemDeErro(err, 'Não foi possível carregar os clientes. Tente novamente mais tarde.'),
+        );
         this.carregando.set(false);
       },
     });
   }
 
-  get clientesFiltrados(): ClienteLista[] {
-    const termo = this.filtro.trim().toLocaleLowerCase('pt-BR');
-    return this.clientes()
-      .filter(
-        (cliente) =>
-          cliente.nome.toLocaleLowerCase('pt-BR').includes(termo) ||
-          cliente.cpf.includes(termo),
-      )
-      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  buscar(): void {
+    this.carregar();
+  }
+
+  limparFiltros(): void {
+    this.filtros = { termo: '', cidade: '', estado: '' };
+    this.carregar();
+  }
+
+  private termoParaApi(termo: string): string {
+    const bruto = termo.trim();
+    if (!bruto) return '';
+    const apenasDigitos = bruto.replace(/\D/g, '');
+    if (apenasDigitos.length >= 3 && /^[\d.\-\s]+$/.test(bruto)) {
+      return apenasDigitos;
+    }
+    return bruto;
   }
 }
