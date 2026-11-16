@@ -60,20 +60,25 @@ export class DashboardGerenteComponent implements OnInit {
 
     this.solicitacaoService
       .aprovar(cpf)
-      .pipe(switchMap((res) => this.jobService.aguardarConclusao(res.jobId)))
+      .pipe(
+        switchMap((res) => this.jobService.aguardarConclusao(res.jobId)),
+        switchMap((job) => this.jobService.obterRecursoDoJob<{ nome: string }>(job)),
+      )
       .subscribe({
-        next: () => {
+        next: (cliente) => {
           this.processandoCpf = null;
-          this.mensagemSucesso = 'Cliente aprovado com sucesso!';
+          this.mensagemSucesso = cliente
+            ? `Cliente ${cliente.nome} aprovado com sucesso!`
+            : 'Cliente aprovado, mas não foi possível carregar seus dados.';
           this.carregarSolicitacoes();
         },
         error: (err) => {
           this.processandoCpf = null;
+          this.carregarSolicitacoes();
           this.error =
             err.mensagem ||
             err.error?.mensagem ||
             'Erro ao processar aprovação do cliente.';
-          this.carregarSolicitacoes();
         },
       });
   }

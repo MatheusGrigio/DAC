@@ -45,6 +45,10 @@ h1, h2, h3, h4,
   font-variant-numeric: tabular-nums;
 }
 
+.operacao-cliente {
+  max-width: 640px;
+}
+
 .btn {
   --bs-btn-border-radius: var(--raio);
   font-weight: 600;

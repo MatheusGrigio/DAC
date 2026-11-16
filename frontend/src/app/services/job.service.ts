@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, timer, throwError, of } from 'rxjs';
+import { Observable, timer, throwError, of, catchError } from 'rxjs';
 import { exhaustMap, filter, switchMap, take, timeout } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { JobResponse } from '../shared/models/job.model';
@@ -22,6 +22,12 @@ export class JobService {
 
   obterRecurso<T>(dominio: string, resourceId: string): Observable<T> {
     return this.http.get<T>(`${this.apiUrl}/${dominio}/${resourceId}`);
+  }
+
+  obterRecursoDoJob<T>(job: JobResponse): Observable<T | null> {
+    if (job.resultType !== 'resource' || !job.dominio || !job.resourceId) return of(null);
+
+    return this.obterRecurso<T>(job.dominio, job.resourceId).pipe(catchError(() => of(null)));
   }
 
   aguardarConclusao<T = unknown>(
