@@ -1,16 +1,18 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Decimal } from 'decimal.js';
 import { catchError, finalize, last, map, of, switchMap } from 'rxjs';
 import { AuthService, ContaService } from '../services';
+import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
+import { formatarMoeda } from '../shared/utils/dinheiro';
 import { mensagemDeErro } from '../shared/utils/erro-http';
 
 @Component({
   selector: 'app-transferencia',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Confirmacao],
   templateUrl: './transferencia.html',
   styleUrls: ['./transferencia.css']
 })
@@ -19,6 +21,8 @@ export class Transferencia {
   private authService = inject(AuthService);
   private contaService = inject(ContaService);
   private destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly confirmacao = viewChild.required(Confirmacao);
 
   transferenciaForm = this.fb.nonNullable.group({
     contaDestino: ['', [Validators.required, Validators.pattern(/^\d{4}$/)]],
@@ -45,6 +49,14 @@ export class Transferencia {
       return;
     }
 
+    this.confirmacao().abrir({
+      titulo: 'Confirmar transferência',
+      mensagem: `Transferir ${formatarMoeda(valorDecimal)} para a conta ${contaDestino}?`,
+      rotulo: 'Transferir',
+    }, () => this.transferir(cpf, contaDestino, valorDecimal));
+  }
+
+  private transferir(cpf: string, contaDestino: string, valorDecimal: Decimal): void {
     this.enviando = true;
     this.mensagemFeedback = '';
     this.contaService.carregar(cpf).pipe(
@@ -59,7 +71,10 @@ export class Transferencia {
         );
       }),
       takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.enviando = false),
+      finalize(() => {
+        this.enviando = false;
+        this.cdr.markForCheck();
+      }),
     ).subscribe({
       next: saldoAtualizado => {
         this.isError = false;

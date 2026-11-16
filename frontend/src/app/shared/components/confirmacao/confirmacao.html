@@ -1,0 +1,35 @@
+<dialog #dialogo class="confirmacao" [attr.aria-label]="opcoes()?.titulo" (cancel)="cancelar()">
+  <form (submit)="confirmar($event)">
+    <h2 class="h5 mb-3">{{ opcoes()?.titulo }}</h2>
+    <p>{{ opcoes()?.mensagem }}</p>
+
+    @if (opcoes()?.rotuloMotivo; as rotuloMotivo) {
+      <label class="form-label w-100">
+        {{ rotuloMotivo }}
+        <textarea
+          #campo
+          class="form-control mt-1"
+          rows="3"
+          required
+          [value]="motivo()"
+          (input)="motivo.set(campo.value)"
+        ></textarea>
+      </label>
+    }
+
+    <div class="d-flex flex-wrap justify-content-end gap-2 mt-3">
+      <button type="button" class="btn btn-outline-secondary" autofocus (click)="cancelar()">
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="btn"
+        [class.btn-danger]="opcoes()?.perigo"
+        [class.btn-primary]="!opcoes()?.perigo"
+        [disabled]="!!opcoes()?.rotuloMotivo && !motivo().trim()"
+      >
+        {{ opcoes()?.rotulo }}
+      </button>
+    </div>
+  </form>
+</dialog>

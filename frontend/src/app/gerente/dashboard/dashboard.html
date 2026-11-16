@@ -14,13 +14,13 @@
   <section class="solicitacoes-section">
     <h2>Solicitações de Autocadastro</h2>
     
-    <div *ngIf="loading" class="carregando">Carregando solicitações...</div>
+    <div *ngIf="loading()" class="carregando" role="status">Carregando solicitações...</div>
     <div class="avisos">
-      <app-alert *ngIf="mensagemSucesso" type="success">{{ mensagemSucesso }}</app-alert>
-      <app-alert *ngIf="error" type="error">{{ error }}</app-alert>
+      <app-alert *ngIf="mensagemSucesso()" type="success">{{ mensagemSucesso() }}</app-alert>
+      <app-alert *ngIf="error()" type="error">{{ error() }}</app-alert>
     </div>
 
-    <div class="tabela" *ngIf="!loading">
+    <div class="tabela" *ngIf="!loading()">
       <table>
         <thead>
           <tr>
@@ -33,7 +33,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let s of solicitacoes">
+          <tr *ngFor="let s of solicitacoes()">
             <td>{{ s.cpf | cpf }}</td>
             <td>{{ s.nome }}</td>
             <td>{{ s.salario | moeda }}</td>
@@ -55,20 +55,20 @@
               <div class="botoes-acao" *ngIf="s.status === 'PENDENTE'">
                 <app-button
                   variant="primary"
-                  [disabled]="processandoCpf === s.cpf"
-                  (click)="aprovar(s.cpf)">
-                  {{ processandoCpf === s.cpf ? 'Processando...' : 'Aprovar' }}
+                  [disabled]="processandoCpf() === s.cpf"
+                  (click)="pedirAprovacao(s)">
+                  {{ processandoCpf() === s.cpf ? 'Processando...' : 'Aprovar' }}
                 </app-button>
                 <app-button
                   variant="danger"
-                  [disabled]="processandoCpf === s.cpf"
-                  (click)="rejeitar(s.cpf)">
+                  [disabled]="processandoCpf() === s.cpf"
+                  (click)="pedirRejeicao(s)">
                   Recusar
                 </app-button>
               </div>
             </td>
           </tr>
-          <tr *ngIf="solicitacoes.length === 0">
+          <tr *ngIf="!error() && solicitacoes().length === 0">
             <td colspan="6" class="sem-registros">Nenhuma solicitação encontrada.</td>
           </tr>
         </tbody>
@@ -76,3 +76,5 @@
     </div>
   </section>
 </main>
+
+<app-confirmacao />
