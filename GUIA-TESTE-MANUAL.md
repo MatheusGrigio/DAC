@@ -1,6 +1,6 @@
 # Guia de teste manual — BANTADS
 
-Teste pela **UI** em `http://localhost:4200` (só fala com o Gateway `http://localhost:3000`). Senha padrão do seed: **`tads`**. Requisitos HTTP detalhados: `httpie/TX-*.md`.
+Teste pela **UI** em `http://localhost:4200` (só fala com o Gateway `http://localhost:3000`). Senha padrão do seed: `tads`. Requisitos HTTP detalhados: `httpie/TX-*.md`.
 
 ---
 
@@ -13,14 +13,15 @@ Teste pela **UI** em `http://localhost:4200` (só fala com o Gateway `http://loc
    - Espere ~1 minuto e confira: `docker compose ps` — linhas **healthy**.
 3. Zere o banco para o seed do enunciado:
    ```powershell
-   Invoke-RestMethod http://localhost:3000/reboot -Method POST -ContentType application/json -Body "{}"
+    Invoke-RestMethod http://localhost:3000/reboot -Method POST -ContentType application/json -Body "{}"
    ```
-   Pode demorar até **90 segundos**. Quando terminar, deve mostrar `clientes: 5`, `gerentes: 4`, `contas: 5`.
+
+    Pode demorar até **90 segundos**. Quando term??inar, deve mostrar `clientes: 5`, `gerentes: 4`, `contas: 5`.
 4. Suba o Angular (em outro terminal):
    ```powershell
-   cd frontend
-   npm install
-   npm start
+    cd frontend
+    npm install
+    npm start
    ```
 5. No navegador, abra **http://localhost:4200** — você cai na tela de **login** (rota `/login`).
 
@@ -208,7 +209,7 @@ Gerente **não** tem tela de depósito. Teste **403** via `httpie/TX-R4-deposito
 
 #### S — Intervalo inválido (API)
 
-Na UI as datas limitam o calendário; intervalo &gt; 365 dias — teste via `httpie/TX-R7-extrato.md`.
+Na UI as datas limitam o calendário; intervalo > 365 dias — teste via `httpie/TX-R7-extrato.md`.
 
 #### H — Dados cadastrais
 

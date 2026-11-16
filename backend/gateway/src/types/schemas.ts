@@ -8,7 +8,13 @@ import {
   ResultType,
   SagaType,
 } from './enums.js';
-import { CONTA_PATTERN, CPF_PATTERN, DINHEIRO_PATTERN, TIMESTAMP_PATTERN } from './patterns.js';
+import {
+  CONTA_PATTERN,
+  CPF_PATTERN,
+  DINHEIRO_PATTERN,
+  LOGIN_EMAIL_PATTERN,
+  TIMESTAMP_PATTERN,
+} from './patterns.js';
 
 export const dinheiroSchema = z.string().regex(DINHEIRO_PATTERN);
 export const cpfSchema = z.string().regex(CPF_PATTERN);
@@ -17,7 +23,7 @@ export const timestampSchema = z.string().regex(TIMESTAMP_PATTERN);
 
 export const loginInputSchema = z
   .object({
-    email: z.string().email(),
+    email: z.string().regex(LOGIN_EMAIL_PATTERN),
     senha: z.string().min(1),
   })
   .strict();
