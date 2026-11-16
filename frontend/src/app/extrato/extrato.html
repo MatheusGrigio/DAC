@@ -1,69 +1,77 @@
-<header class="pagina-cabecalho">
-  <div>
-    <h1>Extrato</h1>
-    <p>Conta {{ numeroConta() }}</p>
-  </div>
-  <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary btn-sm">Voltar</a>
-</header>
+<section class="container operacao-cliente py-4">
+  <h1 class="h3 mb-4">Extrato</h1>
 
-<form class="filtro" [formGroup]="filtro" (ngSubmit)="consultar()">
-  <div>
-    <label class="form-label" for="inicio">De</label>
-    <input id="inicio" type="date" class="form-control" formControlName="inicio" [max]="hoje" />
-  </div>
-  <div>
-    <label class="form-label" for="fim">Até</label>
-    <input id="fim" type="date" class="form-control" formControlName="fim" [max]="hoje" />
-  </div>
-  <button type="submit" class="btn btn-primary" [disabled]="carregando() || !numeroConta()">
-    Consultar
-  </button>
-</form>
+  @if (numeroConta(); as numero) {
+    <dl class="row mb-4">
+      <dt class="col-6">Conta</dt>
+      <dd class="col-6 text-end">{{ numero }}</dd>
+    </dl>
+  }
 
-@if (erro()) {
-  <div class="aviso aviso-erro mb-3" role="alert">{{ erro() }}</div>
-}
+  <form [formGroup]="filtro" (ngSubmit)="consultar()">
+    <div class="row g-3">
+      <div class="col-sm-6">
+        <label class="form-label" for="inicio">De</label>
+        <input id="inicio" type="date" class="form-control form-control-lg" formControlName="dataInicio" [max]="hoje" />
+      </div>
+      <div class="col-sm-6">
+        <label class="form-label" for="fim">Até</label>
+        <input id="fim" type="date" class="form-control form-control-lg" formControlName="dataFim" [max]="hoje" />
+      </div>
+    </div>
 
-@if (carregando()) {
-  <p class="estado">Carregando extrato…</p>
-} @else if (dias(); as lista) {
-  <div class="tabela-wrap">
-    <table class="tabela extrato">
-      <thead>
-        <tr>
-          <th>Data/hora</th>
-          <th>Operação</th>
-          <th>Cliente origem → destino</th>
-          <th class="num">Valor</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="saldo-dia">
-          <td colspan="3">Saldo anterior ao período</td>
-          <td class="num">{{ saldoAbertura() | moeda }}</td>
-        </tr>
+    @if (erro()) {
+      <div class="alert alert-danger mt-3" role="alert">{{ erro() }}</div>
+    }
 
-        @for (dia of lista; track dia.data.toISODate()) {
-          @for (mov of dia.movimentos; track $index) {
-            <tr [class.entrada]="mov.sentido === 'entrada'" [class.saida]="mov.sentido === 'saida'">
-              <td class="valor">{{ mov.dataHora | dataHora }}</td>
-              <td>{{ mov.operacao }}</td>
-              <td>{{ mov.descricao }}</td>
-              <td class="num">{{ mov.sentido === 'saida' ? '−' : '+' }} {{ mov.valor | moeda }}</td>
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary">Voltar</a>
+      <button type="submit" class="btn btn-primary" [disabled]="carregando() || !numeroConta()">
+        Consultar
+      </button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="mt-4" role="status">Carregando extrato...</p>
+  } @else if (dias(); as lista) {
+    <div class="table-responsive mt-4">
+      <table class="table extrato">
+        <thead>
+          <tr>
+            <th scope="col" class="text-nowrap">Data/hora</th>
+            <th scope="col">Operação</th>
+            <th scope="col">Cliente origem → destino</th>
+            <th scope="col" class="text-end">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="saldo-dia">
+            <td colspan="3">Saldo anterior ao período</td>
+            <td class="valor text-end text-nowrap">{{ saldoAbertura() | moeda }}</td>
+          </tr>
+
+          @for (dia of lista; track dia.data.toISODate()) {
+            @for (mov of dia.movimentos; track $index) {
+              <tr [class.entrada]="mov.sentido === 'entrada'" [class.saida]="mov.sentido === 'saida'">
+                <td class="valor text-nowrap">{{ mov.dataHora | dataHora }}</td>
+                <td>{{ mov.operacao }}</td>
+                <td>{{ mov.descricao }}</td>
+                <td class="valor text-end text-nowrap">{{ mov.sentido === 'saida' ? '−' : '+' }} {{ mov.valor | moeda }}</td>
+              </tr>
+            }
+            <tr class="saldo-dia">
+              <td colspan="3">
+                Saldo em {{ dia.data | dataHora: 'dd/MM/yyyy' }}
+                @if (dia.movimentos.length === 0) {
+                  <span class="sem-mov">· sem movimentações</span>
+                }
+              </td>
+              <td class="valor text-end text-nowrap">{{ dia.saldoFinal | moeda }}</td>
             </tr>
           }
-          <tr class="saldo-dia">
-            <td colspan="3">
-              Saldo em {{ dia.data | dataHora: 'dd/MM/yyyy' }}
-              @if (dia.movimentos.length === 0) {
-                <span class="sem-mov">· sem movimentações</span>
-              }
-            </td>
-            <td class="num">{{ dia.saldoFinal | moeda }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-}
-
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

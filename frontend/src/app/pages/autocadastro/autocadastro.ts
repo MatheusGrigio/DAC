@@ -1,9 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Button } from '../../shared/components/button/button';
 import { Decimal } from 'decimal.js';
 import { finalize } from 'rxjs';
 import { SolicitacaoService } from '../../services/solicitacao.service';
@@ -12,7 +10,7 @@ import { mensagemDeErro } from '../../shared/utils/erro-http';
 @Component({
   selector: 'app-autocadastro',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, Button],
+  imports: [FormsModule, RouterLink],
   templateUrl: './autocadastro.html',
   styleUrl: './autocadastro.css',
 })

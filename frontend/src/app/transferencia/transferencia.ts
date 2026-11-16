@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Decimal } from 'decimal.js';
 import { catchError, finalize, last, map, of, switchMap } from 'rxjs';
 import { AuthService, ContaService } from '../services';
@@ -10,7 +10,7 @@ import { mensagemDeErro } from '../shared/utils/erro-http';
 @Component({
   selector: 'app-transferencia',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './transferencia.html',
   styleUrls: ['./transferencia.css']
 })
