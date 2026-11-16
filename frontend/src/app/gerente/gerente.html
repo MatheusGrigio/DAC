@@ -10,7 +10,7 @@
   @if (mostrarFormulario()) {
     <section class="card card-body mb-3" aria-labelledby="titulo-novo-gerente">
       <h2 id="titulo-novo-gerente" class="h5">Novo gerente</h2>
-      <form #formulario="ngForm" (ngSubmit)="inserir(formulario)">
+      <form #formulario="ngForm" (ngSubmit)="pedirInsercao(formulario)">
         <div class="row g-3">
           <div class="col-12">
             <label for="nome-gerente" class="form-label">Nome completo</label>
@@ -127,7 +127,7 @@
                   <app-button
                     variant="danger"
                     [disabled]="processandoCpf() === gerente.cpf"
-                    (click)="remover(gerente)">
+                    (click)="pedirRemocao(gerente)">
                     {{ processandoCpf() === gerente.cpf ? 'Removendo...' : 'Remover' }}
                   </app-button>
                 }

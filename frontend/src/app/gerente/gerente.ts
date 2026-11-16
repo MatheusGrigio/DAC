@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { finalize, of, switchMap } from 'rxjs';
 import { Button } from '../shared/components/button/button';
 import { Alert } from '../shared/components/alert/alert';
+import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
 import {
   GerenteAtualizacao,
   GerenteInput,
@@ -25,6 +26,7 @@ import { environment } from '../../environments/environment';
 export class Gerente implements OnInit {
   private http = inject(HttpClient);
   private jobService = inject(JobService);
+  private readonly confirmacao = viewChild.required(Confirmacao);
   private readonly apiUrl = `${environment.apiUrl}/gerentes`;
 
   gerentes = signal<GerenteResponse[]>([]);
@@ -60,28 +62,40 @@ export class Gerente implements OnInit {
     });
   }
 
-  inserir(formulario: NgForm): void {
+  pedirInsercao(formulario: NgForm): void {
     if (formulario.invalid || this.salvando()) return;
     const { nome, cpf, email, telefone, senha } = formulario.value as GerenteInput;
+    const dados = {
+      nome: nome.trim(),
+      cpf: cpf.trim(),
+      email: email.trim(),
+      telefone: telefone.trim(),
+      senha,
+    };
+    this.confirmacao().abrir({
+      titulo: 'Cadastrar gerente',
+      mensagem: `Cadastrar ${dados.nome} (${dados.email}) como gerente?`,
+      rotulo: 'Cadastrar',
+    }, () => this.inserir(formulario, dados));
+  }
+
+  private inserir(formulario: NgForm, dados: GerenteInput): void {
     this.salvando.set(true);
     this.erro.set('');
     this.sucesso.set('');
 
     this.http
-      .post<JobResponse>(this.apiUrl, {
-        nome: nome.trim(),
-        cpf: cpf.trim(),
-        email: email.trim(),
-        telefone: telefone.trim(),
-        senha,
-      })
+      .post<JobResponse>(this.apiUrl, dados)
       .pipe(
         switchMap((job) => this.jobService.aguardarConclusao(job.jobId)),
+        switchMap((job) => this.jobService.obterRecursoDoJob<GerenteResponse>(job)),
         finalize(() => this.salvando.set(false)),
       )
       .subscribe({
-        next: () => {
-          this.sucesso.set('Gerente cadastrado com sucesso!');
+        next: (gerente) => {
+          this.sucesso.set(gerente
+            ? `Gerente ${gerente.nome} cadastrado com sucesso!`
+            : 'Gerente cadastrado, mas não foi possível carregar seus dados.');
           this.mostrarFormulario.set(false);
           formulario.resetForm();
           this.carregarGerentes();
@@ -125,8 +139,16 @@ export class Gerente implements OnInit {
       });
   }
 
-  remover(gerente: GerenteResponse): void {
-    if (!confirm(`Deseja realmente remover o gerente ${gerente.nome}?`)) return;
+  pedirRemocao(gerente: GerenteResponse): void {
+    this.confirmacao().abrir({
+      titulo: 'Remover gerente',
+      mensagem: `Deseja realmente remover o gerente ${gerente.nome}?`,
+      rotulo: 'Remover',
+      perigo: true,
+    }, () => this.remover(gerente));
+  }
+
+  private remover(gerente: GerenteResponse): void {
     this.processandoCpf.set(gerente.cpf);
     this.erro.set('');
     this.sucesso.set('');

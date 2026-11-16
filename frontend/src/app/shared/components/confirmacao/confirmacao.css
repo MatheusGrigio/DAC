@@ -1,0 +1,12 @@
+.confirmacao {
+  width: min(440px, calc(100% - 2rem));
+  padding: 1.5rem;
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  background: var(--superficie);
+  color: var(--tinta);
+}
+
+.confirmacao::backdrop {
+  background: rgb(0 0 0 / 45%);
+}
