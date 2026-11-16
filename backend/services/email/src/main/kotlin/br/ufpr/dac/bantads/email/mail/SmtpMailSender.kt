@@ -1,6 +1,5 @@
 package br.ufpr.dac.bantads.email.mail
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConditionalOnProperty(prefix = "mail", name = ["dev"], havingValue = "false")
-@ConditionalOnBean(JavaMailSender::class)
 class SmtpMailSender(
     private val javaMailSender: JavaMailSender,
     private val properties: MailProperties,
