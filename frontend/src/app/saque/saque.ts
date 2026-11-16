@@ -5,6 +5,7 @@ import {
   computed,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
@@ -12,6 +13,8 @@ import { Decimal } from 'decimal.js';
 import { last } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { ContaService } from '../services/conta.service';
+import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
+import { Conta } from '../shared/models';
 import { MoedaPipe } from '../shared/pipes/moeda.pipe';
 import {
   centavosParaDecimal,
@@ -22,7 +25,7 @@ import { mensagemDeErro } from '../shared/utils/erro-http';
 @Component({
   selector: 'app-saque',
   standalone: true,
-  imports: [RouterLink, MoedaPipe],
+  imports: [RouterLink, MoedaPipe, Confirmacao],
   templateUrl: './saque.html',
   styleUrl: './saque.css',
 })
@@ -30,6 +33,7 @@ export class Saque implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly contaService = inject(ContaService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly confirmacao = viewChild.required(Confirmacao);
 
   protected readonly conta = this.contaService.conta;
   protected readonly valor = signal(new Decimal(0));
@@ -87,6 +91,14 @@ export class Saque implements OnInit {
     if (!conta || !this.podeEnviar()) return;
 
     const valor = this.valor();
+    this.confirmacao().abrir({
+      titulo: 'Confirmar saque',
+      mensagem: `Sacar ${formatarMoeda(valor)} da conta ${conta.numero}?`,
+      rotulo: 'Sacar',
+    }, () => this.sacar(conta, valor));
+  }
+
+  private sacar(conta: Conta, valor: Decimal): void {
     const saldoEsperado = conta.saldo.minus(valor);
 
     this.erro.set('');

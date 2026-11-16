@@ -1,22 +1,25 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Decimal } from 'decimal.js';
 import { last } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { ContaService } from '../services/conta.service';
+import { Confirmacao } from '../shared/components/confirmacao/confirmacao';
+import { Conta } from '../shared/models';
 import { MoedaPipe } from '../shared/pipes/moeda.pipe';
 import { centavosParaDecimal, formatarMoeda } from '../shared/utils/dinheiro';
 import { mensagemDeErro } from '../shared/utils/erro-http';
 
 @Component({
   selector: 'app-deposito',
-  imports: [RouterLink, MoedaPipe],
+  imports: [RouterLink, MoedaPipe, Confirmacao],
   templateUrl: './deposito.html',
   styleUrl: './deposito.css',
 })
 export class Deposito implements OnInit {
   private authService = inject(AuthService);
   private contaService = inject(ContaService);
+  private readonly confirmacao = viewChild.required(Confirmacao);
 
   protected readonly conta = this.contaService.conta;
 
@@ -57,6 +60,14 @@ export class Deposito implements OnInit {
     }
 
     const valor = this.valor();
+    this.confirmacao().abrir({
+      titulo: 'Confirmar depósito',
+      mensagem: `Depositar ${formatarMoeda(valor)} na conta ${conta.numero}?`,
+      rotulo: 'Depositar',
+    }, () => this.depositar(conta, valor));
+  }
+
+  private depositar(conta: Conta, valor: Decimal): void {
     const saldoEsperado = conta.saldo.plus(valor);
 
     this.erro.set('');
