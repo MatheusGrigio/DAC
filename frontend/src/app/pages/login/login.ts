@@ -1,26 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core'; 
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { LoginRequest } from '../../shared/models';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-login',
-  standalone: true,  
+  standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
-export class Login implements OnInit {  
+export class Login implements OnInit {
   credenciais: LoginRequest = {
     email: '',
     senha: '',
   };
-  
-  erroLogin: string = '';
-  carregando: boolean = false;
+
+  readonly erroLogin = signal('');
+  readonly carregando = signal(false);
   mostrarSenha = false;
 
   private authService = inject(AuthService);
@@ -36,30 +37,32 @@ export class Login implements OnInit {
   }
 
   fazerLogin(): void {
-    this.erroLogin = '';
+    this.erroLogin.set('');
 
     if (!this.credenciais.email || !this.credenciais.senha) {
-      this.erroLogin = 'Por favor, preencha todos os campos.';
+      this.erroLogin.set('Por favor, preencha todos os campos.');
       return;
     }
 
-    this.carregando = true;
-    this.authService.login(this.credenciais).subscribe({
-      next: (response) => {
-        this.carregando = false;
-        this.authService.usuarioLogado.set(response.usuario);
-        this.authService.tipoLogado.set(response.tipo);
-        if (response.tipo === 'CLIENTE') {
-          this.router.navigate(['/cliente/dashboard']);
-        } else {
-          this.router.navigate(['/gerente/solicitacoes']);
-        }
-      },
-      error: (error: { mensagem?: string }) => {
-        this.carregando = false;
-        this.erroLogin =
-          error.mensagem ?? mensagemDeErro(error, 'E-mail ou senha inválidos.');
-      }
-    });
+    this.carregando.set(true);
+    this.authService
+      .login(this.credenciais)
+      .pipe(finalize(() => this.carregando.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.authService.usuarioLogado.set(response.usuario);
+          this.authService.tipoLogado.set(response.tipo);
+          if (response.tipo === 'CLIENTE') {
+            this.router.navigate(['/cliente/dashboard']);
+          } else {
+            this.router.navigate(['/gerente/solicitacoes']);
+          }
+        },
+        error: (error: { mensagem?: string }) => {
+          this.erroLogin.set(
+            error.mensagem ?? mensagemDeErro(error, 'E-mail ou senha inválidos.'),
+          );
+        },
+      });
   }
 }
