@@ -1,6 +1,11 @@
 <main class="container operacao-cliente py-4">
-  <h1 class="h3 mb-4">Solicitar autocadastro</h1>
-  <p class="text-body-secondary">Todos os campos são obrigatórios, exceto complemento.</p>
+  <header class="page-header">
+    <div>
+      <h1 class="h3 mb-1">Solicitar autocadastro</h1>
+      <p class="text-body-secondary mb-0">Todos os campos são obrigatórios, exceto complemento.</p>
+    </div>
+    <app-button variant="secondary" type="button" routerLink="/login">Voltar</app-button>
+  </header>
 
   <form #formulario="ngForm" class="mt-4" (ngSubmit)="enviar(formulario)" novalidate>
     <fieldset class="mb-4" [disabled]="carregando() || !!mensagemSucesso()">
