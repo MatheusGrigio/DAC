@@ -27,17 +27,17 @@ export const routes: Routes = [
     path: 'cliente/deposito',
     canActivate: [authGuard],
     data: { role: 'CLIENTE' },
-    loadComponent: () => import('./deposito/deposito').then(m => m.Deposito)
+    loadComponent: () => import('./cliente/deposito/deposito').then(m => m.Deposito)
   },
   {
     path: 'cliente/saque',
     canActivate: [authGuard],
     data: { role: 'CLIENTE' },
-    loadComponent: () => import('./saque/saque').then(m => m.Saque)
+    loadComponent: () => import('./cliente/saque/saque').then(m => m.Saque)
   },  
   { 
     path: 'cliente/transferencia',
-    loadComponent: () => import('./transferencia/transferencia').then(m => m.Transferencia),
+    loadComponent: () => import('./cliente/transferencia/transferencia').then(m => m.Transferencia),
     canActivate: [authGuard],
     data: { role: 'CLIENTE' }
   },
@@ -45,14 +45,7 @@ export const routes: Routes = [
     path: 'cliente/extrato',
     data: { role: 'CLIENTE' },
     canActivate: [authGuard],
-    loadComponent: () => import('./extrato/extrato').then(m => m.Extrato)
-  },
-  {
-    path: 'cliente/dados',
-    canActivate: [authGuard],
-    data: { role: 'CLIENTE' },
-    loadComponent: () =>
-      import('./cliente/dados-cadastrais/dados-cadastrais').then((m) => m.DadosCadastrais),
+    loadComponent: () => import('./cliente/extrato/extrato').then(m => m.Extrato)
   },
   
   // GERENTE ROUTES
@@ -74,7 +67,7 @@ export const routes: Routes = [
       },
       {
         path: 'gerentes',
-        loadComponent: () => import('./gerente/gerente').then((m) => m.Gerente),
+        loadComponent: () => import('./gerente/gerentes/gerente').then((m) => m.Gerente),
       },
       {
         path: 'relatorio',

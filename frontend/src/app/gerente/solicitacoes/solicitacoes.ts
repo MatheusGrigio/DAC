@@ -1,10 +1,11 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { finalize, switchMap } from 'rxjs';
 import { SolicitacaoService, JobService } from '../../services';
 import { Button } from '../../shared/components/button/button';
 import { Alert } from '../../shared/components/alert/alert';
+import { Confirmacao } from '../../shared/components/confirmacao/confirmacao';
 import { Solicitacao } from '../../shared/models';
 import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
 import { CpfPipe } from '../../shared/pipes/cpf.pipe';
@@ -13,7 +14,7 @@ import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-gerente-solicitacoes',
-  imports: [CommonModule, Button, Alert, MoedaPipe, CpfPipe, DataHoraPipe],
+  imports: [CommonModule, Button, Alert, Confirmacao, MoedaPipe, CpfPipe, DataHoraPipe],
   templateUrl: './solicitacoes.html',
   styleUrl: './solicitacoes.css',
 })
@@ -21,6 +22,7 @@ export class GerenteSolicitacoes implements OnInit {
   private solicitacaoService = inject(SolicitacaoService);
   private jobService = inject(JobService);
   private destroyRef = inject(DestroyRef);
+  private readonly confirmacao = viewChild.required(Confirmacao);
 
   readonly solicitacoes = signal<Solicitacao[]>([]);
   readonly loading = signal(false);
@@ -80,8 +82,25 @@ export class GerenteSolicitacoes implements OnInit {
       });
   }
 
-  aprovar(cpf: string) {
-    if (!confirm('Deseja realmente aprovar este cliente?')) return;
+  pedirAprovacao(solicitacao: Solicitacao): void {
+    this.confirmacao().abrir({
+      titulo: 'Aprovar autocadastro',
+      mensagem: `Deseja aprovar a solicitação de ${solicitacao.nome}?`,
+      rotulo: 'Aprovar',
+    }, () => this.aprovar(solicitacao.cpf));
+  }
+
+  pedirRejeicao(solicitacao: Solicitacao): void {
+    this.confirmacao().abrir({
+      titulo: 'Recusar autocadastro',
+      mensagem: `Informe o motivo para recusar a solicitação de ${solicitacao.nome}.`,
+      rotulo: 'Recusar',
+      perigo: true,
+      rotuloMotivo: 'Motivo da rejeição',
+    }, (motivo) => this.rejeitar(solicitacao.cpf, motivo));
+  }
+
+  private aprovar(cpf: string): void {
     this.processandoCpf.set(cpf);
     this.error.set('');
     this.mensagemSucesso.set('');
@@ -110,27 +129,24 @@ export class GerenteSolicitacoes implements OnInit {
       });
   }
 
-  rejeitar(cpf: string) {
-    const motivo = prompt('Informe o motivo da rejeição:');
-    if (motivo && motivo.trim()) {
-      this.processandoCpf.set(cpf);
-      this.error.set('');
-      this.mensagemSucesso.set('');
+  private rejeitar(cpf: string, motivo: string): void {
+    this.processandoCpf.set(cpf);
+    this.error.set('');
+    this.mensagemSucesso.set('');
 
-      this.solicitacaoService
-        .rejeitar(cpf, motivo.trim())
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => {
-            this.processandoCpf.set(null);
-            this.mensagemSucesso.set('Cliente rejeitado com sucesso.');
-            this.carregarSolicitacoes();
-          },
-          error: (err) => {
-            this.processandoCpf.set(null);
-            this.error.set(mensagemDeErro(err, 'Erro ao rejeitar cliente.'));
-          },
-        });
-    }
+    this.solicitacaoService
+      .rejeitar(cpf, motivo)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.processandoCpf.set(null);
+          this.mensagemSucesso.set('Cliente rejeitado com sucesso.');
+          this.carregarSolicitacoes();
+        },
+        error: (err) => {
+          this.processandoCpf.set(null);
+          this.error.set(mensagemDeErro(err, 'Erro ao rejeitar cliente.'));
+        },
+      });
   }
 }

@@ -14,14 +14,14 @@
     </div>
 
     @if (erro()) {
-      <div class="alert alert-danger mt-3" role="alert">{{ erro() }}</div>
+      <app-alert type="error" class="d-block mt-3">{{ erro() }}</app-alert>
     }
 
     <div class="d-flex flex-wrap gap-2 mt-4">
       <a routerLink="/cliente/dashboard" class="btn btn-outline-secondary">Voltar</a>
-      <button type="submit" class="btn btn-primary" [disabled]="carregando() || !numeroConta()">
+      <app-button type="submit" [disabled]="carregando() || !numeroConta()">
         Consultar
-      </button>
+      </app-button>
     </div>
   </form>
 

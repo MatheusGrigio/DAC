@@ -1,16 +1,18 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, viewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Button } from '../../shared/components/button/button';
+import { Confirmacao } from '../../shared/components/confirmacao/confirmacao';
 
 @Component({
   selector: 'app-gerente-area',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Button],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Button, Confirmacao],
   templateUrl: './area.html',
   styleUrl: './area.css',
 })
 export class GerenteArea {
   private authService = inject(AuthService);
+  private readonly confirmacao = viewChild.required(Confirmacao);
 
   readonly usuario = this.authService.usuarioLogado;
 
@@ -22,7 +24,10 @@ export class GerenteArea {
   ] as const;
 
   logout(): void {
-    if (!confirm('Tem certeza que deseja sair do aplicativo?')) return;
-    this.authService.logout();
+    this.confirmacao().abrir({
+      titulo: 'Sair do BANTADS',
+      mensagem: 'Deseja encerrar sua sessão?',
+      rotulo: 'Sair',
+    }, () => this.authService.logout());
   }
 }

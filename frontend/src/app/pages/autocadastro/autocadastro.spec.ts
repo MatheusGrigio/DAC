@@ -23,4 +23,20 @@ describe('Autocadastro', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it.each([
+    { valor: '11122233396', invalido: false },
+    { valor: '11122233397', invalido: true },
+    { valor: '00000000000', invalido: true },
+  ])('valida os dígitos do CPF $valor', async ({ valor, invalido }) => {
+    const tela: HTMLElement = fixture.nativeElement;
+    const campo = tela.querySelector<HTMLInputElement>('#cpf')!;
+    campo.value = valor;
+    campo.dispatchEvent(new Event('input'));
+    campo.dispatchEvent(new Event('blur'));
+    await fixture.whenStable();
+
+    expect(component.cpfInvalido).toBe(invalido);
+    expect(tela.textContent?.includes('Informe um CPF válido.')).toBe(invalido);
+  });
 });

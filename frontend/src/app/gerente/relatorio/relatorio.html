@@ -8,7 +8,7 @@
     <app-button [disabled]="carregando()" (click)="carregar()">Atualizar relatório</app-button>
   </div>
   @if (!carregando() && !erro() && clientes().length === 0) {
-    <app-alert>Nenhum cliente para exibir no relatório.</app-alert>
+    <app-alert type="info">Nenhum cliente para exibir no relatório.</app-alert>
   } @else if (!carregando() && !erro()) {
   <div class="tabela">
     <table>

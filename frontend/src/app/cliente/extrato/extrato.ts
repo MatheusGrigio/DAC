@@ -1,14 +1,16 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Alert } from '../../shared/components/alert/alert';
+import { Button } from '../../shared/components/button/button';
 import { Decimal } from 'decimal.js';
 import { DateTime } from 'luxon';
-import { AuthService } from '../services/auth.service';
-import { ContaService } from '../services/conta.service';
-import { DataHoraPipe } from '../shared/pipes/data-hora.pipe';
-import { MoedaPipe } from '../shared/pipes/moeda.pipe';
-import { DiaExtrato, montarLinhaDoTempo } from '../shared/utils/extrato';
-import { mensagemDeErro } from '../shared/utils/erro-http';
+import { AuthService } from '../../services/auth.service';
+import { ContaService } from '../../services/conta.service';
+import { DataHoraPipe } from '../../shared/pipes/data-hora.pipe';
+import { MoedaPipe } from '../../shared/pipes/moeda.pipe';
+import { DiaExtrato, montarLinhaDoTempo } from '../../shared/utils/extrato';
+import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 const PADRAO_DIAS = 30;
 const MAXIMO_DIAS = 365;
@@ -21,7 +23,7 @@ function hojeNegocio(): DateTime {
 
 @Component({
   selector: 'app-extrato',
-  imports: [ReactiveFormsModule, RouterLink, MoedaPipe, DataHoraPipe],
+  imports: [ReactiveFormsModule, RouterLink, MoedaPipe, DataHoraPipe, Alert, Button],
   templateUrl: './extrato.html',
   styleUrl: './extrato.css',
 })

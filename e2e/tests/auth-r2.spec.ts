@@ -28,15 +28,15 @@ test.describe('R2 — Autenticação (UI)', () => {
 
   test('R2B happy: logout cliente', async ({ page }) => {
     await login(page, SEED.cliente.email, SEED.cliente.senha);
-    await aceitarConfirmacao(page);
     await page.getByRole('button', { name: /sair/i }).click();
+    await aceitarConfirmacao(page, 'Sair');
     await expect(page).toHaveURL(/login/);
   });
 
   test('R2B happy: logout gerente', async ({ page }) => {
     await login(page, SEED.gerente.email, SEED.gerente.senha);
-    await aceitarConfirmacao(page);
     await page.getByRole('button', { name: /sair/i }).click();
+    await aceitarConfirmacao(page, 'Sair');
     await expect(page).toHaveURL(/login/);
   });
 });

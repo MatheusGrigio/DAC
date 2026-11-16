@@ -52,21 +52,19 @@
 			</div>
 
 			@if (erroLogin()) {
-				<div class="alert alert-danger py-2 small mb-3" role="alert">
+				<app-alert type="error" class="d-block small mb-3">
 					{{ erroLogin() }}
-				</div>
+				</app-alert>
 			}
 
-			<button
-				type="submit"
-				class="btn btn-primary w-100 py-2 fw-semibold"
+			<app-button type="submit" class="w-100"
 				[disabled]="loginForm.invalid || carregando()"
 			>
 				@if (carregando()) {
 					<span class="spinner-border spinner-border-sm me-1" role="status"></span>
 				}
 				<span>{{ carregando() ? 'Entrando...' : 'Entrar' }}</span>
-			</button>
+			</app-button>
 		</form>
 
 		<hr class="my-4" />

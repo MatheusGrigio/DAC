@@ -7,6 +7,6 @@ import { Component, Input } from '@angular/core';
   styleUrl: './alert.css',
 })
 export class Alert {
-  @Input() type: 'success' | 'error' = 'success';
+  @Input() type: 'success' | 'error' | 'info' = 'success';
 
 }

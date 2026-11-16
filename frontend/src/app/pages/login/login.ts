@@ -5,12 +5,14 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { LoginRequest } from '../../shared/models';
+import { Alert } from '../../shared/components/alert/alert';
+import { Button } from '../../shared/components/button/button';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, Alert, Button],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })

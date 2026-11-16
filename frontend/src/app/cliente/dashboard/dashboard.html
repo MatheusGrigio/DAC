@@ -4,7 +4,7 @@
       
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>BANTADS - Área do Cliente</h1>
-        <button class="btn btn-danger" (click)="logout()">Sair</button>
+        <app-button variant="danger" (click)="logout()">Sair</app-button>
       </div>
       
       <div class="card mb-4">
@@ -22,8 +22,8 @@
           @if (carregando()) {
             <p class="mb-0" role="status">Carregando sua conta...</p>
           } @else if (erro()) {
-            <p class="text-danger" role="alert">{{ erro() }}</p>
-            <button type="button" class="btn btn-outline-primary" (click)="carregar()">Tentar novamente</button>
+            <app-alert type="error" class="d-block mb-2">{{ erro() }}</app-alert>
+            <app-button variant="secondary" (click)="carregar()">Tentar novamente</app-button>
           } @else if (conta(); as dadosConta) {
             <h2 class="h5">Sua conta</h2>
             <p><strong>Número da conta:</strong> {{ dadosConta.numero }}</p>
@@ -44,17 +44,10 @@
             </div>
           </div>
         }
-        <div class="col-md-3 mb-3">
-          <div class="card text-center h-100">
-            <div class="card-body">
-              <h5>Dados cadastrais</h5>
-              <p class="text-muted small">Consultar seu cadastro</p>
-              <a routerLink="/cliente/dados" class="btn btn-outline-primary">Acessar</a>
-            </div>
-          </div>
-        </div>
       </div>
       
     </div>
   </div>
 </div>
+
+<app-confirmacao />

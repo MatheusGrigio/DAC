@@ -6,12 +6,14 @@ import { Decimal } from 'decimal.js';
 import { finalize } from 'rxjs';
 import { SolicitacaoService } from '../../services/solicitacao.service';
 import { Button } from '../../shared/components/button/button';
+import { Alert } from '../../shared/components/alert/alert';
 import { mensagemDeErro } from '../../shared/utils/erro-http';
+import { cpfValido } from '../../shared/utils/validadores';
 
 @Component({
   selector: 'app-autocadastro',
   standalone: true,
-  imports: [FormsModule, RouterLink, Button],
+  imports: [FormsModule, RouterLink, Button, Alert],
   templateUrl: './autocadastro.html',
   styleUrl: './autocadastro.css',
 })
@@ -36,8 +38,12 @@ export class Autocadastro {
     uf: '',
   };
 
+  get cpfInvalido(): boolean {
+    return !cpfValido(this.cadastro.cpf);
+  }
+
   enviar(formulario: NgForm): void {
-    if (formulario.invalid || this.carregando() || this.mensagemSucesso()) return;
+    if (formulario.invalid || this.cpfInvalido || this.carregando() || this.mensagemSucesso()) return;
 
     const { nome, cpf, email, telefone, salario, complemento, ...enderecoResto } = this.cadastro;
     const complementoLimpo = complemento.trim() || null;
