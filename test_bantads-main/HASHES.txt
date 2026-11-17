@@ -2,7 +2,7 @@
 # Gerado por: python integridade.py --gerar
 # Confira com: python integridade.py
 
-8aa39d532f7635550f2c6bedc0ed735fb449f822be88fa7475e2999e58bd2e99  bantads.py
+dc844c406abbdc018a48681e55f84d4320375ffd0627310be9eab877fdc92c1d  bantads.py
 2a5fb41478f4ac1e5040d18279f65176d64253bffd39569afb114ed4e86f6056  conftest.py
 6d95331520b77b54ce94ccf146b756d796fad9fa4bb89d6e57cf25c5f73fc46a  integridade.py
 f09928d3f1e4495f9262c9a81156afd517f5f202a112abb09b784ebdd370c373  pytest.ini
@@ -19,4 +19,4 @@ e37c29dfc8925009e309558be224364ca0491d13a828be4ffd80884052f2042a  test_07_relato
 06ed8badac36f8046db5cd93bbe8e12b6ab63faba714b978d231cb634e1b1623  test_10_contas_cliente_novo.py
 959a05c3bf5bc98c3f5993fe4966bb39fe4adc1e038ddc49d64be581929f7c81  test_11_autorizacao.py
 
-CODIGO 344FA766AAC4
+CODIGO 339B2988B6A7

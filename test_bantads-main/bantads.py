@@ -139,21 +139,49 @@ def obter_senha(chave, email, cpf):
     return senha
 
 
+def _ler_conteudo_senha_arquivo():
+    try:
+        with open(SENHA_PATH, encoding="utf-8") as f:
+            return f.read()
+    except OSError:
+        import pytest
+        pytest.skip(f"automatic_password ligado, mas não li {SENHA_PATH}")
+
+
+def _senha_do_bloco(conteudo, email):
+    """Extrai a senha do bloco `to: <email>` gravado pelo MS email (MAIL_DEV)."""
+    alvo = f"to: {email}"
+    for bloco in reversed(conteudo.split("\n\n")):
+        if alvo not in bloco:
+            continue
+        for linha in bloco.splitlines():
+            if linha.startswith("senha: "):
+                return linha.split("senha: ", 1)[1].strip()
+    return None
+
+
 def _ler_senha_arquivo(email_esperado=None):
     """(Não documentado) Lê a senha do arquivo senha_recente.txt — modo automático."""
     import pytest
-    try:
-        with open(SENHA_PATH, encoding="utf-8") as f:
-            conteudo = f.read()
-    except OSError:
-        pytest.skip(f"automatic_password ligado, mas não li {SENHA_PATH}")
+
+    if email_esperado:
+        def senha_projetada():
+            senha = _senha_do_bloco(_ler_conteudo_senha_arquivo(), email_esperado)
+            return senha is not None
+
+        poll_ate(
+            senha_projetada,
+            descricao=f"senha de {email_esperado} em senha_recente.txt",
+        )
+        senha = _senha_do_bloco(_ler_conteudo_senha_arquivo(), email_esperado)
+        assert senha is not None
+        return senha
+
+    conteudo = _ler_conteudo_senha_arquivo()
     senhas = [l.split("senha: ", 1)[1].strip()
               for l in conteudo.splitlines() if l.startswith("senha: ")]
     if not senhas:
         pytest.skip(f"não encontrei uma linha 'senha:' em {SENHA_PATH}")
-    if email_esperado and email_esperado not in conteudo:
-        # o arquivo tem a senha de OUTRO cliente — o login não veio logo após a aprovação
-        pytest.skip(f"senha_recente.txt não corresponde a {email_esperado} (ordem dos testes?)")
     return senhas[-1]
 
 
