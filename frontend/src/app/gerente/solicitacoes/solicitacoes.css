@@ -60,14 +60,11 @@ th {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 8px;
 }
 
 .sem-registros {
   text-align: center;
   color: #777;
   padding: 20px;
-}
-
-.detalhe-solicitacao {
-  margin-top: 8px;
 }

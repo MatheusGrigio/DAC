@@ -27,7 +27,6 @@
           <th scope="col">Salário</th>
           <th scope="col">Status</th>
           <th scope="col">Motivo / Processamento</th>
-          <th scope="col">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -62,48 +61,25 @@
               @if (!s.motivo && !s.dataHoraProcessamento) {
                 <span>-</span>
               }
-            </td>
-            <td>
-              <div class="botoes-acao">
-                @if (s._links?.['aprovacao']) {
-                  <app-button
-                    variant="primary"
-                    [disabled]="processandoCpf() === s.cpf"
-                    (click)="pedirAprovacao(s)"
-                  >
-                    {{ processandoCpf() === s.cpf ? 'Processando...' : 'Aprovar' }}
-                  </app-button>
-                }
-                @if (s._links?.['rejeicao']) {
-                  <app-button
-                    variant="danger"
-                    [disabled]="processandoCpf() === s.cpf"
-                    (click)="pedirRejeicao(s)"
-                  >
-                    Recusar
-                  </app-button>
-                }
-                <app-button
-                  variant="secondary"
-                  [disabled]="processandoCpf() === s.cpf"
-                  (click)="verDetalhes(s.cpf)"
-                >
-                  Detalhes
-                </app-button>
-              </div>
-              @if (detalheCpf() === s.cpf) {
-                <div class="detalhe-solicitacao">
-                  @if (carregandoDetalhe()) {
-                    <small>Carregando endereço...</small>
-                  } @else if (detalhe()?.endereco; as endereco) {
-                    <small>
-                      <strong>Endereço:</strong>
-                      {{ endereco.logradouro }}, {{ endereco.numero }}
-                      @if (endereco.complemento) {
-                        — {{ endereco.complemento }}
-                      }
-                      — {{ endereco.cidade }}/{{ endereco.uf }} — CEP {{ endereco.cep }}
-                    </small>
+              @if (s._links?.['aprovacao'] || s._links?.['rejeicao']) {
+                <div class="botoes-acao">
+                  @if (s._links?.['aprovacao']) {
+                    <app-button
+                      variant="primary"
+                      [disabled]="processandoCpf() === s.cpf"
+                      (click)="pedirAprovacao(s)"
+                    >
+                      {{ processandoCpf() === s.cpf ? 'Processando...' : 'Aprovar' }}
+                    </app-button>
+                  }
+                  @if (s._links?.['rejeicao']) {
+                    <app-button
+                      variant="danger"
+                      [disabled]="processandoCpf() === s.cpf"
+                      (click)="pedirRejeicao(s)"
+                    >
+                      Recusar
+                    </app-button>
                   }
                 </div>
               }
@@ -112,7 +88,7 @@
         } @empty {
           @if (!loading()) {
             <tr>
-              <td colspan="6" class="sem-registros">Nenhuma solicitação encontrada.</td>
+              <td colspan="5" class="sem-registros">Nenhuma solicitação encontrada.</td>
             </tr>
           }
         }

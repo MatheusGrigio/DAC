@@ -29,9 +29,6 @@ export class GerenteSolicitacoes implements OnInit {
   readonly processandoCpf = signal<string | null>(null);
   readonly error = signal('');
   readonly mensagemSucesso = signal('');
-  readonly detalheCpf = signal<string | null>(null);
-  readonly detalhe = signal<Solicitacao | null>(null);
-  readonly carregandoDetalhe = signal(false);
 
   ngOnInit() {
     queueMicrotask(() => this.carregarSolicitacoes());
@@ -53,31 +50,6 @@ export class GerenteSolicitacoes implements OnInit {
         },
         error: () => {
           this.error.set('Falha ao carregar solicitações.');
-        },
-      });
-  }
-
-  verDetalhes(cpf: string) {
-    if (this.detalheCpf() === cpf && this.detalhe()) {
-      this.detalheCpf.set(null);
-      this.detalhe.set(null);
-      return;
-    }
-    this.carregandoDetalhe.set(true);
-    this.detalheCpf.set(cpf);
-    this.detalhe.set(null);
-    this.solicitacaoService
-      .obter(cpf)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (s) => {
-          this.detalhe.set(s);
-          this.carregandoDetalhe.set(false);
-        },
-        error: () => {
-          this.error.set('Não foi possível carregar os detalhes da solicitação.');
-          this.detalheCpf.set(null);
-          this.carregandoDetalhe.set(false);
         },
       });
   }
