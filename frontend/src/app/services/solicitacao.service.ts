@@ -42,12 +42,6 @@ export class SolicitacaoService {
     return this.http.post<SolicitacaoResponse>(this.apiUrl, cadastro);
   }
 
-  obter(cpf: string): Observable<Solicitacao> {
-    return this.http
-      .get<SolicitacaoResponse>(`${this.apiUrl}/${cpf}`)
-      .pipe(map(paraSolicitacao));
-  }
-
   listar(status?: string): Observable<SolicitacoesListModel> {
     const params = status ? new HttpParams().set('status', status) : undefined;
     return this.http

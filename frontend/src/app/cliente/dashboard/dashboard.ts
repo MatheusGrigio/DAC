@@ -13,14 +13,13 @@ interface Operacao {
   rota: string;
   titulo: string;
   descricao: string;
-  disponivel: boolean;
 }
 
 const OPERACOES: Operacao[] = [
-  { rel: 'deposito', rota: '/cliente/deposito', titulo: 'Depósito', descricao: 'Adicionar dinheiro à conta', disponivel: true },
-  { rel: 'saque', rota: '/cliente/saque', titulo: 'Saque', descricao: 'Retirar dinheiro da conta', disponivel: true },
-  { rel: 'transferencia', rota: '/cliente/transferencia', titulo: 'Transferência', descricao: 'Enviar para outra conta', disponivel: true },
-  { rel: 'extrato', rota: '/cliente/extrato', titulo: 'Extrato', descricao: 'Consultar movimentações', disponivel: true },
+  { rel: 'deposito', rota: '/cliente/deposito', titulo: 'Depósito', descricao: 'Adicionar dinheiro à conta' },
+  { rel: 'saque', rota: '/cliente/saque', titulo: 'Saque', descricao: 'Retirar dinheiro da conta' },
+  { rel: 'transferencia', rota: '/cliente/transferencia', titulo: 'Transferência', descricao: 'Enviar para outra conta' },
+  { rel: 'extrato', rota: '/cliente/extrato', titulo: 'Extrato', descricao: 'Consultar movimentações' },
 ];
 
 @Component({
@@ -28,7 +27,6 @@ const OPERACOES: Operacao[] = [
   standalone: true,
   imports: [RouterModule, MoedaPipe, Alert, Button, Confirmacao],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
 })
 export class DashboardClienteComponent {
   private authService = inject(AuthService);
@@ -39,10 +37,6 @@ export class DashboardClienteComponent {
   protected readonly conta = this.contaService.conta;
   protected readonly carregando = signal(true);
   protected readonly erro = signal('');
-
-  protected readonly primeiroNome = computed(
-    () => this.usuario()?.nome.split(' ')[0] || '',
-  )
 
   protected readonly operacoes = computed(() => 
     OPERACOES.filter((op) =>  !!this.conta()?.links[op.rel]),
