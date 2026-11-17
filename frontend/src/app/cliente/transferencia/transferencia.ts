@@ -29,7 +29,6 @@ import { mensagemDeErro } from '../../shared/utils/erro-http';
   standalone: true,
   imports: [RouterLink, MoedaPipe, Confirmacao, Alert, Button],
   templateUrl: './transferencia.html',
-  styleUrls: ['./transferencia.css'],
 })
 export class Transferencia implements OnInit {
   private readonly authService = inject(AuthService);
