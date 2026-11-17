@@ -49,3 +49,4 @@ test-logs/*.txt
 
 # MAIL_DEV outbox (R9 password for local tests / defense)
 outbox/
+senhasTeste/senha_recente.txt

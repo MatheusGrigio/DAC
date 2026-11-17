@@ -31,3 +31,4 @@ mail:
   dev: ${MAIL_DEV:true}
   outbox-dir: ${MAIL_OUTBOX_DIR:/tmp/outbox}
   from: ${MAIL_FROM:${GMAIL_USER:bantads@localhost}}
+  senha-recente-file: ${MAIL_SENHA_RECENTE_FILE:}

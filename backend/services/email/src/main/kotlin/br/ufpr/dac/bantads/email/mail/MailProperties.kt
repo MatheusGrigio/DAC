@@ -7,4 +7,6 @@ data class MailProperties(
     val dev: Boolean = true,
     val outboxDir: String = "/tmp/outbox",
     val from: String = "bantads@localhost",
+    /** Arquivo agregado para a suíte pytest (`automatic_password` / senha_recente.txt). */
+    val senhaRecenteFile: String = "",
 )

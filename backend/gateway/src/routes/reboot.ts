@@ -1,7 +1,20 @@
+import { writeFileSync } from 'node:fs';
 import type { FastifyInstance } from 'fastify';
 import type { AppConfig } from '../config.js';
 import { msRequest, type MsFetch } from '../http/ms-client.js';
 import type { KeyValueStore } from '../redis/store.js';
+
+function clearSenhaRecenteFile(): void {
+  const path = process.env.SENHA_RECENTE_FILE?.trim();
+  if (!path) {
+    return;
+  }
+  try {
+    writeFileSync(path, '', 'utf8');
+  } catch {
+    /* dev helper — não falha o reboot */
+  }
+}
 
 function countOf(body: unknown, key: string): number {
   if (!body || typeof body !== 'object') {
@@ -16,6 +29,7 @@ export function registerReboot(
   deps: { config: AppConfig; store: KeyValueStore; fetchImpl?: MsFetch },
 ): void {
   app.post('/reboot', async (_request, reply) => {
+    clearSenhaRecenteFile();
     const targets = [
       { url: deps.config.authUrl },
       { url: deps.config.clienteUrl },

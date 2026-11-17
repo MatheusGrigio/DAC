@@ -141,6 +141,9 @@ services:
       CLIENTE_URL: http://cliente:8080
       GERENTE_URL: http://gerente:8080
       CONTA_URL: http://conta:8080
+      SENHA_RECENTE_FILE: /data/senhasTeste/senha_recente.txt
+    volumes:
+      - ./senhasTeste:/data/senhasTeste
     mem_limit: 256m
     networks:
       - bantads
@@ -292,6 +295,7 @@ services:
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
       MAIL_DEV: ${MAIL_DEV:-true}
       MAIL_OUTBOX_DIR: /tmp/outbox
+      MAIL_SENHA_RECENTE_FILE: /data/senhasTeste/senha_recente.txt
       GMAIL_USER: ${GMAIL_USER:-}
       GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
       RABBIT_HOST: rabbitmq
@@ -300,6 +304,7 @@ services:
       RABBIT_PASSWORD: ${RABBIT_PASSWORD:-change-me}
     volumes:
       - ./outbox:/tmp/outbox
+      - ./senhasTeste:/data/senhasTeste
     depends_on:
       rabbitmq:
         condition: service_healthy

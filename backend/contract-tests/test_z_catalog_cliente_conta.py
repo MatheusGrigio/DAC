@@ -62,6 +62,21 @@ def test_tx_r3b_gerente_sem_rels_operacao():
     assert_catalog_json("TX-R3A.md", "Response 200 — GERENTE", resp.json())
 
 
+def test_tx_r7_gerente_consulta_extrato():
+    """Suíte publicada (test_11_autorizacao): gerente consulta extrato de cliente seed -> 200."""
+    token = login_gerente()
+    resp = requests.get(
+        URL + "/contas/1291/extrato",
+        headers=auth_headers(token),
+        timeout=10,
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body.get("numeroConta") == "1291"
+    assert "saldoAbertura" in body
+    assert isinstance(body.get("movimentacoes"), list)
+
+
 def test_tx_r4_400_valor_number():
     token = login_cliente()
     resp = requests.post(

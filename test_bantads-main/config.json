@@ -4,5 +4,7 @@
   "novos_clientes": ["cliente.novo1@bantads.com.br", "cliente.novo2@bantads.com.br"],
   "novos_gerentes": ["gerente.novo1@bantads.com.br", "gerente.novo2@bantads.com.br"],
   "job_timeout": 60,
-  "read_timeout": 15
+  "read_timeout": 15,
+  "automatic_password": true,
+  "senha_recente_path": "../senhasTeste/senha_recente.txt"
 }

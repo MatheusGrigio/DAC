@@ -260,6 +260,23 @@ describe('F12 gateway sync flows', () => {
     await app.close();
   });
 
+  it('T07 GERENTE may GET extrato of any conta (R7 / suíte publicada)', async () => {
+    const app = await buildApp({
+      config: testConfig(),
+      store: new MemoryStore(),
+      fetchImpl: bankFetch(),
+    });
+    const token = await login(app, 'ger1@bantads.com.br');
+    const response = await app.inject({
+      method: 'GET',
+      url: '/contas/1291/extrato',
+      headers: { 'x-access-token': token },
+    });
+    assert.equal(response.statusCode, 200);
+    assert.equal((response.json() as { numeroConta: string }).numeroConta, '1291');
+    await app.close();
+  });
+
   it('T04 deposit returns 201 without saldo', async () => {
     const app = await buildApp({
       config: testConfig(),

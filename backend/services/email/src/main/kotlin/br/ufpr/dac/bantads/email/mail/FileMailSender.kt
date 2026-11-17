@@ -29,7 +29,22 @@ class FileMailSender(
                 "\n${mail.body}\n"
         Files.writeString(file, content)
         log.info("MAIL_DEV outbox file={}", file.toAbsolutePath())
+        appendSenhaRecente(mail)
         return messageId
+    }
+
+    private fun appendSenhaRecente(mail: OutgoingMail) {
+        val dest = properties.senhaRecenteFile.trim()
+        if (dest.isEmpty() || mail.senha.isNullOrBlank()) {
+            return
+        }
+        val path = Path.of(dest)
+        Files.createDirectories(path.parent)
+        val block =
+            "to: ${mail.to}\n" +
+                "subject: ${mail.subject}\n" +
+                "senha: ${mail.senha}\n\n"
+        Files.writeString(path, block, java.nio.charset.StandardCharsets.UTF_8, java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND)
     }
 
     private fun safeFileName(to: String): String {
