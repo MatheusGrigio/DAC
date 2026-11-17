@@ -29,7 +29,6 @@ import { mensagemDeErro } from '../../shared/utils/erro-http';
   standalone: true,
   imports: [RouterLink, MoedaPipe, Confirmacao, Alert, Button],
   templateUrl: './saque.html',
-  styleUrl: './saque.css',
 })
 export class Saque implements OnInit {
   private readonly authService = inject(AuthService);

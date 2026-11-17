@@ -16,7 +16,6 @@ import { mensagemDeErro } from '../../shared/utils/erro-http';
   selector: 'app-deposito',
   imports: [RouterLink, MoedaPipe, Confirmacao, Alert, Button],
   templateUrl: './deposito.html',
-  styleUrl: './deposito.css',
 })
 export class Deposito implements OnInit {
   private authService = inject(AuthService);

@@ -91,11 +91,4 @@ export class Autocadastro {
 
     input.value = this.cadastro.salario;
   }
-
-  converterUfParaMaiusculo(): void {
-    this.cadastro.uf = this.cadastro.uf
-      .replace(/[^a-zA-Z]/g, '')
-      .slice(0, 2)
-      .toUpperCase();
-  }
 }
