@@ -19,31 +19,12 @@ allprojects {
 }
 
 subprojects {
-    extra["testcontainers.version"] = "1.21.4"
-
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     extensions.configure<JavaPluginExtension> {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(21))
-        }
-    }
-
-    tasks.named<Copy>("processTestResources") {
-        from(rootProject.file("gradle/docker-java.properties"))
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-        // Docker Engine 29 rejects docker-java's default API 1.32 (minimum is 1.44).
-        systemProperty("api.version", "1.44")
-        if (System.getProperty("os.name").lowercase().contains("windows")) {
-            environment("DOCKER_HOST", "npipe:////./pipe/dockerDesktopLinuxEngine")
-            environment(
-                "TESTCONTAINERS_DOCKER_CLIENT_STRATEGY",
-                "org.testcontainers.dockerclient.EnvironmentAndSystemPropertyClientProviderStrategy",
-            )
         }
     }
 
@@ -66,7 +47,6 @@ subprojects {
             add("implementation", "org.springframework.amqp:spring-rabbit")
             add("implementation", "com.fasterxml.jackson.module:jackson-module-kotlin")
             add("implementation", "com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-            add("testImplementation", "org.jetbrains.kotlin:kotlin-test")
         }
     } else {
         apply(plugin = "org.jetbrains.kotlin.plugin.spring")
@@ -79,7 +59,6 @@ subprojects {
             add("implementation", "org.springframework.boot:spring-boot-starter-web")
             add("implementation", "com.fasterxml.jackson.module:jackson-module-kotlin")
             add("implementation", "org.jetbrains.kotlin:kotlin-reflect")
-            add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
         }
 
         tasks.named<BootJar>("bootJar") {
