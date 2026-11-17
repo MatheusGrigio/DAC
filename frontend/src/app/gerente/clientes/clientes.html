@@ -10,10 +10,8 @@
           type="search"
           class="form-control"
           [(ngModel)]="filtros.termo"
-          placeholder="Trecho do nome ou do CPF"
           autocomplete="off"
         />
-        <div class="form-text">Aceita parte do nome ou do CPF (com ou sem pontuação).</div>
       </div>
       <div class="col-md-4">
         <label class="form-label" for="filtro-cidade">Cidade</label>
@@ -23,7 +21,6 @@
           type="search"
           class="form-control"
           [(ngModel)]="filtros.cidade"
-          placeholder="Trecho da cidade"
           autocomplete="off"
         />
       </div>
@@ -36,7 +33,6 @@
           class="form-control"
           [(ngModel)]="filtros.estado"
           maxlength="2"
-          placeholder="UF"
           autocomplete="off"
           (input)="filtros.estado = filtros.estado.toUpperCase()"
         />
